@@ -1,7 +1,8 @@
 import { condominio, usuario } from "@/db/sqlite/schema";
 import { dbSqlite } from "@/db/sqlite";
 import { randomUUID } from "expo-crypto";
-import { supabase } from "@/db/postgres";
+//import { supabase } from "@/db/postgres";
+import bcrypt from "bcryptjs";
 
 export async function createAdmin() {
   try {
@@ -12,6 +13,8 @@ export async function createAdmin() {
       nome: "Condomínio Admin",
     });
 
+    const hash = await bcrypt.hash("admin1234", 10);
+
     await dbSqlite
       .insert(usuario)
       .values({
@@ -21,7 +24,7 @@ export async function createAdmin() {
         isSindico: true,
         email: "admin@gmail.com",
         nome: "admin",
-        senha: "admin1234",
+        senha: hash,
         status: true,
       })
       .returning();

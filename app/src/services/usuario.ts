@@ -1,5 +1,6 @@
 import { dbSqlite } from "@/db/sqlite";
 import { usuario } from "@/db/sqlite/schema";
+import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 
 interface Login {
@@ -20,7 +21,16 @@ export class Usuario {
       .from(usuario)
       .where(eq(usuario.email, data.email));
 
-    if (user && user.senha === data.senha) {
+    if (!user) {
+      return {
+        message: "E-mail não encontrado",
+        sucesso: false,
+      };
+    }
+
+    const verify = await bcrypt.compare(data.senha, user.senha);
+
+    if (verify) {
       return {
         message: "Login autorizado",
         sucesso: true,

@@ -1,0 +1,1347 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "id": "9745118d-3810-46d9-904b-a87a2f46cc7d",
+  "prevIds": [
+    "b2f644c9-990c-455e-b2df-6cf0e11685a2"
+  ],
+  "ddl": [
+    {
+      "name": "apartamento",
+      "entityType": "tables"
+    },
+    {
+      "name": "bloco",
+      "entityType": "tables"
+    },
+    {
+      "name": "categoria_ocorrencia",
+      "entityType": "tables"
+    },
+    {
+      "name": "comunicado",
+      "entityType": "tables"
+    },
+    {
+      "name": "condominio",
+      "entityType": "tables"
+    },
+    {
+      "name": "morador_apartamento",
+      "entityType": "tables"
+    },
+    {
+      "name": "ocorrencia",
+      "entityType": "tables"
+    },
+    {
+      "name": "status_ocorrencia",
+      "entityType": "tables"
+    },
+    {
+      "name": "tipo_comunicado",
+      "entityType": "tables"
+    },
+    {
+      "name": "usuario",
+      "entityType": "tables"
+    },
+    {
+      "table": "apartamento",
+      "name": "id_apartamento",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "apartamento",
+      "name": "id_bloco",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "apartamento",
+      "name": "nome",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "apartamento",
+      "name": "status_ocupacao",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "false",
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "apartamento",
+      "name": "ativo",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "true",
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "apartamento",
+      "name": "criado_em",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "apartamento",
+      "name": "atualizado_em",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "bloco",
+      "name": "id_bloco",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "bloco",
+      "name": "id_condominio",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "bloco",
+      "name": "nome",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "bloco",
+      "name": "ativo",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "true",
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "bloco",
+      "name": "criado_em",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "bloco",
+      "name": "atualizado_em",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "categoria_ocorrencia",
+      "name": "id_categoria",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "categoria_ocorrencia",
+      "name": "id_condominio",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "categoria_ocorrencia",
+      "name": "nome",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "categoria_ocorrencia",
+      "name": "descricao",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "categoria_ocorrencia",
+      "name": "ativo",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "true",
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "categoria_ocorrencia",
+      "name": "criado_em",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "categoria_ocorrencia",
+      "name": "atualizado_em",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "comunicado",
+      "name": "id_comunicado",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "comunicado",
+      "name": "id_condominio",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "comunicado",
+      "name": "id_tipo_comunicado",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "comunicado",
+      "name": "id_autor",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "comunicado",
+      "name": "titulo",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "comunicado",
+      "name": "descricao",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "comunicado",
+      "name": "status",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "comunicado",
+      "name": "publicado_em",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "comunicado",
+      "name": "expira_em",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "comunicado",
+      "name": "criado_em",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "comunicado",
+      "name": "atualizado_em",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "condominio",
+      "name": "id_condominio",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "condominio",
+      "name": "nome",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "condominio",
+      "name": "razao_social",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "condominio",
+      "name": "cnpj",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "condominio",
+      "name": "email",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "condominio",
+      "name": "telefone",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "condominio",
+      "name": "cep",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "condominio",
+      "name": "logradouro",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "condominio",
+      "name": "numero",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "condominio",
+      "name": "complemento",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "condominio",
+      "name": "bairro",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "condominio",
+      "name": "cidade",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "condominio",
+      "name": "uf",
+      "type": "text(2)",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "condominio",
+      "name": "ativo",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "true",
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "condominio",
+      "name": "criado_em",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "condominio",
+      "name": "atualizado_em",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "morador_apartamento",
+      "name": "id_vinculo",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "morador_apartamento",
+      "name": "id_usuario",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "morador_apartamento",
+      "name": "id_apartamento",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "morador_apartamento",
+      "name": "ativo",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "true",
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "morador_apartamento",
+      "name": "criado_em",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "morador_apartamento",
+      "name": "atualizado_em",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "ocorrencia",
+      "name": "id_ocorrencia",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "ocorrencia",
+      "name": "id_condominio",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "ocorrencia",
+      "name": "id_autor",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "ocorrencia",
+      "name": "id_bloco",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "ocorrencia",
+      "name": "id_apartamento",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "ocorrencia",
+      "name": "id_categoria",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "ocorrencia",
+      "name": "id_status",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "ocorrencia",
+      "name": "numero_protocolo",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "ocorrencia",
+      "name": "titulo",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "ocorrencia",
+      "name": "descricao",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "ocorrencia",
+      "name": "aberta_em",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "ocorrencia",
+      "name": "iniciada_em",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "ocorrencia",
+      "name": "resolvida_em",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "ocorrencia",
+      "name": "criada_em",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "ocorrencia",
+      "name": "atualizada_em",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "status_ocorrencia",
+      "name": "id_status",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "status_ocorrencia",
+      "name": "nome",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "status_ocorrencia",
+      "name": "cor_identificacao",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "status_ocorrencia",
+      "name": "ordem_exibicao",
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "status_ocorrencia",
+      "name": "ativo",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "true",
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "tipo_comunicado",
+      "name": "id_tipo_comunicado",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "tipo_comunicado",
+      "name": "id_condominio",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "tipo_comunicado",
+      "name": "nome",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "tipo_comunicado",
+      "name": "cor_identificacao",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "tipo_comunicado",
+      "name": "ativo",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "true",
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "tipo_comunicado",
+      "name": "criado_em",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "tipo_comunicado",
+      "name": "atualizado_em",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "usuario",
+      "name": "id_usuario",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "usuario",
+      "name": "id_condominio",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "usuario",
+      "name": "nome_completo",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "usuario",
+      "name": "email",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "usuario",
+      "name": "senha_hash",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "usuario",
+      "name": "codigo_acesso_hash",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "usuario",
+      "name": "telefone",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "usuario",
+      "name": "status",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "true",
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "usuario",
+      "name": "is_sindico",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "false",
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "usuario",
+      "name": "criado_em",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "usuario",
+      "name": "atualizado_em",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "apartamento",
+      "name": "fk_apartamento_id_bloco_bloco_id_bloco_fk",
+      "columns": [
+        "id_bloco"
+      ],
+      "tableTo": "bloco",
+      "columnsTo": [
+        "id_bloco"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "nameExplicit": false,
+      "entityType": "fks"
+    },
+    {
+      "table": "bloco",
+      "name": "fk_bloco_id_condominio_condominio_id_condominio_fk",
+      "columns": [
+        "id_condominio"
+      ],
+      "tableTo": "condominio",
+      "columnsTo": [
+        "id_condominio"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "nameExplicit": false,
+      "entityType": "fks"
+    },
+    {
+      "table": "categoria_ocorrencia",
+      "name": "fk_categoria_ocorrencia_id_condominio_condominio_id_condominio_fk",
+      "columns": [
+        "id_condominio"
+      ],
+      "tableTo": "condominio",
+      "columnsTo": [
+        "id_condominio"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "nameExplicit": false,
+      "entityType": "fks"
+    },
+    {
+      "table": "comunicado",
+      "name": "fk_comunicado_id_condominio_condominio_id_condominio_fk",
+      "columns": [
+        "id_condominio"
+      ],
+      "tableTo": "condominio",
+      "columnsTo": [
+        "id_condominio"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "nameExplicit": false,
+      "entityType": "fks"
+    },
+    {
+      "table": "comunicado",
+      "name": "fk_comunicado_id_tipo_comunicado_tipo_comunicado_id_tipo_comunicado_fk",
+      "columns": [
+        "id_tipo_comunicado"
+      ],
+      "tableTo": "tipo_comunicado",
+      "columnsTo": [
+        "id_tipo_comunicado"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "nameExplicit": false,
+      "entityType": "fks"
+    },
+    {
+      "table": "comunicado",
+      "name": "fk_comunicado_id_autor_usuario_id_usuario_fk",
+      "columns": [
+        "id_autor"
+      ],
+      "tableTo": "usuario",
+      "columnsTo": [
+        "id_usuario"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "nameExplicit": false,
+      "entityType": "fks"
+    },
+    {
+      "table": "morador_apartamento",
+      "name": "fk_morador_apartamento_id_usuario_usuario_id_usuario_fk",
+      "columns": [
+        "id_usuario"
+      ],
+      "tableTo": "usuario",
+      "columnsTo": [
+        "id_usuario"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "nameExplicit": false,
+      "entityType": "fks"
+    },
+    {
+      "table": "morador_apartamento",
+      "name": "fk_morador_apartamento_id_apartamento_apartamento_id_apartamento_fk",
+      "columns": [
+        "id_apartamento"
+      ],
+      "tableTo": "apartamento",
+      "columnsTo": [
+        "id_apartamento"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "nameExplicit": false,
+      "entityType": "fks"
+    },
+    {
+      "table": "ocorrencia",
+      "name": "fk_ocorrencia_id_condominio_condominio_id_condominio_fk",
+      "columns": [
+        "id_condominio"
+      ],
+      "tableTo": "condominio",
+      "columnsTo": [
+        "id_condominio"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "nameExplicit": false,
+      "entityType": "fks"
+    },
+    {
+      "table": "ocorrencia",
+      "name": "fk_ocorrencia_id_autor_usuario_id_usuario_fk",
+      "columns": [
+        "id_autor"
+      ],
+      "tableTo": "usuario",
+      "columnsTo": [
+        "id_usuario"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "nameExplicit": false,
+      "entityType": "fks"
+    },
+    {
+      "table": "ocorrencia",
+      "name": "fk_ocorrencia_id_bloco_bloco_id_bloco_fk",
+      "columns": [
+        "id_bloco"
+      ],
+      "tableTo": "bloco",
+      "columnsTo": [
+        "id_bloco"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "nameExplicit": false,
+      "entityType": "fks"
+    },
+    {
+      "table": "ocorrencia",
+      "name": "fk_ocorrencia_id_apartamento_apartamento_id_apartamento_fk",
+      "columns": [
+        "id_apartamento"
+      ],
+      "tableTo": "apartamento",
+      "columnsTo": [
+        "id_apartamento"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "nameExplicit": false,
+      "entityType": "fks"
+    },
+    {
+      "table": "ocorrencia",
+      "name": "fk_ocorrencia_id_categoria_categoria_ocorrencia_id_categoria_fk",
+      "columns": [
+        "id_categoria"
+      ],
+      "tableTo": "categoria_ocorrencia",
+      "columnsTo": [
+        "id_categoria"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "nameExplicit": false,
+      "entityType": "fks"
+    },
+    {
+      "table": "ocorrencia",
+      "name": "fk_ocorrencia_id_status_status_ocorrencia_id_status_fk",
+      "columns": [
+        "id_status"
+      ],
+      "tableTo": "status_ocorrencia",
+      "columnsTo": [
+        "id_status"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "nameExplicit": false,
+      "entityType": "fks"
+    },
+    {
+      "table": "tipo_comunicado",
+      "name": "fk_tipo_comunicado_id_condominio_condominio_id_condominio_fk",
+      "columns": [
+        "id_condominio"
+      ],
+      "tableTo": "condominio",
+      "columnsTo": [
+        "id_condominio"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "nameExplicit": false,
+      "entityType": "fks"
+    },
+    {
+      "table": "usuario",
+      "name": "fk_usuario_id_condominio_condominio_id_condominio_fk",
+      "columns": [
+        "id_condominio"
+      ],
+      "tableTo": "condominio",
+      "columnsTo": [
+        "id_condominio"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "nameExplicit": false,
+      "entityType": "fks"
+    },
+    {
+      "table": "apartamento",
+      "name": "apartamento_pk",
+      "columns": [
+        "id_apartamento"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "table": "bloco",
+      "name": "bloco_pk",
+      "columns": [
+        "id_bloco"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "table": "categoria_ocorrencia",
+      "name": "categoria_ocorrencia_pk",
+      "columns": [
+        "id_categoria"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "table": "comunicado",
+      "name": "comunicado_pk",
+      "columns": [
+        "id_comunicado"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "table": "condominio",
+      "name": "condominio_pk",
+      "columns": [
+        "id_condominio"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "table": "morador_apartamento",
+      "name": "morador_apartamento_pk",
+      "columns": [
+        "id_vinculo"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "table": "ocorrencia",
+      "name": "ocorrencia_pk",
+      "columns": [
+        "id_ocorrencia"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "table": "status_ocorrencia",
+      "name": "status_ocorrencia_pk",
+      "columns": [
+        "id_status"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "table": "tipo_comunicado",
+      "name": "tipo_comunicado_pk",
+      "columns": [
+        "id_tipo_comunicado"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "table": "usuario",
+      "name": "usuario_pk",
+      "columns": [
+        "id_usuario"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "table": "apartamento",
+      "name": "apartamento_id_bloco_nome_unique",
+      "columns": [
+        "id_bloco",
+        "nome"
+      ],
+      "nameExplicit": false,
+      "entityType": "uniques"
+    },
+    {
+      "table": "bloco",
+      "name": "bloco_id_condominio_nome_unique",
+      "columns": [
+        "id_condominio",
+        "nome"
+      ],
+      "nameExplicit": false,
+      "entityType": "uniques"
+    },
+    {
+      "table": "condominio",
+      "name": "condominio_cnpj_unique",
+      "columns": [
+        "cnpj"
+      ],
+      "nameExplicit": false,
+      "entityType": "uniques"
+    },
+    {
+      "table": "ocorrencia",
+      "name": "ocorrencia_numero_protocolo_unique",
+      "columns": [
+        "numero_protocolo"
+      ],
+      "nameExplicit": false,
+      "entityType": "uniques"
+    },
+    {
+      "table": "status_ocorrencia",
+      "name": "status_ocorrencia_nome_unique",
+      "columns": [
+        "nome"
+      ],
+      "nameExplicit": false,
+      "entityType": "uniques"
+    },
+    {
+      "table": "usuario",
+      "name": "usuario_email_unique",
+      "columns": [
+        "email"
+      ],
+      "nameExplicit": false,
+      "entityType": "uniques"
+    }
+  ],
+  "renames": []
+}
