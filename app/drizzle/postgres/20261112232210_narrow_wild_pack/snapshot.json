@@ -1,0 +1,453 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "c1b060ea-04ae-420d-adbd-3b713f1e794d",
+  "prevIds": [
+    "919f825e-fcb0-41b8-b4b8-906b59534334"
+  ],
+  "footprints": [
+    {
+      "statementType": "alter_rls",
+      "statementTarget": [
+        "table",
+        "public",
+        "condominio"
+      ],
+      "writes": [
+        "s|rls|public.condominio"
+      ],
+      "reads": [
+        "n|tbl|public.condominio",
+        "n|sch|public"
+      ],
+      "sqlHash": "996a87bad3734abc"
+    },
+    {
+      "statementType": "alter_rls",
+      "statementTarget": [
+        "table",
+        "public",
+        "usuario"
+      ],
+      "writes": [
+        "s|rls|public.usuario"
+      ],
+      "reads": [
+        "n|tbl|public.usuario",
+        "n|sch|public"
+      ],
+      "sqlHash": "58b78fd44f9ea1f5"
+    },
+    {
+      "statementType": "alter_rls",
+      "statementTarget": [
+        "table",
+        "public",
+        "apartamento"
+      ],
+      "writes": [
+        "s|rls|public.apartamento"
+      ],
+      "reads": [
+        "n|tbl|public.apartamento",
+        "n|sch|public"
+      ],
+      "sqlHash": "370913cba9b957de"
+    },
+    {
+      "statementType": "alter_rls",
+      "statementTarget": [
+        "table",
+        "public",
+        "bloco"
+      ],
+      "writes": [
+        "s|rls|public.bloco"
+      ],
+      "reads": [
+        "n|tbl|public.bloco",
+        "n|sch|public"
+      ],
+      "sqlHash": "4e33b15a8ca25eff"
+    },
+    {
+      "statementType": "alter_rls",
+      "statementTarget": [
+        "table",
+        "public",
+        "categoria_ocorrencia"
+      ],
+      "writes": [
+        "s|rls|public.categoria_ocorrencia"
+      ],
+      "reads": [
+        "n|tbl|public.categoria_ocorrencia",
+        "n|sch|public"
+      ],
+      "sqlHash": "0540882ff82c5323"
+    },
+    {
+      "statementType": "alter_rls",
+      "statementTarget": [
+        "table",
+        "public",
+        "comunicado"
+      ],
+      "writes": [
+        "s|rls|public.comunicado"
+      ],
+      "reads": [
+        "n|tbl|public.comunicado",
+        "n|sch|public"
+      ],
+      "sqlHash": "c6143a4b13b92873"
+    },
+    {
+      "statementType": "alter_rls",
+      "statementTarget": [
+        "table",
+        "public",
+        "morador_apartamento"
+      ],
+      "writes": [
+        "s|rls|public.morador_apartamento"
+      ],
+      "reads": [
+        "n|tbl|public.morador_apartamento",
+        "n|sch|public"
+      ],
+      "sqlHash": "1bb75d01b27b9719"
+    },
+    {
+      "statementType": "alter_rls",
+      "statementTarget": [
+        "table",
+        "public",
+        "ocorrencia"
+      ],
+      "writes": [
+        "s|rls|public.ocorrencia"
+      ],
+      "reads": [
+        "n|tbl|public.ocorrencia",
+        "n|sch|public"
+      ],
+      "sqlHash": "fd0040f3445d77b5"
+    },
+    {
+      "statementType": "alter_rls",
+      "statementTarget": [
+        "table",
+        "public",
+        "status_ocorrencia"
+      ],
+      "writes": [
+        "s|rls|public.status_ocorrencia"
+      ],
+      "reads": [
+        "n|tbl|public.status_ocorrencia",
+        "n|sch|public"
+      ],
+      "sqlHash": "8571c36174b73054"
+    },
+    {
+      "statementType": "alter_rls",
+      "statementTarget": [
+        "table",
+        "public",
+        "tipo_comunicado"
+      ],
+      "writes": [
+        "s|rls|public.tipo_comunicado"
+      ],
+      "reads": [
+        "n|tbl|public.tipo_comunicado",
+        "n|sch|public"
+      ],
+      "sqlHash": "6d536ac00813ec81"
+    },
+    {
+      "statementType": "create_policy",
+      "statementTarget": [
+        "table",
+        "public",
+        "condominio"
+      ],
+      "writes": [
+        "s|pol|public.condominio.condominio_anon_select_dev",
+        "n|pol|public.condominio.condominio_anon_select_dev",
+        "e|pol|public.condominio.condominio_anon_select_dev"
+      ],
+      "reads": [
+        "n|tbl|public.condominio",
+        "n|sch|public",
+        "n|role|anon",
+        "e|rls|public.condominio"
+      ]
+    },
+    {
+      "statementType": "create_policy",
+      "statementTarget": [
+        "table",
+        "public",
+        "condominio"
+      ],
+      "writes": [
+        "s|pol|public.condominio.condominio_anon_insert_dev",
+        "n|pol|public.condominio.condominio_anon_insert_dev",
+        "e|pol|public.condominio.condominio_anon_insert_dev"
+      ],
+      "reads": [
+        "n|tbl|public.condominio",
+        "n|sch|public",
+        "n|role|anon",
+        "e|rls|public.condominio"
+      ]
+    },
+    {
+      "statementType": "create_policy",
+      "statementTarget": [
+        "table",
+        "public",
+        "condominio"
+      ],
+      "writes": [
+        "s|pol|public.condominio.condominio_anon_update_dev",
+        "n|pol|public.condominio.condominio_anon_update_dev",
+        "e|pol|public.condominio.condominio_anon_update_dev"
+      ],
+      "reads": [
+        "n|tbl|public.condominio",
+        "n|sch|public",
+        "n|role|anon",
+        "e|rls|public.condominio"
+      ]
+    },
+    {
+      "statementType": "create_policy",
+      "statementTarget": [
+        "table",
+        "public",
+        "usuario"
+      ],
+      "writes": [
+        "s|pol|public.usuario.usuario_anon_select_dev",
+        "n|pol|public.usuario.usuario_anon_select_dev",
+        "e|pol|public.usuario.usuario_anon_select_dev"
+      ],
+      "reads": [
+        "n|tbl|public.usuario",
+        "n|sch|public",
+        "n|role|anon",
+        "e|rls|public.usuario"
+      ]
+    },
+    {
+      "statementType": "create_policy",
+      "statementTarget": [
+        "table",
+        "public",
+        "usuario"
+      ],
+      "writes": [
+        "s|pol|public.usuario.usuario_anon_insert_dev",
+        "n|pol|public.usuario.usuario_anon_insert_dev",
+        "e|pol|public.usuario.usuario_anon_insert_dev"
+      ],
+      "reads": [
+        "n|tbl|public.usuario",
+        "n|sch|public",
+        "n|role|anon",
+        "e|rls|public.usuario"
+      ]
+    },
+    {
+      "statementType": "create_policy",
+      "statementTarget": [
+        "table",
+        "public",
+        "usuario"
+      ],
+      "writes": [
+        "s|pol|public.usuario.usuario_anon_update_dev",
+        "n|pol|public.usuario.usuario_anon_update_dev",
+        "e|pol|public.usuario.usuario_anon_update_dev"
+      ],
+      "reads": [
+        "n|tbl|public.usuario",
+        "n|sch|public",
+        "n|role|anon",
+        "e|rls|public.usuario"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "condominio",
+        "name": "condominio_anon_select_dev",
+        "as": "PERMISSIVE",
+        "for": "SELECT",
+        "roles": [
+          "anon"
+        ],
+        "using": "true",
+        "withCheck": null,
+        "entityType": "policies"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "condominio",
+        "name": "condominio_anon_insert_dev",
+        "as": "PERMISSIVE",
+        "for": "INSERT",
+        "roles": [
+          "anon"
+        ],
+        "using": null,
+        "withCheck": "true",
+        "entityType": "policies"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "condominio",
+        "name": "condominio_anon_update_dev",
+        "as": "PERMISSIVE",
+        "for": "UPDATE",
+        "roles": [
+          "anon"
+        ],
+        "using": "true",
+        "withCheck": "true",
+        "entityType": "policies"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "usuario",
+        "name": "usuario_anon_select_dev",
+        "as": "PERMISSIVE",
+        "for": "SELECT",
+        "roles": [
+          "anon"
+        ],
+        "using": "true",
+        "withCheck": null,
+        "entityType": "policies"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "usuario",
+        "name": "usuario_anon_insert_dev",
+        "as": "PERMISSIVE",
+        "for": "INSERT",
+        "roles": [
+          "anon"
+        ],
+        "using": null,
+        "withCheck": "true",
+        "entityType": "policies"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "usuario",
+        "name": "usuario_anon_update_dev",
+        "as": "PERMISSIVE",
+        "for": "UPDATE",
+        "roles": [
+          "anon"
+        ],
+        "using": "true",
+        "withCheck": "true",
+        "entityType": "policies"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "tables\u0000[\"public\",\"condominio\"]",
+      "set": {
+        "isRlsEnabled": true
+      }
+    },
+    {
+      "op": "alter",
+      "key": "tables\u0000[\"public\",\"usuario\"]",
+      "set": {
+        "isRlsEnabled": true
+      }
+    },
+    {
+      "op": "alter",
+      "key": "tables\u0000[\"public\",\"apartamento\"]",
+      "set": {
+        "isRlsEnabled": true
+      }
+    },
+    {
+      "op": "alter",
+      "key": "tables\u0000[\"public\",\"bloco\"]",
+      "set": {
+        "isRlsEnabled": true
+      }
+    },
+    {
+      "op": "alter",
+      "key": "tables\u0000[\"public\",\"categoria_ocorrencia\"]",
+      "set": {
+        "isRlsEnabled": true
+      }
+    },
+    {
+      "op": "alter",
+      "key": "tables\u0000[\"public\",\"comunicado\"]",
+      "set": {
+        "isRlsEnabled": true
+      }
+    },
+    {
+      "op": "alter",
+      "key": "tables\u0000[\"public\",\"morador_apartamento\"]",
+      "set": {
+        "isRlsEnabled": true
+      }
+    },
+    {
+      "op": "alter",
+      "key": "tables\u0000[\"public\",\"ocorrencia\"]",
+      "set": {
+        "isRlsEnabled": true
+      }
+    },
+    {
+      "op": "alter",
+      "key": "tables\u0000[\"public\",\"status_ocorrencia\"]",
+      "set": {
+        "isRlsEnabled": true
+      }
+    },
+    {
+      "op": "alter",
+      "key": "tables\u0000[\"public\",\"tipo_comunicado\"]",
+      "set": {
+        "isRlsEnabled": true
+      }
+    }
+  ]
+}

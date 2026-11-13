@@ -3,6 +3,7 @@ import { View, Image } from "react-native";
 import { styles } from "@/styles";
 import { CardLogin } from "@/components/card-login";
 import { Usuario } from "@/services/usuario";
+import { Redirect } from "expo-router";
 
 interface AcessoLogin {
   email: string;
@@ -26,6 +27,8 @@ export default function Login() {
     }
 
     console.log(login.message);
+
+    Redirect({ href: "pages/home/visao-geral" });
   }
   return (
     <View style={styles.loginContainer}>

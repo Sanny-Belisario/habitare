@@ -16,7 +16,7 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack screenOptions={{headerShown: false}}>
+    <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="pages/auth/login" options={{ title: "Login" }} />
       <Stack.Screen
         name="pages/home/visao-geral"

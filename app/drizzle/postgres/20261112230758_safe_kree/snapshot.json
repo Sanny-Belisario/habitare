@@ -1,0 +1,2486 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "919f825e-fcb0-41b8-b4b8-906b59534334",
+  "prevIds": [
+    "4e24aad9-92b7-4b28-b51d-5656829b96fd"
+  ],
+  "footprints": [
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "apartamento"
+      ],
+      "writes": [
+        "s|tbl|public.apartamento",
+        "n|tbl|public.apartamento",
+        "e|tbl|public.apartamento",
+        "n|rel|public.apartamento",
+        "n|type|public.apartamento",
+        "n|rel|public.apartamento_pkey",
+        "n|rel|public.apartamento_id_bloco_nome_unique"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "bloco"
+      ],
+      "writes": [
+        "s|tbl|public.bloco",
+        "n|tbl|public.bloco",
+        "e|tbl|public.bloco",
+        "n|rel|public.bloco",
+        "n|type|public.bloco",
+        "n|rel|public.bloco_pkey",
+        "n|rel|public.bloco_id_condominio_nome_unique"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "categoria_ocorrencia"
+      ],
+      "writes": [
+        "s|tbl|public.categoria_ocorrencia",
+        "n|tbl|public.categoria_ocorrencia",
+        "e|tbl|public.categoria_ocorrencia",
+        "n|rel|public.categoria_ocorrencia",
+        "n|type|public.categoria_ocorrencia",
+        "n|rel|public.categoria_ocorrencia_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "comunicado"
+      ],
+      "writes": [
+        "s|tbl|public.comunicado",
+        "n|tbl|public.comunicado",
+        "e|tbl|public.comunicado",
+        "n|rel|public.comunicado",
+        "n|type|public.comunicado",
+        "n|rel|public.comunicado_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "morador_apartamento"
+      ],
+      "writes": [
+        "s|tbl|public.morador_apartamento",
+        "n|tbl|public.morador_apartamento",
+        "e|tbl|public.morador_apartamento",
+        "n|rel|public.morador_apartamento",
+        "n|type|public.morador_apartamento",
+        "n|rel|public.morador_apartamento_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "ocorrencia"
+      ],
+      "writes": [
+        "s|tbl|public.ocorrencia",
+        "n|tbl|public.ocorrencia",
+        "e|tbl|public.ocorrencia",
+        "n|rel|public.ocorrencia",
+        "n|type|public.ocorrencia",
+        "n|rel|public.ocorrencia_pkey",
+        "n|rel|public.ocorrencia_numero_protocolo_key"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "status_ocorrencia"
+      ],
+      "writes": [
+        "s|tbl|public.status_ocorrencia",
+        "n|tbl|public.status_ocorrencia",
+        "e|tbl|public.status_ocorrencia",
+        "n|rel|public.status_ocorrencia",
+        "n|type|public.status_ocorrencia",
+        "n|rel|public.status_ocorrencia_pkey",
+        "n|rel|public.status_ocorrencia_nome_key"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "tipo_comunicado"
+      ],
+      "writes": [
+        "s|tbl|public.tipo_comunicado",
+        "n|tbl|public.tipo_comunicado",
+        "e|tbl|public.tipo_comunicado",
+        "n|rel|public.tipo_comunicado",
+        "n|type|public.tipo_comunicado",
+        "n|rel|public.tipo_comunicado_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "alter_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "condominio",
+        "id_condominio"
+      ],
+      "writes": [
+        "s|colprop|public.condominio.id_condominio.default"
+      ],
+      "reads": [
+        "n|tbl|public.condominio",
+        "n|sch|public",
+        "n|col|public.condominio.id_condominio"
+      ],
+      "sqlHash": "b7e5ad2c5ead6e67"
+    },
+    {
+      "statementType": "alter_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "condominio",
+        "nome"
+      ],
+      "writes": [
+        "s|colprop|public.condominio.nome.notNull"
+      ],
+      "reads": [
+        "n|tbl|public.condominio",
+        "n|sch|public",
+        "n|col|public.condominio.nome"
+      ],
+      "sqlHash": "def6f639179b87d4"
+    },
+    {
+      "statementType": "alter_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "condominio",
+        "numero"
+      ],
+      "writes": [
+        "s|colprop|public.condominio.numero.type",
+        "s|colprop|public.condominio.numero.default"
+      ],
+      "reads": [
+        "n|tbl|public.condominio",
+        "n|sch|public",
+        "n|col|public.condominio.numero"
+      ],
+      "sqlHash": "3eaf0ff69c9bdd3b"
+    },
+    {
+      "statementType": "alter_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "condominio",
+        "uf"
+      ],
+      "writes": [
+        "s|colprop|public.condominio.uf.type",
+        "s|colprop|public.condominio.uf.default"
+      ],
+      "reads": [
+        "n|tbl|public.condominio",
+        "n|sch|public",
+        "n|col|public.condominio.uf"
+      ],
+      "sqlHash": "ed16953070e9722d"
+    },
+    {
+      "statementType": "alter_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "condominio",
+        "ativo"
+      ],
+      "writes": [
+        "s|colprop|public.condominio.ativo.notNull"
+      ],
+      "reads": [
+        "n|tbl|public.condominio",
+        "n|sch|public",
+        "n|col|public.condominio.ativo"
+      ],
+      "sqlHash": "06fabb05ef322086"
+    },
+    {
+      "statementType": "alter_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "condominio",
+        "criado_em"
+      ],
+      "writes": [
+        "s|colprop|public.condominio.criado_em.notNull",
+        "s|colprop|public.condominio.criado_em.default",
+        "s|colprop|public.condominio.criado_em.type"
+      ],
+      "reads": [
+        "n|tbl|public.condominio",
+        "n|sch|public",
+        "n|col|public.condominio.criado_em"
+      ],
+      "sqlHash": "ae2099d5a2f9def7"
+    },
+    {
+      "statementType": "alter_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "condominio",
+        "atualizado_em"
+      ],
+      "writes": [
+        "s|colprop|public.condominio.atualizado_em.type",
+        "s|colprop|public.condominio.atualizado_em.default"
+      ],
+      "reads": [
+        "n|tbl|public.condominio",
+        "n|sch|public",
+        "n|col|public.condominio.atualizado_em"
+      ],
+      "sqlHash": "1c37b39cfae79dd7"
+    },
+    {
+      "statementType": "alter_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "usuario",
+        "id_usuario"
+      ],
+      "writes": [
+        "s|colprop|public.usuario.id_usuario.default"
+      ],
+      "reads": [
+        "n|tbl|public.usuario",
+        "n|sch|public",
+        "n|col|public.usuario.id_usuario"
+      ],
+      "sqlHash": "42dff96281a6932e"
+    },
+    {
+      "statementType": "alter_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "usuario",
+        "id_condominio"
+      ],
+      "writes": [
+        "s|colprop|public.usuario.id_condominio.notNull"
+      ],
+      "reads": [
+        "n|tbl|public.usuario",
+        "n|sch|public",
+        "n|col|public.usuario.id_condominio"
+      ],
+      "sqlHash": "d6c423a3675741fe"
+    },
+    {
+      "statementType": "alter_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "usuario",
+        "nome_completo"
+      ],
+      "writes": [
+        "s|colprop|public.usuario.nome_completo.notNull"
+      ],
+      "reads": [
+        "n|tbl|public.usuario",
+        "n|sch|public",
+        "n|col|public.usuario.nome_completo"
+      ],
+      "sqlHash": "d83ba31835019eee"
+    },
+    {
+      "statementType": "alter_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "usuario",
+        "email"
+      ],
+      "writes": [
+        "s|colprop|public.usuario.email.notNull"
+      ],
+      "reads": [
+        "n|tbl|public.usuario",
+        "n|sch|public",
+        "n|col|public.usuario.email"
+      ],
+      "sqlHash": "be7ea20817d997ba"
+    },
+    {
+      "statementType": "alter_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "usuario",
+        "senha_hash"
+      ],
+      "writes": [
+        "s|colprop|public.usuario.senha_hash.notNull"
+      ],
+      "reads": [
+        "n|tbl|public.usuario",
+        "n|sch|public",
+        "n|col|public.usuario.senha_hash"
+      ],
+      "sqlHash": "348bb91266bfb74a"
+    },
+    {
+      "statementType": "alter_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "usuario",
+        "status"
+      ],
+      "writes": [
+        "s|colprop|public.usuario.status.notNull"
+      ],
+      "reads": [
+        "n|tbl|public.usuario",
+        "n|sch|public",
+        "n|col|public.usuario.status"
+      ],
+      "sqlHash": "496b43e21c1a9cf4"
+    },
+    {
+      "statementType": "alter_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "usuario",
+        "is_sindico"
+      ],
+      "writes": [
+        "s|colprop|public.usuario.is_sindico.notNull",
+        "s|colprop|public.usuario.is_sindico.default"
+      ],
+      "reads": [
+        "n|tbl|public.usuario",
+        "n|sch|public",
+        "n|col|public.usuario.is_sindico"
+      ],
+      "sqlHash": "c568e800e9870881"
+    },
+    {
+      "statementType": "alter_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "usuario",
+        "criado_em"
+      ],
+      "writes": [
+        "s|colprop|public.usuario.criado_em.notNull",
+        "s|colprop|public.usuario.criado_em.default",
+        "s|colprop|public.usuario.criado_em.type"
+      ],
+      "reads": [
+        "n|tbl|public.usuario",
+        "n|sch|public",
+        "n|col|public.usuario.criado_em"
+      ],
+      "sqlHash": "a1e02b74c771f282"
+    },
+    {
+      "statementType": "alter_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "usuario",
+        "atualizado_em"
+      ],
+      "writes": [
+        "s|colprop|public.usuario.atualizado_em.type",
+        "s|colprop|public.usuario.atualizado_em.default"
+      ],
+      "reads": [
+        "n|tbl|public.usuario",
+        "n|sch|public",
+        "n|col|public.usuario.atualizado_em"
+      ],
+      "sqlHash": "0dc90197cbf4d100"
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "apartamento"
+      ],
+      "writes": [
+        "s|fk|public.apartamento.apartamento_id_bloco_bloco_id_bloco_fkey",
+        "n|fk|public.apartamento.apartamento_id_bloco_bloco_id_bloco_fkey",
+        "e|fk|public.apartamento.apartamento_id_bloco_bloco_id_bloco_fkey",
+        "n|con|public.apartamento.apartamento_id_bloco_bloco_id_bloco_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.apartamento",
+        "n|sch|public",
+        "n|tbl|public.bloco",
+        "n|sch|public",
+        "n|col|public.apartamento.id_bloco",
+        "n|col|public.bloco.id_bloco",
+        "e|uniqueness|public.bloco.id_bloco"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "bloco"
+      ],
+      "writes": [
+        "s|fk|public.bloco.bloco_id_condominio_condominio_id_condominio_fkey",
+        "n|fk|public.bloco.bloco_id_condominio_condominio_id_condominio_fkey",
+        "e|fk|public.bloco.bloco_id_condominio_condominio_id_condominio_fkey",
+        "n|con|public.bloco.bloco_id_condominio_condominio_id_condominio_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.bloco",
+        "n|sch|public",
+        "n|tbl|public.condominio",
+        "n|sch|public",
+        "n|col|public.bloco.id_condominio",
+        "n|col|public.condominio.id_condominio",
+        "e|uniqueness|public.condominio.id_condominio"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "categoria_ocorrencia"
+      ],
+      "writes": [
+        "s|fk|public.categoria_ocorrencia.categoria_ocorrencia_6LhDpg5DcNer_fkey",
+        "n|fk|public.categoria_ocorrencia.categoria_ocorrencia_6LhDpg5DcNer_fkey",
+        "e|fk|public.categoria_ocorrencia.categoria_ocorrencia_6LhDpg5DcNer_fkey",
+        "n|con|public.categoria_ocorrencia.categoria_ocorrencia_6LhDpg5DcNer_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.categoria_ocorrencia",
+        "n|sch|public",
+        "n|tbl|public.condominio",
+        "n|sch|public",
+        "n|col|public.categoria_ocorrencia.id_condominio",
+        "n|col|public.condominio.id_condominio",
+        "e|uniqueness|public.condominio.id_condominio"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "comunicado"
+      ],
+      "writes": [
+        "s|fk|public.comunicado.comunicado_id_condominio_condominio_id_condominio_fkey",
+        "n|fk|public.comunicado.comunicado_id_condominio_condominio_id_condominio_fkey",
+        "e|fk|public.comunicado.comunicado_id_condominio_condominio_id_condominio_fkey",
+        "n|con|public.comunicado.comunicado_id_condominio_condominio_id_condominio_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.comunicado",
+        "n|sch|public",
+        "n|tbl|public.condominio",
+        "n|sch|public",
+        "n|col|public.comunicado.id_condominio",
+        "n|col|public.condominio.id_condominio",
+        "e|uniqueness|public.condominio.id_condominio"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "comunicado"
+      ],
+      "writes": [
+        "s|fk|public.comunicado.comunicado_KkiUxrNlyCC0_fkey",
+        "n|fk|public.comunicado.comunicado_KkiUxrNlyCC0_fkey",
+        "e|fk|public.comunicado.comunicado_KkiUxrNlyCC0_fkey",
+        "n|con|public.comunicado.comunicado_KkiUxrNlyCC0_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.comunicado",
+        "n|sch|public",
+        "n|tbl|public.tipo_comunicado",
+        "n|sch|public",
+        "n|col|public.comunicado.id_tipo_comunicado",
+        "n|col|public.tipo_comunicado.id_tipo_comunicado",
+        "e|uniqueness|public.tipo_comunicado.id_tipo_comunicado"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "comunicado"
+      ],
+      "writes": [
+        "s|fk|public.comunicado.comunicado_id_autor_usuario_id_usuario_fkey",
+        "n|fk|public.comunicado.comunicado_id_autor_usuario_id_usuario_fkey",
+        "e|fk|public.comunicado.comunicado_id_autor_usuario_id_usuario_fkey",
+        "n|con|public.comunicado.comunicado_id_autor_usuario_id_usuario_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.comunicado",
+        "n|sch|public",
+        "n|tbl|public.usuario",
+        "n|sch|public",
+        "n|col|public.comunicado.id_autor",
+        "n|col|public.usuario.id_usuario",
+        "e|uniqueness|public.usuario.id_usuario"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "morador_apartamento"
+      ],
+      "writes": [
+        "s|fk|public.morador_apartamento.morador_apartamento_id_usuario_usuario_id_usuario_fkey",
+        "n|fk|public.morador_apartamento.morador_apartamento_id_usuario_usuario_id_usuario_fkey",
+        "e|fk|public.morador_apartamento.morador_apartamento_id_usuario_usuario_id_usuario_fkey",
+        "n|con|public.morador_apartamento.morador_apartamento_id_usuario_usuario_id_usuario_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.morador_apartamento",
+        "n|sch|public",
+        "n|tbl|public.usuario",
+        "n|sch|public",
+        "n|col|public.morador_apartamento.id_usuario",
+        "n|col|public.usuario.id_usuario",
+        "e|uniqueness|public.usuario.id_usuario"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "morador_apartamento"
+      ],
+      "writes": [
+        "s|fk|public.morador_apartamento.morador_apartamento_m28Mz74G04EC_fkey",
+        "n|fk|public.morador_apartamento.morador_apartamento_m28Mz74G04EC_fkey",
+        "e|fk|public.morador_apartamento.morador_apartamento_m28Mz74G04EC_fkey",
+        "n|con|public.morador_apartamento.morador_apartamento_m28Mz74G04EC_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.morador_apartamento",
+        "n|sch|public",
+        "n|tbl|public.apartamento",
+        "n|sch|public",
+        "n|col|public.morador_apartamento.id_apartamento",
+        "n|col|public.apartamento.id_apartamento",
+        "e|uniqueness|public.apartamento.id_apartamento"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "ocorrencia"
+      ],
+      "writes": [
+        "s|fk|public.ocorrencia.ocorrencia_id_condominio_condominio_id_condominio_fkey",
+        "n|fk|public.ocorrencia.ocorrencia_id_condominio_condominio_id_condominio_fkey",
+        "e|fk|public.ocorrencia.ocorrencia_id_condominio_condominio_id_condominio_fkey",
+        "n|con|public.ocorrencia.ocorrencia_id_condominio_condominio_id_condominio_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.ocorrencia",
+        "n|sch|public",
+        "n|tbl|public.condominio",
+        "n|sch|public",
+        "n|col|public.ocorrencia.id_condominio",
+        "n|col|public.condominio.id_condominio",
+        "e|uniqueness|public.condominio.id_condominio"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "ocorrencia"
+      ],
+      "writes": [
+        "s|fk|public.ocorrencia.ocorrencia_id_autor_usuario_id_usuario_fkey",
+        "n|fk|public.ocorrencia.ocorrencia_id_autor_usuario_id_usuario_fkey",
+        "e|fk|public.ocorrencia.ocorrencia_id_autor_usuario_id_usuario_fkey",
+        "n|con|public.ocorrencia.ocorrencia_id_autor_usuario_id_usuario_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.ocorrencia",
+        "n|sch|public",
+        "n|tbl|public.usuario",
+        "n|sch|public",
+        "n|col|public.ocorrencia.id_autor",
+        "n|col|public.usuario.id_usuario",
+        "e|uniqueness|public.usuario.id_usuario"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "ocorrencia"
+      ],
+      "writes": [
+        "s|fk|public.ocorrencia.ocorrencia_id_bloco_bloco_id_bloco_fkey",
+        "n|fk|public.ocorrencia.ocorrencia_id_bloco_bloco_id_bloco_fkey",
+        "e|fk|public.ocorrencia.ocorrencia_id_bloco_bloco_id_bloco_fkey",
+        "n|con|public.ocorrencia.ocorrencia_id_bloco_bloco_id_bloco_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.ocorrencia",
+        "n|sch|public",
+        "n|tbl|public.bloco",
+        "n|sch|public",
+        "n|col|public.ocorrencia.id_bloco",
+        "n|col|public.bloco.id_bloco",
+        "e|uniqueness|public.bloco.id_bloco"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "ocorrencia"
+      ],
+      "writes": [
+        "s|fk|public.ocorrencia.ocorrencia_id_apartamento_apartamento_id_apartamento_fkey",
+        "n|fk|public.ocorrencia.ocorrencia_id_apartamento_apartamento_id_apartamento_fkey",
+        "e|fk|public.ocorrencia.ocorrencia_id_apartamento_apartamento_id_apartamento_fkey",
+        "n|con|public.ocorrencia.ocorrencia_id_apartamento_apartamento_id_apartamento_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.ocorrencia",
+        "n|sch|public",
+        "n|tbl|public.apartamento",
+        "n|sch|public",
+        "n|col|public.ocorrencia.id_apartamento",
+        "n|col|public.apartamento.id_apartamento",
+        "e|uniqueness|public.apartamento.id_apartamento"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "ocorrencia"
+      ],
+      "writes": [
+        "s|fk|public.ocorrencia.ocorrencia_id_categoria_categoria_ocorrencia_id_categoria_fkey",
+        "n|fk|public.ocorrencia.ocorrencia_id_categoria_categoria_ocorrencia_id_categoria_fkey",
+        "e|fk|public.ocorrencia.ocorrencia_id_categoria_categoria_ocorrencia_id_categoria_fkey",
+        "n|con|public.ocorrencia.ocorrencia_id_categoria_categoria_ocorrencia_id_categoria_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.ocorrencia",
+        "n|sch|public",
+        "n|tbl|public.categoria_ocorrencia",
+        "n|sch|public",
+        "n|col|public.ocorrencia.id_categoria",
+        "n|col|public.categoria_ocorrencia.id_categoria",
+        "e|uniqueness|public.categoria_ocorrencia.id_categoria"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "ocorrencia"
+      ],
+      "writes": [
+        "s|fk|public.ocorrencia.ocorrencia_id_status_status_ocorrencia_id_status_fkey",
+        "n|fk|public.ocorrencia.ocorrencia_id_status_status_ocorrencia_id_status_fkey",
+        "e|fk|public.ocorrencia.ocorrencia_id_status_status_ocorrencia_id_status_fkey",
+        "n|con|public.ocorrencia.ocorrencia_id_status_status_ocorrencia_id_status_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.ocorrencia",
+        "n|sch|public",
+        "n|tbl|public.status_ocorrencia",
+        "n|sch|public",
+        "n|col|public.ocorrencia.id_status",
+        "n|col|public.status_ocorrencia.id_status",
+        "e|uniqueness|public.status_ocorrencia.id_status"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "tipo_comunicado"
+      ],
+      "writes": [
+        "s|fk|public.tipo_comunicado.tipo_comunicado_id_condominio_condominio_id_condominio_fkey",
+        "n|fk|public.tipo_comunicado.tipo_comunicado_id_condominio_condominio_id_condominio_fkey",
+        "e|fk|public.tipo_comunicado.tipo_comunicado_id_condominio_condominio_id_condominio_fkey",
+        "n|con|public.tipo_comunicado.tipo_comunicado_id_condominio_condominio_id_condominio_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.tipo_comunicado",
+        "n|sch|public",
+        "n|tbl|public.condominio",
+        "n|sch|public",
+        "n|col|public.tipo_comunicado.id_condominio",
+        "n|col|public.condominio.id_condominio",
+        "e|uniqueness|public.condominio.id_condominio"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "apartamento",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "bloco",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "categoria_ocorrencia",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "comunicado",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "morador_apartamento",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "ocorrencia",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "status_ocorrencia",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "tipo_comunicado",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "apartamento",
+        "name": "id_apartamento",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "apartamento",
+        "name": "id_bloco",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "apartamento",
+        "name": "nome",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "apartamento",
+        "name": "status_ocupacao",
+        "type": "boolean",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "false",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "apartamento",
+        "name": "ativo",
+        "type": "boolean",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "true",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "apartamento",
+        "name": "criado_em",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "apartamento",
+        "name": "atualizado_em",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "bloco",
+        "name": "id_bloco",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "bloco",
+        "name": "id_condominio",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "bloco",
+        "name": "nome",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "bloco",
+        "name": "ativo",
+        "type": "boolean",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "true",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "bloco",
+        "name": "criado_em",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "bloco",
+        "name": "atualizado_em",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "categoria_ocorrencia",
+        "name": "id_categoria",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "categoria_ocorrencia",
+        "name": "id_condominio",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "categoria_ocorrencia",
+        "name": "nome",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "categoria_ocorrencia",
+        "name": "descricao",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "categoria_ocorrencia",
+        "name": "ativo",
+        "type": "boolean",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "true",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "categoria_ocorrencia",
+        "name": "criado_em",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "categoria_ocorrencia",
+        "name": "atualizado_em",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "comunicado",
+        "name": "id_comunicado",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "comunicado",
+        "name": "id_condominio",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "comunicado",
+        "name": "id_tipo_comunicado",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "comunicado",
+        "name": "id_autor",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "comunicado",
+        "name": "titulo",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "comunicado",
+        "name": "descricao",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "comunicado",
+        "name": "status",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "comunicado",
+        "name": "publicado_em",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "comunicado",
+        "name": "expira_em",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "comunicado",
+        "name": "criado_em",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "comunicado",
+        "name": "atualizado_em",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "morador_apartamento",
+        "name": "id_vinculo",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "morador_apartamento",
+        "name": "id_usuario",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "morador_apartamento",
+        "name": "id_apartamento",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "morador_apartamento",
+        "name": "ativo",
+        "type": "boolean",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "true",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "morador_apartamento",
+        "name": "criado_em",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "morador_apartamento",
+        "name": "atualizado_em",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ocorrencia",
+        "name": "id_ocorrencia",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ocorrencia",
+        "name": "id_condominio",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ocorrencia",
+        "name": "id_autor",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ocorrencia",
+        "name": "id_bloco",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ocorrencia",
+        "name": "id_apartamento",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ocorrencia",
+        "name": "id_categoria",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ocorrencia",
+        "name": "id_status",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ocorrencia",
+        "name": "numero_protocolo",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ocorrencia",
+        "name": "titulo",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ocorrencia",
+        "name": "descricao",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ocorrencia",
+        "name": "aberta_em",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ocorrencia",
+        "name": "iniciada_em",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ocorrencia",
+        "name": "resolvida_em",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ocorrencia",
+        "name": "criada_em",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ocorrencia",
+        "name": "atualizada_em",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "status_ocorrencia",
+        "name": "id_status",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "status_ocorrencia",
+        "name": "nome",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "status_ocorrencia",
+        "name": "cor_identificacao",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "status_ocorrencia",
+        "name": "ordem_exibicao",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "status_ocorrencia",
+        "name": "ativo",
+        "type": "boolean",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "true",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "tipo_comunicado",
+        "name": "id_tipo_comunicado",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "tipo_comunicado",
+        "name": "id_condominio",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "tipo_comunicado",
+        "name": "nome",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "tipo_comunicado",
+        "name": "cor_identificacao",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "tipo_comunicado",
+        "name": "ativo",
+        "type": "boolean",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "true",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "tipo_comunicado",
+        "name": "criado_em",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "tipo_comunicado",
+        "name": "atualizado_em",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "apartamento",
+        "name": "apartamento_id_bloco_bloco_id_bloco_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "id_bloco"
+        ],
+        "schemaTo": "public",
+        "tableTo": "bloco",
+        "columnsTo": [
+          "id_bloco"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "NO ACTION",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "bloco",
+        "name": "bloco_id_condominio_condominio_id_condominio_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "id_condominio"
+        ],
+        "schemaTo": "public",
+        "tableTo": "condominio",
+        "columnsTo": [
+          "id_condominio"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "NO ACTION",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "categoria_ocorrencia",
+        "name": "categoria_ocorrencia_6LhDpg5DcNer_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "id_condominio"
+        ],
+        "schemaTo": "public",
+        "tableTo": "condominio",
+        "columnsTo": [
+          "id_condominio"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "NO ACTION",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "comunicado",
+        "name": "comunicado_id_condominio_condominio_id_condominio_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "id_condominio"
+        ],
+        "schemaTo": "public",
+        "tableTo": "condominio",
+        "columnsTo": [
+          "id_condominio"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "NO ACTION",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "comunicado",
+        "name": "comunicado_KkiUxrNlyCC0_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "id_tipo_comunicado"
+        ],
+        "schemaTo": "public",
+        "tableTo": "tipo_comunicado",
+        "columnsTo": [
+          "id_tipo_comunicado"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "NO ACTION",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "comunicado",
+        "name": "comunicado_id_autor_usuario_id_usuario_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "id_autor"
+        ],
+        "schemaTo": "public",
+        "tableTo": "usuario",
+        "columnsTo": [
+          "id_usuario"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "NO ACTION",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "morador_apartamento",
+        "name": "morador_apartamento_id_usuario_usuario_id_usuario_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "id_usuario"
+        ],
+        "schemaTo": "public",
+        "tableTo": "usuario",
+        "columnsTo": [
+          "id_usuario"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "NO ACTION",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "morador_apartamento",
+        "name": "morador_apartamento_m28Mz74G04EC_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "id_apartamento"
+        ],
+        "schemaTo": "public",
+        "tableTo": "apartamento",
+        "columnsTo": [
+          "id_apartamento"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "NO ACTION",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ocorrencia",
+        "name": "ocorrencia_id_condominio_condominio_id_condominio_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "id_condominio"
+        ],
+        "schemaTo": "public",
+        "tableTo": "condominio",
+        "columnsTo": [
+          "id_condominio"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "NO ACTION",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ocorrencia",
+        "name": "ocorrencia_id_autor_usuario_id_usuario_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "id_autor"
+        ],
+        "schemaTo": "public",
+        "tableTo": "usuario",
+        "columnsTo": [
+          "id_usuario"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "NO ACTION",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ocorrencia",
+        "name": "ocorrencia_id_bloco_bloco_id_bloco_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "id_bloco"
+        ],
+        "schemaTo": "public",
+        "tableTo": "bloco",
+        "columnsTo": [
+          "id_bloco"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "NO ACTION",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ocorrencia",
+        "name": "ocorrencia_id_apartamento_apartamento_id_apartamento_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "id_apartamento"
+        ],
+        "schemaTo": "public",
+        "tableTo": "apartamento",
+        "columnsTo": [
+          "id_apartamento"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "NO ACTION",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ocorrencia",
+        "name": "ocorrencia_id_categoria_categoria_ocorrencia_id_categoria_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "id_categoria"
+        ],
+        "schemaTo": "public",
+        "tableTo": "categoria_ocorrencia",
+        "columnsTo": [
+          "id_categoria"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "NO ACTION",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ocorrencia",
+        "name": "ocorrencia_id_status_status_ocorrencia_id_status_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "id_status"
+        ],
+        "schemaTo": "public",
+        "tableTo": "status_ocorrencia",
+        "columnsTo": [
+          "id_status"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "NO ACTION",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "tipo_comunicado",
+        "name": "tipo_comunicado_id_condominio_condominio_id_condominio_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "id_condominio"
+        ],
+        "schemaTo": "public",
+        "tableTo": "condominio",
+        "columnsTo": [
+          "id_condominio"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "NO ACTION",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "apartamento",
+        "name": "apartamento_pkey",
+        "columns": [
+          "id_apartamento"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "bloco",
+        "name": "bloco_pkey",
+        "columns": [
+          "id_bloco"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "categoria_ocorrencia",
+        "name": "categoria_ocorrencia_pkey",
+        "columns": [
+          "id_categoria"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "comunicado",
+        "name": "comunicado_pkey",
+        "columns": [
+          "id_comunicado"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "morador_apartamento",
+        "name": "morador_apartamento_pkey",
+        "columns": [
+          "id_vinculo"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ocorrencia",
+        "name": "ocorrencia_pkey",
+        "columns": [
+          "id_ocorrencia"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "status_ocorrencia",
+        "name": "status_ocorrencia_pkey",
+        "columns": [
+          "id_status"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "tipo_comunicado",
+        "name": "tipo_comunicado_pkey",
+        "columns": [
+          "id_tipo_comunicado"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "apartamento",
+        "name": "apartamento_id_bloco_nome_unique",
+        "nameExplicit": false,
+        "columns": [
+          "id_bloco",
+          "nome"
+        ],
+        "nullsNotDistinct": false,
+        "entityType": "uniques"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "bloco",
+        "name": "bloco_id_condominio_nome_unique",
+        "nameExplicit": false,
+        "columns": [
+          "id_condominio",
+          "nome"
+        ],
+        "nullsNotDistinct": false,
+        "entityType": "uniques"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ocorrencia",
+        "name": "ocorrencia_numero_protocolo_key",
+        "nameExplicit": false,
+        "columns": [
+          "numero_protocolo"
+        ],
+        "nullsNotDistinct": false,
+        "entityType": "uniques"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "status_ocorrencia",
+        "name": "status_ocorrencia_nome_key",
+        "nameExplicit": false,
+        "columns": [
+          "nome"
+        ],
+        "nullsNotDistinct": false,
+        "entityType": "uniques"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "columns\u0000[\"public\",\"condominio\",\"id_condominio\"]",
+      "set": {
+        "default": "gen_random_uuid()"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "columns\u0000[\"public\",\"condominio\",\"nome\"]",
+      "set": {
+        "notNull": true
+      }
+    },
+    {
+      "op": "alter",
+      "key": "columns\u0000[\"public\",\"condominio\",\"numero\"]",
+      "set": {
+        "type": "text"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "columns\u0000[\"public\",\"condominio\",\"uf\"]",
+      "set": {
+        "type": "varchar(2)"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "columns\u0000[\"public\",\"condominio\",\"ativo\"]",
+      "set": {
+        "notNull": true
+      }
+    },
+    {
+      "op": "alter",
+      "key": "columns\u0000[\"public\",\"condominio\",\"criado_em\"]",
+      "set": {
+        "type": "timestamp with time zone",
+        "notNull": true,
+        "default": "now()"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "columns\u0000[\"public\",\"condominio\",\"atualizado_em\"]",
+      "set": {
+        "type": "timestamp with time zone"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "columns\u0000[\"public\",\"usuario\",\"id_usuario\"]",
+      "set": {
+        "default": "gen_random_uuid()"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "columns\u0000[\"public\",\"usuario\",\"id_condominio\"]",
+      "set": {
+        "notNull": true
+      }
+    },
+    {
+      "op": "alter",
+      "key": "columns\u0000[\"public\",\"usuario\",\"nome_completo\"]",
+      "set": {
+        "notNull": true
+      }
+    },
+    {
+      "op": "alter",
+      "key": "columns\u0000[\"public\",\"usuario\",\"email\"]",
+      "set": {
+        "notNull": true
+      }
+    },
+    {
+      "op": "alter",
+      "key": "columns\u0000[\"public\",\"usuario\",\"senha_hash\"]",
+      "set": {
+        "notNull": true
+      }
+    },
+    {
+      "op": "alter",
+      "key": "columns\u0000[\"public\",\"usuario\",\"status\"]",
+      "set": {
+        "notNull": true
+      }
+    },
+    {
+      "op": "alter",
+      "key": "columns\u0000[\"public\",\"usuario\",\"is_sindico\"]",
+      "set": {
+        "notNull": true,
+        "default": "false"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "columns\u0000[\"public\",\"usuario\",\"criado_em\"]",
+      "set": {
+        "type": "timestamp with time zone",
+        "notNull": true,
+        "default": "now()"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "columns\u0000[\"public\",\"usuario\",\"atualizado_em\"]",
+      "set": {
+        "type": "timestamp with time zone"
+      }
+    }
+  ]
+}
