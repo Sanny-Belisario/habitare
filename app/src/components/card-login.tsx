@@ -1,5 +1,6 @@
 import { View, Text, TextInput, StyleSheet, Pressable } from "react-native";
 import { useState } from "react";
+import { Link } from "expo-router";
 
 interface Dados {
   email: string;
@@ -53,7 +54,7 @@ export function CardLogin({ acessoLogin }: Login) {
       >
         <Text style={cardLogin.textButton}>Entrar</Text>
       </Pressable>
-      <Pressable>
+      <Link href={"pages/home/visao-geral"}>
         <Text
           style={{
             ...cardLogin.text,
@@ -62,7 +63,7 @@ export function CardLogin({ acessoLogin }: Login) {
         >
           Ver criadores
         </Text>
-      </Pressable>
+      </Link>
     </View>
   );
 }
