@@ -26,8 +26,8 @@ const atualizadoEm = (nome = "atualizado_em") => dataHora(nome);
 // RLS: todas as tabelas usam pgTable.withRLS, então o anon (chave pública do app)
 // não acessa nada sem uma policy. PROVISÓRIO, só para desenvolvimento: o login
 // ainda é local, então a sincronização (src/services/sincronizacao.ts) roda como
-// anon e precisa ler e gravar usuario e condominio. Com isso, qualquer um com a
-// chave pública lê os senha_hash.
+// anon e precisa ler e gravar todas as tabelas. Com isso, qualquer um com a
+// chave pública lê e altera tudo, inclusive os senha_hash.
 const acessoAnonDev = (tabela: string) => [
   pgPolicy(`${tabela}_anon_select_dev`, {
     for: "select",
@@ -102,7 +102,7 @@ export const bloco = pgTable.withRLS(
     criadoEm: criadoEm(),
     atualizadoEm: atualizadoEm(),
   },
-  (t) => [unique().on(t.idCondominio, t.nome)],
+  (t) => [unique().on(t.idCondominio, t.nome), ...acessoAnonDev("bloco")],
 );
 
 export const apartamento = pgTable.withRLS(
@@ -118,96 +118,120 @@ export const apartamento = pgTable.withRLS(
     criadoEm: criadoEm(),
     atualizadoEm: atualizadoEm(),
   },
-  (t) => [unique().on(t.idBloco, t.nome)],
+  (t) => [unique().on(t.idBloco, t.nome), ...acessoAnonDev("apartamento")],
 );
 
-export const moradorApartamento = pgTable.withRLS("morador_apartamento", {
-  id: uuid("id_vinculo").primaryKey().defaultRandom(),
-  idUsuario: uuid("id_usuario")
-    .notNull()
-    .references(() => usuario.id),
-  idApartamento: uuid("id_apartamento")
-    .notNull()
-    .references(() => apartamento.id),
-  ativo: boolean().notNull().default(true),
-  criadoEm: criadoEm(),
-  atualizadoEm: atualizadoEm(),
-});
+export const moradorApartamento = pgTable.withRLS(
+  "morador_apartamento",
+  {
+    id: uuid("id_vinculo").primaryKey().defaultRandom(),
+    idUsuario: uuid("id_usuario")
+      .notNull()
+      .references(() => usuario.id),
+    idApartamento: uuid("id_apartamento")
+      .notNull()
+      .references(() => apartamento.id),
+    ativo: boolean().notNull().default(true),
+    criadoEm: criadoEm(),
+    atualizadoEm: atualizadoEm(),
+  },
+  () => acessoAnonDev("morador_apartamento"),
+);
 
-export const statusOcorrencia = pgTable.withRLS("status_ocorrencia", {
-  id: uuid("id_status").primaryKey().defaultRandom(),
-  nome: text().notNull().unique(),
-  corIdentificacao: text("cor_identificacao"),
-  ordemExibicao: integer("ordem_exibicao"),
-  ativo: boolean().notNull().default(true),
-});
+export const statusOcorrencia = pgTable.withRLS(
+  "status_ocorrencia",
+  {
+    id: uuid("id_status").primaryKey().defaultRandom(),
+    nome: text().notNull().unique(),
+    corIdentificacao: text("cor_identificacao"),
+    ordemExibicao: integer("ordem_exibicao"),
+    ativo: boolean().notNull().default(true),
+  },
+  () => acessoAnonDev("status_ocorrencia"),
+);
 
-export const categoriaOcorrencia = pgTable.withRLS("categoria_ocorrencia", {
-  id: uuid("id_categoria").primaryKey().defaultRandom(),
-  idCondominio: uuid("id_condominio")
-    .notNull()
-    .references(() => condominio.id),
-  nome: text().notNull(),
-  descricao: text(),
-  ativo: boolean().notNull().default(true),
-  criadoEm: criadoEm(),
-  atualizadoEm: atualizadoEm(),
-});
+export const categoriaOcorrencia = pgTable.withRLS(
+  "categoria_ocorrencia",
+  {
+    id: uuid("id_categoria").primaryKey().defaultRandom(),
+    idCondominio: uuid("id_condominio")
+      .notNull()
+      .references(() => condominio.id),
+    nome: text().notNull(),
+    descricao: text(),
+    ativo: boolean().notNull().default(true),
+    criadoEm: criadoEm(),
+    atualizadoEm: atualizadoEm(),
+  },
+  () => acessoAnonDev("categoria_ocorrencia"),
+);
 
-export const ocorrencia = pgTable.withRLS("ocorrencia", {
-  id: uuid("id_ocorrencia").primaryKey().defaultRandom(),
-  idCondominio: uuid("id_condominio")
-    .notNull()
-    .references(() => condominio.id),
-  idAutor: uuid("id_autor")
-    .notNull()
-    .references(() => usuario.id),
-  idBloco: uuid("id_bloco").references(() => bloco.id), // local opcional
-  idApartamento: uuid("id_apartamento").references(() => apartamento.id), // local opcional
-  idCategoria: uuid("id_categoria")
-    .notNull()
-    .references(() => categoriaOcorrencia.id),
-  idStatus: uuid("id_status")
-    .notNull()
-    .references(() => statusOcorrencia.id),
-  numeroProtocolo: text("numero_protocolo").notNull().unique(),
-  titulo: text().notNull(),
-  descricao: text(),
-  abertaEm: dataHora("aberta_em").notNull().defaultNow(),
-  iniciadaEm: dataHora("iniciada_em"),
-  resolvidaEm: dataHora("resolvida_em"),
-  criadaEm: criadoEm("criada_em"),
-  atualizadaEm: atualizadoEm("atualizada_em"),
-});
+export const ocorrencia = pgTable.withRLS(
+  "ocorrencia",
+  {
+    id: uuid("id_ocorrencia").primaryKey().defaultRandom(),
+    idCondominio: uuid("id_condominio")
+      .notNull()
+      .references(() => condominio.id),
+    idAutor: uuid("id_autor")
+      .notNull()
+      .references(() => usuario.id),
+    idBloco: uuid("id_bloco").references(() => bloco.id), // local opcional
+    idApartamento: uuid("id_apartamento").references(() => apartamento.id), // local opcional
+    idCategoria: uuid("id_categoria")
+      .notNull()
+      .references(() => categoriaOcorrencia.id),
+    idStatus: uuid("id_status")
+      .notNull()
+      .references(() => statusOcorrencia.id),
+    numeroProtocolo: text("numero_protocolo").notNull().unique(),
+    titulo: text().notNull(),
+    descricao: text(),
+    abertaEm: dataHora("aberta_em").notNull().defaultNow(),
+    iniciadaEm: dataHora("iniciada_em"),
+    resolvidaEm: dataHora("resolvida_em"),
+    criadaEm: criadoEm("criada_em"),
+    atualizadaEm: atualizadoEm("atualizada_em"),
+  },
+  () => acessoAnonDev("ocorrencia"),
+);
 
-export const tipoComunicado = pgTable.withRLS("tipo_comunicado", {
-  id: uuid("id_tipo_comunicado").primaryKey().defaultRandom(),
-  idCondominio: uuid("id_condominio")
-    .notNull()
-    .references(() => condominio.id),
-  nome: text().notNull(),
-  corIdentificacao: text("cor_identificacao"),
-  ativo: boolean().notNull().default(true),
-  criadoEm: criadoEm(),
-  atualizadoEm: atualizadoEm(),
-});
+export const tipoComunicado = pgTable.withRLS(
+  "tipo_comunicado",
+  {
+    id: uuid("id_tipo_comunicado").primaryKey().defaultRandom(),
+    idCondominio: uuid("id_condominio")
+      .notNull()
+      .references(() => condominio.id),
+    nome: text().notNull(),
+    corIdentificacao: text("cor_identificacao"),
+    ativo: boolean().notNull().default(true),
+    criadoEm: criadoEm(),
+    atualizadoEm: atualizadoEm(),
+  },
+  () => acessoAnonDev("tipo_comunicado"),
+);
 
-export const comunicado = pgTable.withRLS("comunicado", {
-  id: uuid("id_comunicado").primaryKey().defaultRandom(),
-  idCondominio: uuid("id_condominio")
-    .notNull()
-    .references(() => condominio.id),
-  idTipoComunicado: uuid("id_tipo_comunicado")
-    .notNull()
-    .references(() => tipoComunicado.id),
-  idAutor: uuid("id_autor")
-    .notNull()
-    .references(() => usuario.id),
-  titulo: text().notNull(),
-  descricao: text(),
-  status: text(),
-  publicadoEm: dataHora("publicado_em"),
-  expiraEm: dataHora("expira_em"),
-  criadoEm: criadoEm(),
-  atualizadoEm: atualizadoEm(),
-});
+export const comunicado = pgTable.withRLS(
+  "comunicado",
+  {
+    id: uuid("id_comunicado").primaryKey().defaultRandom(),
+    idCondominio: uuid("id_condominio")
+      .notNull()
+      .references(() => condominio.id),
+    idTipoComunicado: uuid("id_tipo_comunicado")
+      .notNull()
+      .references(() => tipoComunicado.id),
+    idAutor: uuid("id_autor")
+      .notNull()
+      .references(() => usuario.id),
+    titulo: text().notNull(),
+    descricao: text(),
+    status: text(),
+    publicadoEm: dataHora("publicado_em"),
+    expiraEm: dataHora("expira_em"),
+    criadoEm: criadoEm(),
+    atualizadoEm: atualizadoEm(),
+  },
+  () => acessoAnonDev("comunicado"),
+);

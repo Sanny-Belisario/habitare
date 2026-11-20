@@ -103,7 +103,8 @@ O `supabase-js` não lança exceção quando a query falha: confira sempre o `er
 
 ## Pontos de atenção
 
-- **Sem internet:** o dado fica só no SQLite, o `insert` do Supabase falha e nada tenta enviar de novo. Se o app precisar funcionar offline, será preciso marcar os registros pendentes para reenvio.
+- **Sincronização:** `src/hooks/use-sincronizacao.ts`, ligado em `src/app/_layout.tsx`, roda `Sincronizacao.sincronizar()` (`src/services/sincronizacao.ts`) ao abrir o app, a cada 30 segundos e ao voltar para o primeiro plano. Todas as tabelas são comparadas pelo id nos dois sentidos: o registro que só existe de um lado é copiado para o outro, e o que existe nos dois fica com o `atualizado_em` (ou `criado_em`) mais recente. Sem internet, a rodada falha e a próxima tenta de novo. Exclusões não são propagadas (use `ativo = false`), e um registro novo com o mesmo valor unique de outro id do outro lado (o mesmo e-mail, por exemplo) não é copiado: aparece como conflito no log.
+- **Tabela nova:** inclua-a em `TABELAS`, em `src/services/sincronizacao.ts`, depois das tabelas que ela referencia, e dê a ela o `acessoAnonDev` no `schema.ts` do Postgres.
 - **Chaves no APK:** a URL e a publishable key ficam legíveis dentro do app, e isso é esperado: quem protege os dados são as policies de RLS. Nunca coloque a senha do banco nem a secret key (`service_role`) em variáveis `EXPO_PUBLIC_`.
 - **Variáveis ausentes:** `src/db/postgres/index.ts` chama `createClient()` ao ser importado. Se alguma tela importar esse arquivo sem as variáveis no `.env.local`, o app quebra ao abrir.
 

@@ -3,7 +3,7 @@ import { View, Image } from "react-native";
 import { styles } from "@/styles";
 import { CardLogin } from "@/components/card-login";
 import { Usuario } from "@/services/usuario";
-import { Redirect } from "expo-router";
+import { router } from "expo-router";
 
 interface AcessoLogin {
   email: string;
@@ -16,19 +16,20 @@ export default function Login() {
   async function acessoLogin(data: AcessoLogin) {
     if (!data.email) {
       console.log("E-mail não pode ser vazio");
+      return;
     } else if (!data.senha || data.senha.length < 6) {
       console.log("Senha deve conter, no minimo 6 caracteres");
+      return;
     }
 
     const login = await usuarios.login(data);
 
-    if (!login.sucesso) {
-      console.log(login.message);
-    }
-
     console.log(login.message);
 
-    Redirect({ href: "pages/home/visao-geral" });
+    if (!login.sucesso) return;
+
+    // Redirect é um componente (usa hooks): fora do render, navegue pelo router.
+    router.replace("/pages/home/visao-geral");
   }
   return (
     <View style={styles.loginContainer}>

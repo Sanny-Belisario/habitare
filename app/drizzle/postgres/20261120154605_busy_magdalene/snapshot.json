@@ -1,0 +1,853 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "ba09a6f2-f1aa-49c6-bc5f-63287b8664b9",
+  "prevIds": [
+    "c1b060ea-04ae-420d-adbd-3b713f1e794d"
+  ],
+  "footprints": [
+    {
+      "statementType": "create_policy",
+      "statementTarget": [
+        "table",
+        "public",
+        "apartamento"
+      ],
+      "writes": [
+        "s|pol|public.apartamento.apartamento_anon_select_dev",
+        "n|pol|public.apartamento.apartamento_anon_select_dev",
+        "e|pol|public.apartamento.apartamento_anon_select_dev"
+      ],
+      "reads": [
+        "n|tbl|public.apartamento",
+        "n|sch|public",
+        "n|role|anon",
+        "e|rls|public.apartamento"
+      ]
+    },
+    {
+      "statementType": "create_policy",
+      "statementTarget": [
+        "table",
+        "public",
+        "apartamento"
+      ],
+      "writes": [
+        "s|pol|public.apartamento.apartamento_anon_insert_dev",
+        "n|pol|public.apartamento.apartamento_anon_insert_dev",
+        "e|pol|public.apartamento.apartamento_anon_insert_dev"
+      ],
+      "reads": [
+        "n|tbl|public.apartamento",
+        "n|sch|public",
+        "n|role|anon",
+        "e|rls|public.apartamento"
+      ]
+    },
+    {
+      "statementType": "create_policy",
+      "statementTarget": [
+        "table",
+        "public",
+        "apartamento"
+      ],
+      "writes": [
+        "s|pol|public.apartamento.apartamento_anon_update_dev",
+        "n|pol|public.apartamento.apartamento_anon_update_dev",
+        "e|pol|public.apartamento.apartamento_anon_update_dev"
+      ],
+      "reads": [
+        "n|tbl|public.apartamento",
+        "n|sch|public",
+        "n|role|anon",
+        "e|rls|public.apartamento"
+      ]
+    },
+    {
+      "statementType": "create_policy",
+      "statementTarget": [
+        "table",
+        "public",
+        "bloco"
+      ],
+      "writes": [
+        "s|pol|public.bloco.bloco_anon_select_dev",
+        "n|pol|public.bloco.bloco_anon_select_dev",
+        "e|pol|public.bloco.bloco_anon_select_dev"
+      ],
+      "reads": [
+        "n|tbl|public.bloco",
+        "n|sch|public",
+        "n|role|anon",
+        "e|rls|public.bloco"
+      ]
+    },
+    {
+      "statementType": "create_policy",
+      "statementTarget": [
+        "table",
+        "public",
+        "bloco"
+      ],
+      "writes": [
+        "s|pol|public.bloco.bloco_anon_insert_dev",
+        "n|pol|public.bloco.bloco_anon_insert_dev",
+        "e|pol|public.bloco.bloco_anon_insert_dev"
+      ],
+      "reads": [
+        "n|tbl|public.bloco",
+        "n|sch|public",
+        "n|role|anon",
+        "e|rls|public.bloco"
+      ]
+    },
+    {
+      "statementType": "create_policy",
+      "statementTarget": [
+        "table",
+        "public",
+        "bloco"
+      ],
+      "writes": [
+        "s|pol|public.bloco.bloco_anon_update_dev",
+        "n|pol|public.bloco.bloco_anon_update_dev",
+        "e|pol|public.bloco.bloco_anon_update_dev"
+      ],
+      "reads": [
+        "n|tbl|public.bloco",
+        "n|sch|public",
+        "n|role|anon",
+        "e|rls|public.bloco"
+      ]
+    },
+    {
+      "statementType": "create_policy",
+      "statementTarget": [
+        "table",
+        "public",
+        "categoria_ocorrencia"
+      ],
+      "writes": [
+        "s|pol|public.categoria_ocorrencia.categoria_ocorrencia_anon_select_dev",
+        "n|pol|public.categoria_ocorrencia.categoria_ocorrencia_anon_select_dev",
+        "e|pol|public.categoria_ocorrencia.categoria_ocorrencia_anon_select_dev"
+      ],
+      "reads": [
+        "n|tbl|public.categoria_ocorrencia",
+        "n|sch|public",
+        "n|role|anon",
+        "e|rls|public.categoria_ocorrencia"
+      ]
+    },
+    {
+      "statementType": "create_policy",
+      "statementTarget": [
+        "table",
+        "public",
+        "categoria_ocorrencia"
+      ],
+      "writes": [
+        "s|pol|public.categoria_ocorrencia.categoria_ocorrencia_anon_insert_dev",
+        "n|pol|public.categoria_ocorrencia.categoria_ocorrencia_anon_insert_dev",
+        "e|pol|public.categoria_ocorrencia.categoria_ocorrencia_anon_insert_dev"
+      ],
+      "reads": [
+        "n|tbl|public.categoria_ocorrencia",
+        "n|sch|public",
+        "n|role|anon",
+        "e|rls|public.categoria_ocorrencia"
+      ]
+    },
+    {
+      "statementType": "create_policy",
+      "statementTarget": [
+        "table",
+        "public",
+        "categoria_ocorrencia"
+      ],
+      "writes": [
+        "s|pol|public.categoria_ocorrencia.categoria_ocorrencia_anon_update_dev",
+        "n|pol|public.categoria_ocorrencia.categoria_ocorrencia_anon_update_dev",
+        "e|pol|public.categoria_ocorrencia.categoria_ocorrencia_anon_update_dev"
+      ],
+      "reads": [
+        "n|tbl|public.categoria_ocorrencia",
+        "n|sch|public",
+        "n|role|anon",
+        "e|rls|public.categoria_ocorrencia"
+      ]
+    },
+    {
+      "statementType": "create_policy",
+      "statementTarget": [
+        "table",
+        "public",
+        "comunicado"
+      ],
+      "writes": [
+        "s|pol|public.comunicado.comunicado_anon_select_dev",
+        "n|pol|public.comunicado.comunicado_anon_select_dev",
+        "e|pol|public.comunicado.comunicado_anon_select_dev"
+      ],
+      "reads": [
+        "n|tbl|public.comunicado",
+        "n|sch|public",
+        "n|role|anon",
+        "e|rls|public.comunicado"
+      ]
+    },
+    {
+      "statementType": "create_policy",
+      "statementTarget": [
+        "table",
+        "public",
+        "comunicado"
+      ],
+      "writes": [
+        "s|pol|public.comunicado.comunicado_anon_insert_dev",
+        "n|pol|public.comunicado.comunicado_anon_insert_dev",
+        "e|pol|public.comunicado.comunicado_anon_insert_dev"
+      ],
+      "reads": [
+        "n|tbl|public.comunicado",
+        "n|sch|public",
+        "n|role|anon",
+        "e|rls|public.comunicado"
+      ]
+    },
+    {
+      "statementType": "create_policy",
+      "statementTarget": [
+        "table",
+        "public",
+        "comunicado"
+      ],
+      "writes": [
+        "s|pol|public.comunicado.comunicado_anon_update_dev",
+        "n|pol|public.comunicado.comunicado_anon_update_dev",
+        "e|pol|public.comunicado.comunicado_anon_update_dev"
+      ],
+      "reads": [
+        "n|tbl|public.comunicado",
+        "n|sch|public",
+        "n|role|anon",
+        "e|rls|public.comunicado"
+      ]
+    },
+    {
+      "statementType": "create_policy",
+      "statementTarget": [
+        "table",
+        "public",
+        "morador_apartamento"
+      ],
+      "writes": [
+        "s|pol|public.morador_apartamento.morador_apartamento_anon_select_dev",
+        "n|pol|public.morador_apartamento.morador_apartamento_anon_select_dev",
+        "e|pol|public.morador_apartamento.morador_apartamento_anon_select_dev"
+      ],
+      "reads": [
+        "n|tbl|public.morador_apartamento",
+        "n|sch|public",
+        "n|role|anon",
+        "e|rls|public.morador_apartamento"
+      ]
+    },
+    {
+      "statementType": "create_policy",
+      "statementTarget": [
+        "table",
+        "public",
+        "morador_apartamento"
+      ],
+      "writes": [
+        "s|pol|public.morador_apartamento.morador_apartamento_anon_insert_dev",
+        "n|pol|public.morador_apartamento.morador_apartamento_anon_insert_dev",
+        "e|pol|public.morador_apartamento.morador_apartamento_anon_insert_dev"
+      ],
+      "reads": [
+        "n|tbl|public.morador_apartamento",
+        "n|sch|public",
+        "n|role|anon",
+        "e|rls|public.morador_apartamento"
+      ]
+    },
+    {
+      "statementType": "create_policy",
+      "statementTarget": [
+        "table",
+        "public",
+        "morador_apartamento"
+      ],
+      "writes": [
+        "s|pol|public.morador_apartamento.morador_apartamento_anon_update_dev",
+        "n|pol|public.morador_apartamento.morador_apartamento_anon_update_dev",
+        "e|pol|public.morador_apartamento.morador_apartamento_anon_update_dev"
+      ],
+      "reads": [
+        "n|tbl|public.morador_apartamento",
+        "n|sch|public",
+        "n|role|anon",
+        "e|rls|public.morador_apartamento"
+      ]
+    },
+    {
+      "statementType": "create_policy",
+      "statementTarget": [
+        "table",
+        "public",
+        "ocorrencia"
+      ],
+      "writes": [
+        "s|pol|public.ocorrencia.ocorrencia_anon_select_dev",
+        "n|pol|public.ocorrencia.ocorrencia_anon_select_dev",
+        "e|pol|public.ocorrencia.ocorrencia_anon_select_dev"
+      ],
+      "reads": [
+        "n|tbl|public.ocorrencia",
+        "n|sch|public",
+        "n|role|anon",
+        "e|rls|public.ocorrencia"
+      ]
+    },
+    {
+      "statementType": "create_policy",
+      "statementTarget": [
+        "table",
+        "public",
+        "ocorrencia"
+      ],
+      "writes": [
+        "s|pol|public.ocorrencia.ocorrencia_anon_insert_dev",
+        "n|pol|public.ocorrencia.ocorrencia_anon_insert_dev",
+        "e|pol|public.ocorrencia.ocorrencia_anon_insert_dev"
+      ],
+      "reads": [
+        "n|tbl|public.ocorrencia",
+        "n|sch|public",
+        "n|role|anon",
+        "e|rls|public.ocorrencia"
+      ]
+    },
+    {
+      "statementType": "create_policy",
+      "statementTarget": [
+        "table",
+        "public",
+        "ocorrencia"
+      ],
+      "writes": [
+        "s|pol|public.ocorrencia.ocorrencia_anon_update_dev",
+        "n|pol|public.ocorrencia.ocorrencia_anon_update_dev",
+        "e|pol|public.ocorrencia.ocorrencia_anon_update_dev"
+      ],
+      "reads": [
+        "n|tbl|public.ocorrencia",
+        "n|sch|public",
+        "n|role|anon",
+        "e|rls|public.ocorrencia"
+      ]
+    },
+    {
+      "statementType": "create_policy",
+      "statementTarget": [
+        "table",
+        "public",
+        "status_ocorrencia"
+      ],
+      "writes": [
+        "s|pol|public.status_ocorrencia.status_ocorrencia_anon_select_dev",
+        "n|pol|public.status_ocorrencia.status_ocorrencia_anon_select_dev",
+        "e|pol|public.status_ocorrencia.status_ocorrencia_anon_select_dev"
+      ],
+      "reads": [
+        "n|tbl|public.status_ocorrencia",
+        "n|sch|public",
+        "n|role|anon",
+        "e|rls|public.status_ocorrencia"
+      ]
+    },
+    {
+      "statementType": "create_policy",
+      "statementTarget": [
+        "table",
+        "public",
+        "status_ocorrencia"
+      ],
+      "writes": [
+        "s|pol|public.status_ocorrencia.status_ocorrencia_anon_insert_dev",
+        "n|pol|public.status_ocorrencia.status_ocorrencia_anon_insert_dev",
+        "e|pol|public.status_ocorrencia.status_ocorrencia_anon_insert_dev"
+      ],
+      "reads": [
+        "n|tbl|public.status_ocorrencia",
+        "n|sch|public",
+        "n|role|anon",
+        "e|rls|public.status_ocorrencia"
+      ]
+    },
+    {
+      "statementType": "create_policy",
+      "statementTarget": [
+        "table",
+        "public",
+        "status_ocorrencia"
+      ],
+      "writes": [
+        "s|pol|public.status_ocorrencia.status_ocorrencia_anon_update_dev",
+        "n|pol|public.status_ocorrencia.status_ocorrencia_anon_update_dev",
+        "e|pol|public.status_ocorrencia.status_ocorrencia_anon_update_dev"
+      ],
+      "reads": [
+        "n|tbl|public.status_ocorrencia",
+        "n|sch|public",
+        "n|role|anon",
+        "e|rls|public.status_ocorrencia"
+      ]
+    },
+    {
+      "statementType": "create_policy",
+      "statementTarget": [
+        "table",
+        "public",
+        "tipo_comunicado"
+      ],
+      "writes": [
+        "s|pol|public.tipo_comunicado.tipo_comunicado_anon_select_dev",
+        "n|pol|public.tipo_comunicado.tipo_comunicado_anon_select_dev",
+        "e|pol|public.tipo_comunicado.tipo_comunicado_anon_select_dev"
+      ],
+      "reads": [
+        "n|tbl|public.tipo_comunicado",
+        "n|sch|public",
+        "n|role|anon",
+        "e|rls|public.tipo_comunicado"
+      ]
+    },
+    {
+      "statementType": "create_policy",
+      "statementTarget": [
+        "table",
+        "public",
+        "tipo_comunicado"
+      ],
+      "writes": [
+        "s|pol|public.tipo_comunicado.tipo_comunicado_anon_insert_dev",
+        "n|pol|public.tipo_comunicado.tipo_comunicado_anon_insert_dev",
+        "e|pol|public.tipo_comunicado.tipo_comunicado_anon_insert_dev"
+      ],
+      "reads": [
+        "n|tbl|public.tipo_comunicado",
+        "n|sch|public",
+        "n|role|anon",
+        "e|rls|public.tipo_comunicado"
+      ]
+    },
+    {
+      "statementType": "create_policy",
+      "statementTarget": [
+        "table",
+        "public",
+        "tipo_comunicado"
+      ],
+      "writes": [
+        "s|pol|public.tipo_comunicado.tipo_comunicado_anon_update_dev",
+        "n|pol|public.tipo_comunicado.tipo_comunicado_anon_update_dev",
+        "e|pol|public.tipo_comunicado.tipo_comunicado_anon_update_dev"
+      ],
+      "reads": [
+        "n|tbl|public.tipo_comunicado",
+        "n|sch|public",
+        "n|role|anon",
+        "e|rls|public.tipo_comunicado"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "apartamento",
+        "name": "apartamento_anon_select_dev",
+        "as": "PERMISSIVE",
+        "for": "SELECT",
+        "roles": [
+          "anon"
+        ],
+        "using": "true",
+        "withCheck": null,
+        "entityType": "policies"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "apartamento",
+        "name": "apartamento_anon_insert_dev",
+        "as": "PERMISSIVE",
+        "for": "INSERT",
+        "roles": [
+          "anon"
+        ],
+        "using": null,
+        "withCheck": "true",
+        "entityType": "policies"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "apartamento",
+        "name": "apartamento_anon_update_dev",
+        "as": "PERMISSIVE",
+        "for": "UPDATE",
+        "roles": [
+          "anon"
+        ],
+        "using": "true",
+        "withCheck": "true",
+        "entityType": "policies"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "bloco",
+        "name": "bloco_anon_select_dev",
+        "as": "PERMISSIVE",
+        "for": "SELECT",
+        "roles": [
+          "anon"
+        ],
+        "using": "true",
+        "withCheck": null,
+        "entityType": "policies"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "bloco",
+        "name": "bloco_anon_insert_dev",
+        "as": "PERMISSIVE",
+        "for": "INSERT",
+        "roles": [
+          "anon"
+        ],
+        "using": null,
+        "withCheck": "true",
+        "entityType": "policies"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "bloco",
+        "name": "bloco_anon_update_dev",
+        "as": "PERMISSIVE",
+        "for": "UPDATE",
+        "roles": [
+          "anon"
+        ],
+        "using": "true",
+        "withCheck": "true",
+        "entityType": "policies"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "categoria_ocorrencia",
+        "name": "categoria_ocorrencia_anon_select_dev",
+        "as": "PERMISSIVE",
+        "for": "SELECT",
+        "roles": [
+          "anon"
+        ],
+        "using": "true",
+        "withCheck": null,
+        "entityType": "policies"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "categoria_ocorrencia",
+        "name": "categoria_ocorrencia_anon_insert_dev",
+        "as": "PERMISSIVE",
+        "for": "INSERT",
+        "roles": [
+          "anon"
+        ],
+        "using": null,
+        "withCheck": "true",
+        "entityType": "policies"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "categoria_ocorrencia",
+        "name": "categoria_ocorrencia_anon_update_dev",
+        "as": "PERMISSIVE",
+        "for": "UPDATE",
+        "roles": [
+          "anon"
+        ],
+        "using": "true",
+        "withCheck": "true",
+        "entityType": "policies"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "comunicado",
+        "name": "comunicado_anon_select_dev",
+        "as": "PERMISSIVE",
+        "for": "SELECT",
+        "roles": [
+          "anon"
+        ],
+        "using": "true",
+        "withCheck": null,
+        "entityType": "policies"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "comunicado",
+        "name": "comunicado_anon_insert_dev",
+        "as": "PERMISSIVE",
+        "for": "INSERT",
+        "roles": [
+          "anon"
+        ],
+        "using": null,
+        "withCheck": "true",
+        "entityType": "policies"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "comunicado",
+        "name": "comunicado_anon_update_dev",
+        "as": "PERMISSIVE",
+        "for": "UPDATE",
+        "roles": [
+          "anon"
+        ],
+        "using": "true",
+        "withCheck": "true",
+        "entityType": "policies"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "morador_apartamento",
+        "name": "morador_apartamento_anon_select_dev",
+        "as": "PERMISSIVE",
+        "for": "SELECT",
+        "roles": [
+          "anon"
+        ],
+        "using": "true",
+        "withCheck": null,
+        "entityType": "policies"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "morador_apartamento",
+        "name": "morador_apartamento_anon_insert_dev",
+        "as": "PERMISSIVE",
+        "for": "INSERT",
+        "roles": [
+          "anon"
+        ],
+        "using": null,
+        "withCheck": "true",
+        "entityType": "policies"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "morador_apartamento",
+        "name": "morador_apartamento_anon_update_dev",
+        "as": "PERMISSIVE",
+        "for": "UPDATE",
+        "roles": [
+          "anon"
+        ],
+        "using": "true",
+        "withCheck": "true",
+        "entityType": "policies"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ocorrencia",
+        "name": "ocorrencia_anon_select_dev",
+        "as": "PERMISSIVE",
+        "for": "SELECT",
+        "roles": [
+          "anon"
+        ],
+        "using": "true",
+        "withCheck": null,
+        "entityType": "policies"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ocorrencia",
+        "name": "ocorrencia_anon_insert_dev",
+        "as": "PERMISSIVE",
+        "for": "INSERT",
+        "roles": [
+          "anon"
+        ],
+        "using": null,
+        "withCheck": "true",
+        "entityType": "policies"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ocorrencia",
+        "name": "ocorrencia_anon_update_dev",
+        "as": "PERMISSIVE",
+        "for": "UPDATE",
+        "roles": [
+          "anon"
+        ],
+        "using": "true",
+        "withCheck": "true",
+        "entityType": "policies"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "status_ocorrencia",
+        "name": "status_ocorrencia_anon_select_dev",
+        "as": "PERMISSIVE",
+        "for": "SELECT",
+        "roles": [
+          "anon"
+        ],
+        "using": "true",
+        "withCheck": null,
+        "entityType": "policies"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "status_ocorrencia",
+        "name": "status_ocorrencia_anon_insert_dev",
+        "as": "PERMISSIVE",
+        "for": "INSERT",
+        "roles": [
+          "anon"
+        ],
+        "using": null,
+        "withCheck": "true",
+        "entityType": "policies"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "status_ocorrencia",
+        "name": "status_ocorrencia_anon_update_dev",
+        "as": "PERMISSIVE",
+        "for": "UPDATE",
+        "roles": [
+          "anon"
+        ],
+        "using": "true",
+        "withCheck": "true",
+        "entityType": "policies"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "tipo_comunicado",
+        "name": "tipo_comunicado_anon_select_dev",
+        "as": "PERMISSIVE",
+        "for": "SELECT",
+        "roles": [
+          "anon"
+        ],
+        "using": "true",
+        "withCheck": null,
+        "entityType": "policies"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "tipo_comunicado",
+        "name": "tipo_comunicado_anon_insert_dev",
+        "as": "PERMISSIVE",
+        "for": "INSERT",
+        "roles": [
+          "anon"
+        ],
+        "using": null,
+        "withCheck": "true",
+        "entityType": "policies"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "tipo_comunicado",
+        "name": "tipo_comunicado_anon_update_dev",
+        "as": "PERMISSIVE",
+        "for": "UPDATE",
+        "roles": [
+          "anon"
+        ],
+        "using": "true",
+        "withCheck": "true",
+        "entityType": "policies"
+      }
+    }
+  ]
+}

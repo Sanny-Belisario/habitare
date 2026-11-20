@@ -1,278 +1,264 @@
-import { supabase } from "@/db/postgres";
-import { dbSqlite } from "@/db/sqlite";
-import { condominio, usuario } from "@/db/sqlite/schema";
-import { inArray } from "drizzle-orm";
+import * as schema from "@/db/sqlite/schema";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { getColumns, getTableName, type Column } from "drizzle-orm";
+import type { SQLiteAsyncDatabase, SQLiteTable } from "drizzle-orm/sqlite-core";
 
-// Linhas como o supabase-js devolve: chaves com o nome das colunas no Postgres.
-interface UsuarioPostgres {
-  id_usuario: string;
-  id_condominio: string;
-  nome_completo: string;
-  email: string;
-  senha_hash: string;
-  codigo_acesso_hash: string | null;
-  telefone: string | null;
-  status: boolean;
-  is_sindico: boolean;
-  criado_em: string;
-  atualizado_em: string | null;
+// O banco local chega por parâmetro (e não importado de @/db/sqlite) para a
+// sincronização também rodar fora do app, com outro driver SQLite, em testes.
+type BancoLocal = SQLiteAsyncDatabase<"sync", unknown>;
+type Linha = Record<string, unknown>;
+
+type Coluna<T extends SQLiteTable> = keyof T["_"]["columns"] & string;
+
+interface Tabela<T extends SQLiteTable> {
+  tabela: T;
+  // Colunas timestamptz no Postgres (texto ISO no SQLite).
+  datas: Coluna<T>[];
+  // [criação, última alteração]. Sem elas, só se copia o registro que falta:
+  // não há como saber qual lado é o mais novo.
+  versao?: [Coluna<T>, Coluna<T>];
+  // Restrições unique além da PK, cada uma com suas colunas.
+  unicos?: Coluna<T>[][];
 }
 
-interface CondominioPostgres {
-  id_condominio: string;
-  nome: string;
-  razao_social: string | null;
-  cnpj: string | null;
-  email: string | null;
-  telefone: string | null;
-  cep: string | null;
-  logradouro: string | null;
-  numero: string | null;
-  complemento: string | null;
-  bairro: string | null;
-  cidade: string | null;
-  uf: string | null;
-  ativo: boolean;
-  criado_em: string;
-  atualizado_em: string | null;
-}
+type TabelaSincronizada = {
+  tabela: SQLiteTable;
+  datas: string[];
+  versao?: [string, string];
+  unicos?: string[][];
+};
 
-type UsuarioSqlite = typeof usuario.$inferSelect;
-type CondominioSqlite = typeof condominio.$inferSelect;
+const tabela = <T extends SQLiteTable>(t: Tabela<T>) =>
+  t as unknown as TabelaSincronizada;
 
-export interface ResultadoSincronizacao {
+// Em ordem de dependência: o pai chega ao destino antes do filho que aponta para ele.
+const TABELAS: TabelaSincronizada[] = [
+  tabela({
+    tabela: schema.condominio,
+    datas: ["criadoEm", "atualizadoEm"],
+    versao: ["criadoEm", "atualizadoEm"],
+    unicos: [["cnpj"]],
+  }),
+  tabela({
+    tabela: schema.usuario,
+    datas: ["criadoEm", "atualizadoEm"],
+    versao: ["criadoEm", "atualizadoEm"],
+    unicos: [["email"]],
+  }),
+  tabela({
+    tabela: schema.bloco,
+    datas: ["criadoEm", "atualizadoEm"],
+    versao: ["criadoEm", "atualizadoEm"],
+    unicos: [["idCondominio", "nome"]],
+  }),
+  tabela({
+    tabela: schema.apartamento,
+    datas: ["criadoEm", "atualizadoEm"],
+    versao: ["criadoEm", "atualizadoEm"],
+    unicos: [["idBloco", "nome"]],
+  }),
+  tabela({
+    tabela: schema.moradorApartamento,
+    datas: ["criadoEm", "atualizadoEm"],
+    versao: ["criadoEm", "atualizadoEm"],
+  }),
+  tabela({
+    tabela: schema.statusOcorrencia,
+    datas: [],
+    unicos: [["nome"]],
+  }),
+  tabela({
+    tabela: schema.categoriaOcorrencia,
+    datas: ["criadoEm", "atualizadoEm"],
+    versao: ["criadoEm", "atualizadoEm"],
+  }),
+  tabela({
+    tabela: schema.ocorrencia,
+    datas: [
+      "abertaEm",
+      "iniciadaEm",
+      "resolvidaEm",
+      "criadaEm",
+      "atualizadaEm",
+    ],
+    versao: ["criadaEm", "atualizadaEm"],
+    unicos: [["numeroProtocolo"]],
+  }),
+  tabela({
+    tabela: schema.tipoComunicado,
+    datas: ["criadoEm", "atualizadoEm"],
+    versao: ["criadoEm", "atualizadoEm"],
+  }),
+  tabela({
+    tabela: schema.comunicado,
+    datas: ["publicadoEm", "expiraEm", "criadoEm", "atualizadoEm"],
+    versao: ["criadoEm", "atualizadoEm"],
+  }),
+];
+
+// O PostgREST devolve no máximo 1000 linhas por requisição.
+const TAMANHO_PAGINA = 1000;
+const TAMANHO_LOTE_ENVIO = 500;
+
+export interface ResultadoTabela {
   enviados: number; // SQLite -> Postgres
   recebidos: number; // Postgres -> SQLite
-  conflitos: string[]; // e-mails com ids diferentes nos dois bancos
+  conflitos: string[]; // ids diferentes com o mesmo valor de uma coluna unique
 }
+
+export type ResultadoSincronizacao = Record<string, ResultadoTabela>;
 
 // O Postgres devolve microssegundos e "+00:00" ("2026-11-12T23:07:58.123456+00:00").
 // Corta para milissegundos e converte para o mesmo ISO em UTC que o SQLite usa.
-function normalizarData(data: string): string;
-function normalizarData(data: string | null): string | null;
-function normalizarData(data: string | null) {
-  if (!data) return null;
+function normalizarData(data: unknown): string | null {
+  if (typeof data !== "string" || !data) return null;
   return new Date(data.replace(/(\.\d{3})\d+/, "$1")).toISOString();
 }
 
 // Versão do registro: a última alteração, ou a criação se nunca foi alterado.
-const versao = (criadoEm: string, atualizadoEm: string | null) =>
-  new Date(normalizarData(atualizadoEm ?? criadoEm)).getTime();
-
-const usuarioParaSqlite = (u: UsuarioPostgres): UsuarioSqlite => ({
-  id: u.id_usuario,
-  idCondominio: u.id_condominio,
-  nome: u.nome_completo,
-  email: u.email,
-  senha: u.senha_hash,
-  codigoAcesso: u.codigo_acesso_hash,
-  telefone: u.telefone,
-  status: u.status,
-  isSindico: u.is_sindico,
-  criadoEm: normalizarData(u.criado_em),
-  atualizadoEm: normalizarData(u.atualizado_em),
-});
-
-const usuarioParaPostgres = (u: UsuarioSqlite): UsuarioPostgres => ({
-  id_usuario: u.id,
-  id_condominio: u.idCondominio,
-  nome_completo: u.nome,
-  email: u.email,
-  senha_hash: u.senha,
-  codigo_acesso_hash: u.codigoAcesso,
-  telefone: u.telefone,
-  status: u.status,
-  is_sindico: u.isSindico,
-  criado_em: u.criadoEm,
-  atualizado_em: u.atualizadoEm,
-});
-
-const condominioParaSqlite = (c: CondominioPostgres): CondominioSqlite => ({
-  id: c.id_condominio,
-  nome: c.nome,
-  razaoSocial: c.razao_social,
-  cnpj: c.cnpj,
-  email: c.email,
-  telefone: c.telefone,
-  cep: c.cep,
-  logradouro: c.logradouro,
-  numero: c.numero,
-  complemento: c.complemento,
-  bairro: c.bairro,
-  cidade: c.cidade,
-  uf: c.uf,
-  ativo: c.ativo,
-  criadoEm: normalizarData(c.criado_em),
-  atualizadoEm: normalizarData(c.atualizado_em),
-});
-
-const condominioParaPostgres = (c: CondominioSqlite): CondominioPostgres => ({
-  id_condominio: c.id,
-  nome: c.nome,
-  razao_social: c.razaoSocial,
-  cnpj: c.cnpj,
-  email: c.email,
-  telefone: c.telefone,
-  cep: c.cep,
-  logradouro: c.logradouro,
-  numero: c.numero,
-  complemento: c.complemento,
-  bairro: c.bairro,
-  cidade: c.cidade,
-  uf: c.uf,
-  ativo: c.ativo,
-  criado_em: c.criadoEm,
-  atualizado_em: c.atualizadoEm,
-});
+function versao(linha: Linha, [criacao, alteracao]: [string, string]) {
+  const data = normalizarData(linha[alteracao] ?? linha[criacao]);
+  return data ? new Date(data).getTime() : 0;
+}
 
 export class Sincronizacao {
-  // Sincroniza a tabela usuario nos dois sentidos, casando os registros pelo id.
+  constructor(
+    private readonly local: BancoLocal,
+    private readonly remoto: SupabaseClient,
+  ) {}
+
+  // Sincroniza todas as tabelas nos dois sentidos, casando os registros pelo id.
   // Quem só existe de um lado é copiado para o outro; quem existe nos dois fica
   // com a versão de atualizado_em (ou criado_em) mais recente.
-  async usuarios(): Promise<ResultadoSincronizacao> {
-    const locais = await dbSqlite.select().from(usuario);
-
-    const { data, error } = await supabase.from("usuario").select("*");
-    if (error) {
-      throw new Error(`Erro ao buscar usuários no Postgres: ${error.message}`);
+  // Exclusões não são propagadas: um registro apagado de um lado volta do outro.
+  async sincronizar(): Promise<ResultadoSincronizacao> {
+    const resultado: ResultadoSincronizacao = {};
+    for (const t of TABELAS) {
+      resultado[getTableName(t.tabela)] = await this.sincronizarTabela(t);
     }
-    const remotos = (data ?? []) as UsuarioPostgres[];
+    return resultado;
+  }
 
-    const locaisPorId = new Map(locais.map((u) => [u.id, u]));
-    const remotosPorId = new Map(remotos.map((u) => [u.id_usuario, u]));
-    const remotosPorEmail = new Map(remotos.map((u) => [u.email, u]));
-    const locaisPorEmail = new Map(locais.map((u) => [u.email, u]));
+  private async sincronizarTabela(
+    t: TabelaSincronizada,
+  ): Promise<ResultadoTabela> {
+    const nome = getTableName(t.tabela);
+    const colunas = Object.entries(getColumns(t.tabela)) as [string, Column][];
+    const [chave, colunaChave] = colunas.find(([, c]) => c.primary)!;
+    const datas = new Set(t.datas);
 
-    const paraEnviar: UsuarioSqlite[] = [];
-    const paraReceber: UsuarioPostgres[] = [];
-    const conflitos: string[] = [];
+    // supabase-js usa os nomes das colunas no banco (id_usuario), o Drizzle os
+    // nomes das propriedades do schema (id).
+    const paraPostgres = (linha: Linha): Linha =>
+      Object.fromEntries(colunas.map(([prop, c]) => [c.name, linha[prop]]));
+    const paraSqlite = (linha: Linha): Linha =>
+      Object.fromEntries(
+        colunas.map(([prop, c]) => {
+          const valor = linha[c.name];
+          return [prop, datas.has(prop) ? normalizarData(valor) : valor];
+        }),
+      );
+
+    const locais: Linha[] = await this.local.select().from(t.tabela);
+    const remotos = (await this.buscarRemotos(nome, colunaChave.name)).map(
+      paraSqlite,
+    );
+
+    const locaisPorId = new Map(locais.map((l) => [l[chave], l]));
+    const remotosPorId = new Map(remotos.map((r) => [r[chave], r]));
+
+    // Para cada unique, o valor -> id de quem o usa em cada lado.
+    const chaveUnica = (linha: Linha, cols: string[]) =>
+      JSON.stringify(cols.map((c) => linha[c]));
+    const indexar = (linhas: Linha[]) =>
+      (t.unicos ?? []).map(
+        (cols) => new Map(linhas.map((l) => [chaveUnica(l, cols), l[chave]])),
+      );
+    const unicosLocais = indexar(locais);
+    const unicosRemotos = indexar(remotos);
+
+    // Um registro novo não pode ser copiado se o destino já tem outro id com o
+    // mesmo valor numa coluna unique (o mesmo e-mail cadastrado nos dois lados).
+    const conflitos = new Set<string>();
+    const emConflito = (linha: Linha, destino: Map<string, unknown>[]) => {
+      const bate = (t.unicos ?? []).find((cols, i) => {
+        const id = destino[i].get(chaveUnica(linha, cols));
+        return id !== undefined && id !== linha[chave];
+      });
+      if (bate) conflitos.add(`${bate.join("+")}=${chaveUnica(linha, bate)}`);
+      return bate !== undefined;
+    };
+
+    const paraEnviar: Linha[] = [];
+    const paraReceber: Linha[] = [];
 
     for (const local of locais) {
-      const remoto = remotosPorId.get(local.id);
-
+      const remoto = remotosPorId.get(local[chave]);
       if (!remoto) {
-        // O e-mail é unique: o mesmo e-mail com outro id não pode ser copiado.
-        if (remotosPorEmail.has(local.email)) conflitos.push(local.email);
-        else paraEnviar.push(local);
-        continue;
+        if (!emConflito(local, unicosRemotos)) paraEnviar.push(local);
+      } else if (t.versao) {
+        const vLocal = versao(local, t.versao);
+        const vRemoto = versao(remoto, t.versao);
+        if (vLocal > vRemoto) paraEnviar.push(local);
+        else if (vRemoto > vLocal) paraReceber.push(remoto);
       }
-
-      const vLocal = versao(local.criadoEm, local.atualizadoEm);
-      const vRemoto = versao(remoto.criado_em, remoto.atualizado_em);
-      if (vLocal > vRemoto) paraEnviar.push(local);
-      else if (vRemoto > vLocal) paraReceber.push(remoto);
     }
 
     for (const remoto of remotos) {
-      if (locaisPorId.has(remoto.id_usuario)) continue;
-      if (locaisPorEmail.has(remoto.email)) {
-        if (!conflitos.includes(remoto.email)) conflitos.push(remoto.email);
-      } else {
-        paraReceber.push(remoto);
-      }
+      if (locaisPorId.has(remoto[chave])) continue;
+      if (!emConflito(remoto, unicosLocais)) paraReceber.push(remoto);
     }
 
-    if (conflitos.length > 0) {
-      console.warn("Usuários com o mesmo e-mail e ids diferentes:", conflitos);
+    if (conflitos.size > 0) {
+      console.warn(`Sincronização de ${nome}: valores únicos em conflito`, [
+        ...conflitos,
+      ]);
     }
 
-    if (paraEnviar.length > 0) {
-      await this.enviarCondominios(paraEnviar.map((u) => u.idCondominio));
-
-      const { error: erroEnvio } = await supabase
-        .from("usuario")
-        .upsert(paraEnviar.map(usuarioParaPostgres), {
-          onConflict: "id_usuario",
-        });
-      if (erroEnvio) {
-        throw new Error(
-          `Erro ao enviar usuários ao Postgres: ${erroEnvio.message}`,
-        );
+    for (let i = 0; i < paraEnviar.length; i += TAMANHO_LOTE_ENVIO) {
+      const lote = paraEnviar.slice(i, i + TAMANHO_LOTE_ENVIO);
+      const { error } = await this.remoto
+        .from(nome)
+        .upsert(lote.map(paraPostgres), { onConflict: colunaChave.name });
+      if (error) {
+        throw new Error(`Erro ao enviar ${nome} ao Postgres: ${error.message}`);
       }
     }
 
     if (paraReceber.length > 0) {
-      await this.receberCondominios(paraReceber.map((u) => u.id_condominio));
-
-      for (const remoto of paraReceber) {
-        const { id, ...campos } = usuarioParaSqlite(remoto);
-        // atualizadoEm vai explícito para o $onUpdateFn não trocar pela hora atual.
-        await dbSqlite
-          .insert(usuario)
-          .values({ id, ...campos })
-          .onConflictDoUpdate({ target: usuario.id, set: campos });
-      }
+      // Drivers síncronos (expo-sqlite) não aceitam callback async na transação.
+      this.local.transaction((tx) => {
+        for (const remoto of paraReceber) {
+          const { [chave]: _id, ...campos } = remoto;
+          // atualizadoEm vai explícito para o $onUpdateFn não trocar pela hora atual.
+          tx.insert(t.tabela)
+            .values(remoto)
+            .onConflictDoUpdate({ target: colunaChave, set: campos })
+            .run();
+        }
+      });
     }
 
     return {
       enviados: paraEnviar.length,
       recebidos: paraReceber.length,
-      conflitos,
+      conflitos: [...conflitos],
     };
   }
 
-  // A FK usuario -> condominio exige que o condomínio exista no destino.
-  // Aqui só se copia o condomínio que falta; a sincronização completa da
-  // tabela condominio fica para quando ela tiver o próprio método.
-  private async enviarCondominios(ids: string[]) {
-    const unicos = [...new Set(ids)];
-
-    const { data, error } = await supabase
-      .from("condominio")
-      .select("id_condominio")
-      .in("id_condominio", unicos);
-    if (error) {
-      throw new Error(`Erro ao buscar condomínios no Postgres: ${error.message}`);
-    }
-
-    const existentes = new Set(
-      (data as Pick<CondominioPostgres, "id_condominio">[]).map(
-        (c) => c.id_condominio,
-      ),
-    );
-    const faltando = unicos.filter((id) => !existentes.has(id));
-    if (faltando.length === 0) return;
-
-    const locais = await dbSqlite
-      .select()
-      .from(condominio)
-      .where(inArray(condominio.id, faltando));
-
-    const { error: erroEnvio } = await supabase
-      .from("condominio")
-      .insert(locais.map(condominioParaPostgres));
-    if (erroEnvio) {
-      throw new Error(
-        `Erro ao enviar condomínios ao Postgres: ${erroEnvio.message}`,
-      );
-    }
-  }
-
-  private async receberCondominios(ids: string[]) {
-    const unicos = [...new Set(ids)];
-
-    const existentes = new Set(
-      (
-        await dbSqlite
-          .select({ id: condominio.id })
-          .from(condominio)
-          .where(inArray(condominio.id, unicos))
-      ).map((c) => c.id),
-    );
-    const faltando = unicos.filter((id) => !existentes.has(id));
-    if (faltando.length === 0) return;
-
-    const { data, error } = await supabase
-      .from("condominio")
-      .select("*")
-      .in("id_condominio", faltando);
-    if (error) {
-      throw new Error(`Erro ao buscar condomínios no Postgres: ${error.message}`);
-    }
-
-    const remotos = (data ?? []) as CondominioPostgres[];
-    if (remotos.length > 0) {
-      await dbSqlite.insert(condominio).values(remotos.map(condominioParaSqlite));
+  private async buscarRemotos(nome: string, colunaChave: string) {
+    const linhas: Linha[] = [];
+    for (let inicio = 0; ; inicio += TAMANHO_PAGINA) {
+      const { data, error } = await this.remoto
+        .from(nome)
+        .select("*")
+        .order(colunaChave)
+        .range(inicio, inicio + TAMANHO_PAGINA - 1);
+      if (error) {
+        throw new Error(`Erro ao buscar ${nome} no Postgres: ${error.message}`);
+      }
+      linhas.push(...(data as Linha[]));
+      if (data.length < TAMANHO_PAGINA) return linhas;
     }
   }
 }
