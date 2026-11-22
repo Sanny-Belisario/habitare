@@ -7,17 +7,26 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  loginContainer: {
+  loginScreen: {
     flex: 1,
     backgroundColor: "#172D40",
+  },
+  // Conteúdo do ScrollView: flexGrow centraliza quando sobra espaço e deixa
+  // rolar quando o teclado ocupa a tela.
+  loginContainer: {
+    flexGrow: 1,
     alignItems: "center",
     justifyContent: "center",
     gap: 25,
+    paddingVertical: 32,
   },
 
+  // Largura e altura fixas: num require() local, o Image do Android usa o
+  // tamanho real do arquivo (1254 px) na dimensão que faltar, e ignora o
+  // aspectRatio. Altura em % também não funciona dentro do ScrollView.
   logo: {
-    width: "50%",
-    height: "20%",
+    width: 200,
+    height: 170,
     objectFit: "cover",
   },
 });

@@ -190,6 +190,7 @@ export const ocorrencia = pgTable.withRLS(
     abertaEm: dataHora("aberta_em").notNull().defaultNow(),
     iniciadaEm: dataHora("iniciada_em"),
     resolvidaEm: dataHora("resolvida_em"),
+    ativo: boolean().notNull().default(true),
     criadaEm: criadoEm("criada_em"),
     atualizadaEm: atualizadoEm("atualizada_em"),
   },

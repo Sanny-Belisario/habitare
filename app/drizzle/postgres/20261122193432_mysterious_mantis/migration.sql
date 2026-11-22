@@ -1,0 +1,1 @@
+ALTER TABLE "ocorrencia" ADD COLUMN "ativo" boolean DEFAULT true NOT NULL;

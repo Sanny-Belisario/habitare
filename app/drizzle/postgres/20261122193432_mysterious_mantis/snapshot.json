@@ -1,0 +1,47 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "73702873-c253-4c4c-b670-40b56f1dbf32",
+  "prevIds": [
+    "ba09a6f2-f1aa-49c6-bc5f-63287b8664b9"
+  ],
+  "footprints": [
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "ocorrencia",
+        "ativo"
+      ],
+      "writes": [
+        "s|col|public.ocorrencia.ativo",
+        "n|col|public.ocorrencia.ativo",
+        "e|col|public.ocorrencia.ativo"
+      ],
+      "reads": [
+        "n|tbl|public.ocorrencia",
+        "n|sch|public"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ocorrencia",
+        "name": "ativo",
+        "type": "boolean",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "true",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    }
+  ]
+}

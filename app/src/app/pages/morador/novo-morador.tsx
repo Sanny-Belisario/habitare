@@ -8,6 +8,8 @@ import {
   Text,
   View,
 } from "react-native";
+import { navegarPelaBarra } from "@/components/BottomNav";
+import type { NavKey } from "@/types";
 
 const fields = [
   { label: "Nome Completo", placeholder: "Informe o nome do novo morador" },
@@ -30,15 +32,13 @@ const navigationItems = [
 
 export default function NovoMorador() {
   function navegar(label: string) {
-    if (label === "Início") {
-      router.replace("/pages/home/visao-geral");
-      return;
-    }
-    if (label === "Configurações") {
-      router.replace("/pages/configuracoes");
-      return;
-    }
-    Alert.alert("Tela não implementada", `${label} ainda não possui uma tela disponível.`);
+    const chaves: Record<string, NavKey> = {
+      Início: "inicio",
+      Comunicados: "comunicados",
+      Ocorrências: "ocorrencias",
+      Configurações: "configuracoes",
+    };
+    navegarPelaBarra(chaves[label]);
   }
 
   return (

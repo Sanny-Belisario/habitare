@@ -2,6 +2,7 @@ import { dbSqlite } from "@/db/sqlite";
 import { usuario } from "@/db/sqlite/schema";
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
+import { sessao } from "./sessao";
 
 interface Login {
   email: string;
@@ -28,7 +29,7 @@ export class Usuario {
     const [user] = await dbSqlite
       .select()
       .from(usuario)
-      .where(eq(usuario.email, data.email));
+      .where(eq(usuario.email, data.email.trim()));
 
     if (!user) {
       return {
@@ -37,9 +38,27 @@ export class Usuario {
       };
     }
 
-    const verify = await bcrypt.compare(data.senha, user.senha);
+    // O campo aceita a senha ou o código de acesso (os dois guardados com bcrypt).
+    const verify =
+      (await bcrypt.compare(data.senha, user.senha)) ||
+      (!!user.codigoAcesso &&
+        (await bcrypt.compare(data.senha, user.codigoAcesso)));
 
     if (verify) {
+      if (!user.status) {
+        return {
+          message: "Usuário inativo. Procure o síndico do condomínio.",
+          sucesso: false,
+        };
+      }
+
+      sessao.definir({
+        id: user.id,
+        nome: user.nome,
+        idCondominio: user.idCondominio,
+        isSindico: user.isSindico,
+      });
+
       return {
         message: "Login autorizado",
         sucesso: true,
@@ -48,7 +67,7 @@ export class Usuario {
     }
 
     return {
-      message: "Senha incorreta",
+      message: "Senha ou código de acesso incorreto",
       sucesso: false,
     };
   }

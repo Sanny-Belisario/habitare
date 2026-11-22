@@ -3,10 +3,25 @@ import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { MoradorBottomNav } from "@/components/MoradorBottomNav";
-import { comunicados } from "@/data/comunicados";
+import { useCabecalho } from "@/hooks/use-cabecalho";
+import { useComunicados } from "@/hooks/use-comunicados";
+import { useMinhasOcorrencias } from "@/hooks/use-minhas-ocorrencias";
+import { ehResolvida } from "@/services/ocorrencia";
 import { colors } from "@/theme";
 
 export default function InicioMorador() {
+  const { comunicados, carregando } = useComunicados();
+  const { ocorrencias } = useMinhasOcorrencias();
+  const { marca, inicial } = useCabecalho();
+
+  const pendentes = ocorrencias.filter((o) => !ehResolvida(o.status)).length;
+  const resumoOcorrencias =
+    pendentes === 0
+      ? "Nenhuma ocorrência em andamento"
+      : pendentes === 1
+        ? "1 ocorrência em andamento"
+        : `${pendentes} ocorrências em andamento`;
+
   function openAnnouncement(id: string) {
     router.navigate("/pages/home/comunicados-morador");
     router.navigate({
@@ -23,7 +38,7 @@ export default function InicioMorador() {
           contentContainerStyle={styles.content}
           showsVerticalScrollIndicator={false}
         >
-          <Text style={styles.brand}>HABITARE / CONDOMÍNIO AURORA</Text>
+          <Text style={styles.brand}>{marca}</Text>
 
           <View style={styles.header}>
             <View>
@@ -40,20 +55,30 @@ export default function InicioMorador() {
                 <Ionicons name="settings-outline" size={22} color={colors.primary} />
               </TouchableOpacity>
               <View style={styles.avatar}>
-                <Text style={styles.avatarText}>A</Text>
+                <Text style={styles.avatarText}>{inicial}</Text>
               </View>
             </View>
           </View>
 
           <Text style={styles.sectionTitle}>Acesso rápido</Text>
           <View style={styles.quickAccess}>
-            <View style={styles.quickCard}>
+            <TouchableOpacity
+              style={styles.quickCard}
+              onPress={() => router.navigate("/pages/home/nova-ocorrencia")}
+              activeOpacity={0.8}
+              accessibilityRole="button"
+            >
               <View style={styles.quickIcon}>
                 <Ionicons name="add" size={18} color={colors.dark} />
               </View>
               <Text style={styles.quickLabel}>Nova ocorrência</Text>
-            </View>
-            <View style={styles.quickCard}>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.quickCard}
+              onPress={() => router.navigate("/pages/home/ocorrencias-morador")}
+              activeOpacity={0.8}
+              accessibilityRole="button"
+            >
               <View style={styles.quickIcon}>
                 <Ionicons
                   name="reorder-three-outline"
@@ -62,7 +87,7 @@ export default function InicioMorador() {
                 />
               </View>
               <Text style={styles.quickLabel}>Minhas ocorrências</Text>
-            </View>
+            </TouchableOpacity>
           </View>
 
           <Text style={[styles.sectionTitle, styles.announcementsHeading]}>
@@ -91,16 +116,36 @@ export default function InicioMorador() {
                 </Text>
               </TouchableOpacity>
             ))}
+            {comunicados.length === 0 ? (
+              <Text style={styles.announcementDetails}>
+                {carregando
+                  ? "Carregando comunicados..."
+                  : "Nenhum comunicado por enquanto"}
+              </Text>
+            ) : null}
           </View>
         </ScrollView>
 
-        <View style={styles.occurrenceSummary}>
-          <Text style={styles.summaryTitle}>1 ocorrência em andamento</Text>
+        <TouchableOpacity
+          style={styles.occurrenceSummary}
+          onPress={() =>
+            router.navigate(
+              pendentes > 0
+                ? "/pages/home/ocorrencias-morador"
+                : "/pages/home/nova-ocorrencia",
+            )
+          }
+          activeOpacity={0.8}
+          accessibilityRole="button"
+        >
+          <Text style={styles.summaryTitle}>{resumoOcorrencias}</Text>
           <View style={styles.summaryLink}>
-            <Text style={styles.summaryText}>Acompanhar solicitação</Text>
+            <Text style={styles.summaryText}>
+              {pendentes > 0 ? "Acompanhar solicitações" : "Registrar uma ocorrência"}
+            </Text>
             <Ionicons name="arrow-forward" size={10} color={colors.primary} />
           </View>
-        </View>
+        </TouchableOpacity>
 
         <MoradorBottomNav active="inicio" />
       </View>

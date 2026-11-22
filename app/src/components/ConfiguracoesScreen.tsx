@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 
 import { colors } from '../theme';
 import type { Apartamento, Bloco, Morador, TabKey } from '../types';
@@ -107,7 +108,10 @@ export default function ConfiguracoesScreen() {
 
   const renderMoradores = () => (
     <>
-      <PrimaryButton title="Adicionar novo morador" onPress={() => adicionar('morador')} />
+      <PrimaryButton
+        title="Adicionar novo morador"
+        onPress={() => router.navigate('/pages/morador/novo-morador')}
+      />
       {moradores.map((m) => {
         const visivel = !!codigosVisiveis[m.id];
         return (
@@ -147,7 +151,7 @@ export default function ConfiguracoesScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
+    <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.content}

@@ -137,6 +137,8 @@ export const ocorrencia = sqliteTable("ocorrencia", {
   abertaEm: text("aberta_em").notNull().$defaultFn(agora),
   iniciadaEm: text("iniciada_em"),
   resolvidaEm: text("resolvida_em"),
+  // Exclusões não são sincronizadas: a ocorrência excluída fica com ativo = false.
+  ativo: integer({ mode: "boolean" }).notNull().default(true),
   criadaEm: criadoEm("criada_em"),
   atualizadaEm: atualizadoEm("atualizada_em"),
 });

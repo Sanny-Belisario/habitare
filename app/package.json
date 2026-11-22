@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "expo-router/entry",
   "dependencies": {
+    "@expo/vector-icons": "^15.1.1",
     "@supabase/supabase-js": "^2.119.0",
     "bcryptjs": "^3.0.3",
     "drizzle-orm": "^1.0.0-rc.5",
@@ -41,7 +42,7 @@
     "db:migrate:postgres": "drizzle-kit migrate --config=drizzle.postgres.config.ts",
     "db:studio:postgres": "drizzle-kit studio --config=drizzle.postgres.config.ts",
     "lint": "expo lint",
-    "seed": "node seed.ts",
+    "seed": "tsx seed.ts",
     "db:seed": "tsx seed.ts"
   },
   "private": true,
