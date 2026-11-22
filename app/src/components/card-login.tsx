@@ -54,7 +54,7 @@ export function CardLogin({ acessoLogin }: Login) {
       >
         <Text style={cardLogin.textButton}>Entrar</Text>
       </Pressable>
-      <Link href={"pages/home/visao-geral"}>
+      <Link href="/pages/auth/criadores">
         <Text
           style={{
             ...cardLogin.text,
