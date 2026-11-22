@@ -1,12 +1,16 @@
 import { dbSqlite } from "@/db/sqlite";
 import { usuario } from "@/db/sqlite/schema";
 import bcrypt from "bcryptjs";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { sessao } from "./sessao";
 
 interface Login {
   email: string;
   senha: string;
+}
+
+export function emailNormalizadoIgual(email: string) {
+  return sql`lower(trim(${usuario.email})) = ${email.trim().toLowerCase()}`;
 }
 
 export class Usuario {
@@ -26,10 +30,13 @@ export class Usuario {
       };
     }
 
-    const [user] = await dbSqlite
+    const email = data.email.trim();
+    const [contaExata] = await dbSqlite
       .select()
       .from(usuario)
-      .where(eq(usuario.email, data.email.trim()));
+      .where(eq(usuario.email, email));
+    const user = contaExata ?? dbSqlite.select().from(usuario)
+      .where(emailNormalizadoIgual(email)).get();
 
     if (!user) {
       return {

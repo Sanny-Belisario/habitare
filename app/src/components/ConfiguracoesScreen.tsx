@@ -1,14 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
   ScrollView,
-  TouchableOpacity,
   Alert,
   StyleSheet,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 
 import { useConsultaLocal } from '@/hooks/use-consulta-local';
@@ -16,20 +14,17 @@ import { useSessao } from '@/hooks/use-sessao';
 import { sincronizarAgora } from '@/hooks/use-sincronizacao';
 import { excluirApartamento, listarApartamentos, TABELAS_APARTAMENTOS, tituloApartamento } from '@/services/apartamento';
 import { excluirBloco, listarBlocos } from '@/services/bloco';
+import { listarMoradores, TABELAS_MORADORES } from '@/services/morador';
 
 import { colors } from '../theme';
-import type { Morador, TabKey } from '../types';
+import type { TabKey } from '../types';
 import ConfigHeader from '../components/ConfigHeader';
 import ConfigTabs from '../components/ConfigTabs';
 import PrimaryButton from '../components/PrimaryButton';
 import StatusBadge from '../components/StatusBadge';
 import CardActions from '../components/CardActions';
 import BottomNav from '../components/BottomNav';
-
-const MORADORES_INICIAIS: Morador[] = [
-  { id: 'm1', nome: 'João Luís', bloco: 'Bloco A', apartamento: '304', codigo: '482913', ativo: true },
-  { id: 'm2', nome: 'Luísa Moraes', bloco: 'Bloco C', apartamento: '201', codigo: '731045', ativo: false },
-];
+import { MoradorCard } from '../components/MoradorCard';
 
 export default function ConfiguracoesScreen() {
   const { aba } = useLocalSearchParams<{ aba?: TabKey }>();
@@ -41,8 +36,9 @@ export default function ConfiguracoesScreen() {
   const { dados: apartamentos, carregando: carregandoApartamentos, erro: erroApartamentos } = useConsultaLocal(
     listarApartamentos, TABELAS_APARTAMENTOS, [], [usuario?.idCondominio],
   );
-  const [moradores, setMoradores] = useState<Morador[]>(MORADORES_INICIAIS);
-  const [codigosVisiveis, setCodigosVisiveis] = useState<Record<string, boolean>>({});
+  const { dados: moradores, carregando: carregandoMoradores, erro: erroMoradores } = useConsultaLocal(
+    listarMoradores, TABELAS_MORADORES, [], [usuario?.id],
+  );
 
   const confirmarExclusao = (titulo: string, onConfirm: () => void) => {
     Alert.alert('Excluir', `Deseja excluir ${titulo}?`, [
@@ -50,12 +46,6 @@ export default function ConfiguracoesScreen() {
       { text: 'Excluir', style: 'destructive', onPress: onConfirm },
     ]);
   };
-
-  const editar = (titulo: string) =>
-    Alert.alert('Editar', `Aqui abrirá a edição de ${titulo}.`);
-
-  const alternarCodigo = (id: string) =>
-    setCodigosVisiveis((prev) => ({ ...prev, [id]: !prev[id] }));
 
   function executarExclusao(excluir: () => void) {
     try {
@@ -116,7 +106,7 @@ export default function ConfiguracoesScreen() {
               label={a.ocupado ? 'Ocupado' : 'Livre'}
               variant={a.ocupado ? 'danger' : 'success'}
             />
-            <Text style={[styles.cardTitle, styles.apartmentTitle]}>{titulo}</Text>
+            <Text style={[styles.cardTitle, styles.titleWithBadge]}>{titulo}</Text>
             <Text style={styles.cardSub}>{a.bloco}</Text>
             {usuario?.isSindico ? (
               <CardActions
@@ -140,48 +130,21 @@ export default function ConfiguracoesScreen() {
     </>
   );
 
-  const renderMoradores = () => (
+  const renderMoradores = () => usuario?.isSindico ? (
     <>
       <PrimaryButton
         title="Adicionar novo morador"
-        onPress={() => router.navigate('/pages/morador/novo-morador')}
+        onPress={() => router.push('/pages/morador/novo-morador')}
       />
-      {moradores.map((m) => {
-        const visivel = !!codigosVisiveis[m.id];
-        return (
-          <View key={m.id} style={styles.card}>
-            <StatusBadge
-              label={m.ativo ? 'Ativo' : 'Inativo'}
-              variant={m.ativo ? 'success' : 'danger'}
-            />
-            <Text style={styles.cardTitle}>{m.nome}</Text>
-            <Text style={styles.cardSub}>
-              {m.bloco} • Apartamento {m.apartamento}
-            </Text>
-            <View style={styles.codigoRow}>
-              <Text style={styles.cardSub}>
-                Código de Acesso: {visivel ? m.codigo : '******'}
-              </Text>
-              <TouchableOpacity onPress={() => alternarCodigo(m.id)} hitSlop={8}>
-                <Ionicons
-                  name={visivel ? 'eye-outline' : 'eye-off-outline'}
-                  size={16}
-                  color={colors.muted}
-                />
-              </TouchableOpacity>
-            </View>
-            <CardActions
-              onEdit={() => editar(m.nome)}
-              onDelete={() =>
-                confirmarExclusao(m.nome, () =>
-                  setMoradores((lista) => lista.filter((x) => x.id !== m.id))
-                )
-              }
-            />
-          </View>
-        );
-      })}
+      {moradores.map((morador) => <MoradorCard key={morador.id} morador={morador} />)}
+      {moradores.length === 0 ? (
+        <Text style={styles.empty}>
+          {carregandoMoradores ? 'Carregando moradores...' : erroMoradores ?? 'Nenhum morador cadastrado.'}
+        </Text>
+      ) : null}
     </>
+  ) : (
+    <Text style={styles.empty}>A lista de moradores é gerenciada pelo síndico.</Text>
   );
 
   return (
@@ -218,8 +181,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   cardTitle: { fontSize: 20, fontWeight: '800', color: colors.text, marginBottom: 8 },
-  apartmentTitle: { paddingRight: 76 },
+  titleWithBadge: { paddingRight: 76 },
   cardSub: { fontSize: 13, color: colors.muted, marginBottom: 4 },
   empty: { color: colors.muted, textAlign: 'center', paddingVertical: 16 },
-  codigoRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
 });

@@ -4,8 +4,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../theme';
 
 interface CardActionsProps {
-  onEdit: () => void;
-  onDelete: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
   editLabel?: string;
   deleteLabel?: string;
 }
@@ -18,10 +18,26 @@ export default function CardActions({
 }: CardActionsProps) {
   return (
     <View style={styles.row}>
-      <TouchableOpacity onPress={onEdit} hitSlop={8} accessibilityRole="button" accessibilityLabel={editLabel}>
+      <TouchableOpacity
+        onPress={onEdit}
+        disabled={!onEdit}
+        style={!onEdit && styles.disabled}
+        hitSlop={8}
+        accessibilityRole="button"
+        accessibilityState={{ disabled: !onEdit }}
+        accessibilityLabel={editLabel}
+      >
         <Ionicons name="pencil-outline" size={17} color={colors.muted} />
       </TouchableOpacity>
-      <TouchableOpacity onPress={onDelete} hitSlop={8} accessibilityRole="button" accessibilityLabel={deleteLabel}>
+      <TouchableOpacity
+        onPress={onDelete}
+        disabled={!onDelete}
+        style={!onDelete && styles.disabled}
+        hitSlop={8}
+        accessibilityRole="button"
+        accessibilityState={{ disabled: !onDelete }}
+        accessibilityLabel={deleteLabel}
+      >
         <Ionicons name="trash-outline" size={17} color={colors.trash} />
       </TouchableOpacity>
     </View>
@@ -35,4 +51,5 @@ const styles = StyleSheet.create({
     gap: 12,
     marginTop: 14,
   },
+  disabled: { opacity: 0.55 },
 });

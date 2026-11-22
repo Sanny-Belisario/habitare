@@ -1,9 +1,10 @@
 import { Redirect, router, useLocalSearchParams } from "expo-router";
 import { useState, type ReactNode } from "react";
-import { KeyboardAvoidingView, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { KeyboardAvoidingView, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import BottomNav from "@/components/BottomNav";
+import { CampoTexto } from "@/components/CampoTexto";
 import PrimaryButton from "@/components/PrimaryButton";
 import { SindicoHeader } from "@/components/SindicoHeader";
 import { useConsultaLocal } from "@/hooks/use-consulta-local";
@@ -87,15 +88,12 @@ function FormularioBloco({ bloco }: { bloco?: Bloco }) {
   return (
     <>
       <Text style={styles.subtitle}>Preencha o campo abaixo.</Text>
-      <View style={styles.field}>
-        <Text style={styles.label}>
-          Bloco<Text style={styles.required}> *</Text>
-        </Text>
-        <TextInput
-          style={styles.input}
+      <View style={styles.form}>
+        <CampoTexto
+          label="Bloco"
+          obrigatorio
           accessibilityLabel="Nome do bloco"
           placeholder="Ex.: Bloco C"
-          placeholderTextColor={colors.muted}
           value={nome}
           onChangeText={(valor) => {
             setNome(valor);
@@ -107,8 +105,8 @@ function FormularioBloco({ bloco }: { bloco?: Bloco }) {
         {erro ? (
           <Text style={styles.error} accessibilityLiveRegion="polite">{erro}</Text>
         ) : null}
+        <PrimaryButton title={bloco ? "Salvar alterações" : "Cadastrar bloco"} onPress={salvar} />
       </View>
-      <PrimaryButton title={bloco ? "Salvar alterações" : "Cadastrar bloco"} onPress={salvar} />
     </>
   );
 }
@@ -118,17 +116,6 @@ const styles = StyleSheet.create({
   body: { flex: 1 },
   content: { padding: 20 },
   subtitle: { color: colors.muted, fontSize: 14, marginTop: 18, marginBottom: 16 },
-  field: { gap: 8, marginBottom: 16 },
-  label: { color: colors.dark, fontSize: 14, fontWeight: "700" },
-  required: { color: colors.trash },
-  input: {
-    minHeight: 48,
-    borderRadius: 12,
-    backgroundColor: colors.card,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    color: colors.dark,
-    fontSize: 14,
-  },
+  form: { gap: 16 },
   error: { color: colors.trash, fontSize: 13 },
 });

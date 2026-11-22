@@ -1,9 +1,10 @@
 import { Redirect, router, useLocalSearchParams } from "expo-router";
 import { useState, type ReactNode } from "react";
-import { KeyboardAvoidingView, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { KeyboardAvoidingView, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import BottomNav from "@/components/BottomNav";
+import { CampoTexto } from "@/components/CampoTexto";
 import PrimaryButton from "@/components/PrimaryButton";
 import { SelectField } from "@/components/SelectField";
 import { SindicoHeader } from "@/components/SindicoHeader";
@@ -101,23 +102,18 @@ function FormularioApartamento({ apartamento }: { apartamento?: ApartamentoEdica
     <>
       <Text style={styles.subtitle}>Preencha os campos abaixo.</Text>
       <View style={styles.form}>
-        <View style={styles.field}>
-          <Text style={styles.label}>
-            Apartamento<Text style={styles.required}> *</Text>
-          </Text>
-          <TextInput
-            style={styles.input}
-            accessibilityLabel="Número do apartamento"
-            placeholder="Ex.: Apartamento 201"
-            placeholderTextColor={colors.muted}
-            value={numero}
-            onChangeText={(valor) => {
-              setNumero(valor);
-              setErro(null);
-            }}
-            returnKeyType="done"
-          />
-        </View>
+        <CampoTexto
+          label="Apartamento"
+          obrigatorio
+          accessibilityLabel="Número do apartamento"
+          placeholder="Ex.: Apartamento 201"
+          value={numero}
+          onChangeText={(valor) => {
+            setNumero(valor);
+            setErro(null);
+          }}
+          returnKeyType="done"
+        />
         <SelectField
           label="Bloco"
           placeholder={carregando ? "Carregando blocos..." : "Selecione um bloco"}
@@ -148,17 +144,5 @@ const styles = StyleSheet.create({
   content: { padding: 20 },
   subtitle: { color: colors.muted, fontSize: 14, marginTop: 18, marginBottom: 16 },
   form: { gap: 16 },
-  field: { gap: 8 },
-  label: { color: colors.dark, fontSize: 14, fontWeight: "700" },
-  required: { color: colors.trash },
-  input: {
-    minHeight: 48,
-    borderRadius: 12,
-    backgroundColor: colors.card,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    color: colors.dark,
-    fontSize: 14,
-  },
   error: { color: colors.trash, fontSize: 13 },
 });
