@@ -52,7 +52,7 @@ export class Usuario {
         (await bcrypt.compare(data.senha, user.codigoAcesso)));
 
     if (verify) {
-      if (!user.status) {
+      if (!user.status || user.excluido) {
         return {
           message: "Usuário inativo. Procure o síndico do condomínio.",
           sucesso: false,

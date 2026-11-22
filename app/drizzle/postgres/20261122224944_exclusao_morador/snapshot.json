@@ -1,0 +1,47 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "bec14d27-3f2c-456e-afc7-259724773b3c",
+  "prevIds": [
+    "b6b8305e-4ff8-41f6-9b5b-8e63f034c459"
+  ],
+  "footprints": [
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "usuario",
+        "excluido"
+      ],
+      "writes": [
+        "s|col|public.usuario.excluido",
+        "n|col|public.usuario.excluido",
+        "e|col|public.usuario.excluido"
+      ],
+      "reads": [
+        "n|tbl|public.usuario",
+        "n|sch|public"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "usuario",
+        "name": "excluido",
+        "type": "boolean",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "false",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    }
+  ]
+}

@@ -14,7 +14,7 @@ import { useSessao } from '@/hooks/use-sessao';
 import { sincronizarAgora } from '@/hooks/use-sincronizacao';
 import { excluirApartamento, listarApartamentos, TABELAS_APARTAMENTOS, tituloApartamento } from '@/services/apartamento';
 import { excluirBloco, listarBlocos } from '@/services/bloco';
-import { listarMoradores, TABELAS_MORADORES } from '@/services/morador';
+import { excluirMorador, listarMoradores, TABELAS_MORADORES } from '@/services/morador';
 
 import { colors } from '../theme';
 import type { TabKey } from '../types';
@@ -136,7 +136,17 @@ export default function ConfiguracoesScreen() {
         title="Adicionar novo morador"
         onPress={() => router.push('/pages/morador/novo-morador')}
       />
-      {moradores.map((morador) => <MoradorCard key={morador.id} morador={morador} />)}
+      {moradores.map((morador) => (
+        <MoradorCard
+          key={morador.id}
+          morador={morador}
+          onEdit={() => router.push({ pathname: '/pages/morador/novo-morador', params: { id: morador.id } })}
+          onDelete={() => confirmarExclusao(
+            `o morador “${morador.nome}”`,
+            () => executarExclusao(() => excluirMorador(morador.id)),
+          )}
+        />
+      ))}
       {moradores.length === 0 ? (
         <Text style={styles.empty}>
           {carregandoMoradores ? 'Carregando moradores...' : erroMoradores ?? 'Nenhum morador cadastrado.'}

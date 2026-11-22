@@ -3,6 +3,7 @@ import { Stack } from "expo-router";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 import { Platform } from "react-native";
 
+import { useRevogarSessao } from "@/hooks/use-revogar-sessao";
 import { useSessao } from "@/hooks/use-sessao";
 
 import migrations from "../../drizzle/sqlite/migrations";
@@ -42,6 +43,7 @@ function NativeDatabaseSetup({
 
 export default function RootLayout() {
   const usuario = useSessao();
+  useRevogarSessao(usuario);
   const nativeDatabase =
     Platform.OS === "web" ? null : getNativeDatabase();
 

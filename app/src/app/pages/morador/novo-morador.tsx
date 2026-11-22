@@ -1,5 +1,5 @@
-import { Redirect, router } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+import { Redirect, router, useLocalSearchParams } from "expo-router";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -20,7 +20,7 @@ import { useSessao } from "@/hooks/use-sessao";
 import { sincronizarAgora } from "@/hooks/use-sincronizacao";
 import { listarApartamentos, TABELAS_APARTAMENTOS, tituloApartamento } from "@/services/apartamento";
 import { listarBlocos } from "@/services/bloco";
-import { cadastrarMorador } from "@/services/morador";
+import { buscarMoradorParaEdicao, cadastrarMorador, editarMorador, TABELAS_MORADORES } from "@/services/morador";
 import { estilosCampo } from "@/styles/campos-formulario";
 import { colors } from "@/theme";
 
@@ -29,24 +29,44 @@ const listaMoradores = {
   params: { aba: "moradores" },
 } as const;
 
+type MoradorEdicao = NonNullable<Awaited<ReturnType<typeof buscarMoradorParaEdicao>>>;
+
 function voltar() {
   router.dismissTo(listaMoradores);
 }
 
 export default function NovoMorador() {
+  const { id } = useLocalSearchParams<{ id?: string }>();
   const usuario = useSessao();
   if (!usuario) return <Redirect href="/pages/auth/login" />;
   if (!usuario.isSindico) return <Redirect href={listaMoradores} />;
 
-  return <CadastroMorador key={usuario.id} />;
+  return id === undefined
+    ? <FormularioMorador key={usuario.id} />
+    : <EdicaoMorador key={`${usuario.id}/${id}`} id={id} />;
 }
 
-function CadastroMorador() {
-  const [nome, setNome] = useState("");
-  const [email, setEmail] = useState("");
-  const [telefone, setTelefone] = useState("");
-  const [idBloco, setIdBloco] = useState<string | null>(null);
-  const [idApartamento, setIdApartamento] = useState<string | null>(null);
+function EdicaoMorador({ id }: { id: string }) {
+  const { dados: morador, carregando, erro } = useConsultaLocal(
+    () => buscarMoradorParaEdicao(id), TABELAS_MORADORES, null, [id],
+  );
+  if (morador) return <FormularioMorador morador={morador} />;
+
+  return (
+    <TelaMorador titulo="Editar morador">
+      <Text style={styles.subtitle}>
+        {carregando ? "Carregando morador..." : erro ?? "Morador não encontrado."}
+      </Text>
+    </TelaMorador>
+  );
+}
+
+function FormularioMorador({ morador }: { morador?: MoradorEdicao }) {
+  const [nome, setNome] = useState(morador?.nome ?? "");
+  const [email, setEmail] = useState(morador?.email ?? "");
+  const [telefone, setTelefone] = useState(morador?.telefone ?? "");
+  const [idBloco, setIdBloco] = useState<string | null>(morador?.idBloco ?? null);
+  const [idApartamento, setIdApartamento] = useState<string | null>(morador?.idApartamento ?? null);
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [acesso, setAcesso] = useState<Awaited<ReturnType<typeof cadastrarMorador>> | null>(null);
@@ -71,13 +91,20 @@ function CadastroMorador() {
     setErro(null);
     Keyboard.dismiss();
     try {
-      const resultado = await cadastrarMorador({ nome, email, telefone, idBloco, idApartamento }, pedido.signal);
+      const dados = { nome, email, telefone, idBloco, idApartamento };
+      if (morador) {
+        editarMorador(morador.id, dados);
+        void sincronizarAgora();
+        voltar();
+        return;
+      }
+      const resultado = await cadastrarMorador(dados, pedido.signal);
       if (pedido.signal.aborted) return;
       setAcesso(resultado);
       void sincronizarAgora();
     } catch (falha) {
       if (!pedido.signal.aborted) {
-        setErro(falha instanceof Error ? falha.message : "Não foi possível cadastrar o morador.");
+        setErro(falha instanceof Error ? falha.message : "Não foi possível salvar o morador.");
       }
     } finally {
       pendente.current = null;
@@ -87,94 +114,106 @@ function CadastroMorador() {
 
   const falha = erro ?? erroBlocos ?? erroApartamentos;
 
+  const titulo = morador ? "Editar morador" : acesso ? "Morador cadastrado" : "Novo morador";
+  const rotuloSalvar = morador ? "Salvar alterações" : "Cadastrar morador";
+
+  return (
+    <TelaMorador titulo={titulo}>
+      {acesso ? (
+        <>
+          <Text style={styles.subtitle}>O morador entra com o e-mail e o código abaixo. Guarde o código, pois ele é exibido apenas agora.</Text>
+          <View style={styles.accessCard}>
+            <Text style={estilosCampo.rotulo}>E-mail</Text>
+            <Text style={[estilosCampo.texto, styles.accessValue]} selectable>{acesso.email}</Text>
+            <Text style={estilosCampo.rotulo}>Código de acesso</Text>
+            <Text style={styles.code} selectable>{acesso.codigo}</Text>
+          </View>
+          <PrimaryButton title="Concluir" onPress={voltar} />
+        </>
+      ) : (
+        <>
+          <Text style={styles.subtitle}>Preencha os campos abaixo.</Text>
+          <View style={styles.form}>
+            <CampoTexto
+              label="Nome completo"
+              obrigatorio
+              value={nome}
+              onChangeText={setNome}
+              autoCapitalize="words"
+              autoComplete="name"
+              editable={!salvando}
+              placeholder="Informe o nome do morador"
+            />
+            <CampoTexto
+              label="E-mail"
+              obrigatorio
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+              autoComplete="email"
+              keyboardType="email-address"
+              autoCorrect={false}
+              editable={!salvando}
+              placeholder="Informe o e-mail do morador"
+            />
+            <CampoTexto
+              label="Telefone"
+              obrigatorio={!morador}
+              value={telefone}
+              onChangeText={setTelefone}
+              autoComplete="tel"
+              keyboardType="phone-pad"
+              editable={!salvando}
+              placeholder="Informe o telefone do morador"
+            />
+            <SelectField
+              label="Bloco"
+              placeholder={carregandoBlocos ? "Carregando blocos..." : "Selecione um bloco"}
+              opcoes={blocos}
+              valor={idBloco}
+              onChange={(id) => {
+                if (id === idBloco) return;
+                setIdBloco(id);
+                setIdApartamento(null);
+                setErro(null);
+              }}
+              obrigatorio={!morador}
+              desabilitado={salvando || carregandoBlocos}
+              vazio="Nenhum bloco ativo no condomínio."
+            />
+            <SelectField
+              label="Apartamento"
+              placeholder={idBloco ? "Selecione um apartamento" : "Selecione um bloco primeiro"}
+              opcoes={opcoesApartamentos}
+              valor={idApartamento}
+              onChange={(id) => {
+                setIdApartamento(id);
+                setErro(null);
+              }}
+              obrigatorio={!morador || !!idBloco}
+              desabilitado={salvando || carregandoApartamentos || !idBloco}
+              vazio="Nenhum apartamento ativo neste bloco."
+            />
+            {falha ? <Text style={styles.error} accessibilityLiveRegion="polite">{falha}</Text> : null}
+            <PrimaryButton
+              title={salvando ? "Salvando..." : rotuloSalvar}
+              onPress={salvar}
+              disabled={salvando || carregandoBlocos || carregandoApartamentos}
+            />
+          </View>
+        </>
+      )}
+    </TelaMorador>
+  );
+}
+
+function TelaMorador({ titulo, children }: { titulo: string; children: ReactNode }) {
   return (
     <SafeAreaView style={styles.screen} edges={["top", "bottom"]}>
       <KeyboardAvoidingView behavior="padding" style={styles.body}>
         <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-          <SindicoHeader titulo={acesso ? "Morador cadastrado" : "Novo morador"} onVoltar={voltar} />
-          {acesso ? (
-            <>
-              <Text style={styles.subtitle}>O morador entra com o e-mail e o código abaixo. Guarde o código, pois ele é exibido apenas agora.</Text>
-              <View style={styles.accessCard}>
-                <Text style={estilosCampo.rotulo}>E-mail</Text>
-                <Text style={[estilosCampo.texto, styles.accessValue]} selectable>{acesso.email}</Text>
-                <Text style={estilosCampo.rotulo}>Código de acesso</Text>
-                <Text style={styles.code} selectable>{acesso.codigo}</Text>
-              </View>
-              <PrimaryButton title="Concluir" onPress={voltar} />
-            </>
-          ) : (
-            <>
-              <Text style={styles.subtitle}>Preencha os campos abaixo.</Text>
-              <View style={styles.form}>
-                <CampoTexto
-                  label="Nome completo"
-                  obrigatorio
-                  value={nome}
-                  onChangeText={setNome}
-                  autoCapitalize="words"
-                  autoComplete="name"
-                  editable={!salvando}
-                  placeholder="Informe o nome do novo morador"
-                />
-                <CampoTexto
-                  label="E-mail"
-                  obrigatorio
-                  value={email}
-                  onChangeText={setEmail}
-                  autoCapitalize="none"
-                  autoComplete="email"
-                  keyboardType="email-address"
-                  autoCorrect={false}
-                  editable={!salvando}
-                  placeholder="Informe o e-mail do morador"
-                />
-                <CampoTexto
-                  label="Telefone"
-                  obrigatorio
-                  value={telefone}
-                  onChangeText={setTelefone}
-                  autoComplete="tel"
-                  keyboardType="phone-pad"
-                  editable={!salvando}
-                  placeholder="Informe o telefone do morador"
-                />
-                <SelectField
-                  label="Bloco"
-                  placeholder={carregandoBlocos ? "Carregando blocos..." : "Selecione um bloco"}
-                  opcoes={blocos}
-                  valor={idBloco}
-                  onChange={(id) => {
-                    setIdBloco(id);
-                    setIdApartamento(null);
-                    setErro(null);
-                  }}
-                  obrigatorio
-                  desabilitado={salvando || carregandoBlocos}
-                  vazio="Nenhum bloco ativo no condomínio."
-                />
-                <SelectField
-                  label="Apartamento"
-                  placeholder={idBloco ? "Selecione um apartamento" : "Selecione um bloco primeiro"}
-                  opcoes={opcoesApartamentos}
-                  valor={idApartamento}
-                  onChange={(id) => {
-                    setIdApartamento(id);
-                    setErro(null);
-                  }}
-                  obrigatorio
-                  desabilitado={salvando || carregandoApartamentos || !idBloco}
-                  vazio="Nenhum apartamento ativo neste bloco."
-                />
-                {falha ? <Text style={styles.error} accessibilityLiveRegion="polite">{falha}</Text> : null}
-                <PrimaryButton
-                  title={salvando ? "Cadastrando morador..." : "Cadastrar morador"}
-                  onPress={salvar}
-                  disabled={salvando || carregandoBlocos || carregandoApartamentos}
-                />
-              </View>
-            </>
-          )}
+          <SindicoHeader titulo={titulo} onVoltar={voltar} />
+          {children}
         </ScrollView>
         <BottomNav active="configuracoes" />
       </KeyboardAvoidingView>

@@ -7,7 +7,13 @@ import { tituloApartamento } from "@/services/apartamento";
 import { colors } from "@/theme";
 import type { Morador } from "@/types";
 
-export function MoradorCard({ morador }: { morador: Morador }) {
+interface MoradorCardProps {
+  morador: Morador;
+  onEdit: () => void;
+  onDelete: () => void;
+}
+
+export function MoradorCard({ morador, onEdit, onDelete }: MoradorCardProps) {
   const { nome, ativo, bloco, apartamento, temCodigoAcesso } = morador;
 
   return (
@@ -27,7 +33,12 @@ export function MoradorCard({ morador }: { morador: Morador }) {
         </Text>
         {temCodigoAcesso ? <Ionicons name="eye-off-outline" size={14} color={colors.muted} /> : null}
       </View>
-      <CardActions editLabel={`Editar ${nome}`} deleteLabel={`Excluir ${nome}`} />
+      <CardActions
+        editLabel={`Editar ${nome}`}
+        deleteLabel={`Excluir ${nome}`}
+        onEdit={onEdit}
+        onDelete={onDelete}
+      />
     </View>
   );
 }
