@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { MenuConta } from "@/components/MenuConta";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { useCabecalho } from "@/hooks/use-cabecalho";
@@ -11,7 +12,7 @@ interface Props {
 }
 
 export function SindicoHeader({ titulo, onVoltar, protocolo }: Props) {
-  const { marca, inicial } = useCabecalho();
+  const { marca } = useCabecalho();
 
   return (
     <View style={styles.container}>
@@ -33,9 +34,7 @@ export function SindicoHeader({ titulo, onVoltar, protocolo }: Props) {
           {protocolo ? <Text style={styles.protocol}>{protocolo}</Text> : null}
           <Text style={styles.title} accessibilityRole="header">{titulo}</Text>
         </View>
-        <View style={styles.avatar}>
-          <Text style={styles.avatarText}>{inicial}</Text>
-        </View>
+        <MenuConta />
       </View>
     </View>
   );
@@ -50,13 +49,4 @@ const styles = StyleSheet.create({
   eyebrow: { color: colors.muted, fontSize: 14 },
   protocol: { color: colors.muted, fontSize: 12, fontWeight: "700" },
   title: { color: colors.dark, fontSize: 30, fontWeight: "800" },
-  avatar: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    backgroundColor: colors.navActive,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  avatarText: { color: colors.primary, fontSize: 16, fontWeight: "700" },
 });

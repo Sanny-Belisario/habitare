@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { MenuConta } from "@/components/MenuConta";
 import { and, desc, eq } from "drizzle-orm";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
@@ -112,7 +113,7 @@ export default function InicioSindico() {
 
 function Painel() {
   const idCondominio = sessao.obter()?.idCondominio;
-  const { marca, inicial } = useCabecalho();
+  const { marca } = useCabecalho();
   const agora = useAgora();
 
   // Mudança no Supabase -> sincroniza na hora -> SQLite muda -> consulta refeita.
@@ -168,9 +169,7 @@ function Painel() {
             </Text>
           ) : null}
         </View>
-        <View style={styles.avatar}>
-          <Text style={styles.avatarText}>{inicial}</Text>
-        </View>
+        <MenuConta />
       </View>
 
       <Text style={styles.sectionTitle}>Panorama das solicitações</Text>
@@ -266,15 +265,6 @@ const styles = StyleSheet.create({
   eyebrow: { fontSize: 15, color: colors.muted, marginBottom: 2 },
   title: { fontSize: 30, fontWeight: "800", color: colors.dark },
   updatedAt: { fontSize: 11, color: colors.muted, marginTop: 4 },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.navActive,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  avatarText: { fontSize: 16, fontWeight: "700", color: colors.primary },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "800",

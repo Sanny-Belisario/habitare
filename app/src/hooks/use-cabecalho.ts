@@ -17,17 +17,15 @@ async function buscarNomeCondominio(): Promise<string | null> {
   return linha?.nome ?? null;
 }
 
-// Dados do topo das telas: "HABITARE / <CONDOMÍNIO>" e a inicial do usuário no avatar.
+// Marca do topo das telas: "HABITARE / <CONDOMÍNIO>".
 export function useCabecalho() {
   const { dados: nomeCondominio } = useConsultaLocal(
     buscarNomeCondominio,
     ["condominio"],
     null as string | null,
   );
-  const nome = sessao.obter()?.nome?.trim();
 
   return {
     marca: `HABITARE / ${(nomeCondominio ?? "Condomínio").toUpperCase()}`,
-    inicial: nome ? nome.charAt(0).toUpperCase() : "?",
   };
 }

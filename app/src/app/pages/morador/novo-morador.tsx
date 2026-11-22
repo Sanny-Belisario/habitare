@@ -1,4 +1,5 @@
 import { SafeAreaView } from "react-native-safe-area-context";
+import { MenuConta } from "@/components/MenuConta";
 import { router } from "expo-router";
 import {
   Alert,
@@ -60,9 +61,7 @@ export default function NovoMorador() {
               <Text style={styles.backArrow}>←</Text>
               <Text style={styles.backText}>Voltar</Text>
             </Pressable>
-            <View style={styles.avatar}>
-              <Text style={styles.avatarText}>A</Text>
-            </View>
+            <MenuConta />
           </View>
 
           <Text style={styles.title}>Novo morador</Text>
@@ -178,19 +177,6 @@ const styles = StyleSheet.create({
   backText: {
     color: "#8393A3",
     fontSize: 9,
-  },
-  avatar: {
-    width: 25,
-    height: 25,
-    borderRadius: 13,
-    backgroundColor: "#DFEAF1",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  avatarText: {
-    color: "#29447F",
-    fontSize: 11,
-    fontWeight: "700",
   },
   title: {
     color: "#1E3348",

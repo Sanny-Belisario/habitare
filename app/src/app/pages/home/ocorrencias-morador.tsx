@@ -1,4 +1,5 @@
 import { router } from "expo-router";
+import { MenuConta } from "@/components/MenuConta";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
 
@@ -61,7 +62,7 @@ function excluir(o: OcorrenciaResumo) {
 }
 
 export default function OcorrenciasMorador() {
-  const { marca, inicial } = useCabecalho();
+  const { marca } = useCabecalho();
   const { ocorrencias, carregando } = useMinhasOcorrencias();
 
   return (
@@ -79,9 +80,7 @@ export default function OcorrenciasMorador() {
               <Text style={styles.eyebrow}>Seu condomínio</Text>
               <Text style={styles.title}>Ocorrências</Text>
             </View>
-            <View style={styles.avatar}>
-              <Text style={styles.avatarText}>{inicial}</Text>
-            </View>
+            <MenuConta />
           </View>
 
           <Text style={styles.sectionTitle}>Minhas ocorrências</Text>
@@ -146,15 +145,6 @@ const styles = StyleSheet.create({
   },
   eyebrow: { fontSize: 15, color: colors.muted, marginBottom: 2 },
   title: { fontSize: 30, fontWeight: "800", color: colors.dark },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.navActive,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  avatarText: { fontSize: 16, fontWeight: "700", color: colors.primary },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "800",

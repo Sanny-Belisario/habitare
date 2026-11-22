@@ -1,4 +1,5 @@
 import React from 'react';
+import { MenuConta } from "@/components/MenuConta";
 import { View, Text, StyleSheet } from 'react-native';
 import { colors } from '../theme';
 
@@ -11,9 +12,7 @@ export default function ConfigHeader() {
           <Text style={styles.subtitle}>Gestão do condomínio</Text>
           <Text style={styles.title}>Configurações</Text>
         </View>
-        <View style={styles.avatar}>
-          <Text style={styles.avatarText}>A</Text>
-        </View>
+        <MenuConta />
       </View>
     </View>
   );
@@ -35,13 +34,4 @@ const styles = StyleSheet.create({
   },
   subtitle: { fontSize: 15, color: colors.muted, marginBottom: 2 },
   title: { fontSize: 32, fontWeight: '800', color: colors.dark },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.navActive,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarText: { fontSize: 16, fontWeight: '700', color: colors.primary },
 });

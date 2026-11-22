@@ -3,6 +3,8 @@ import { Stack } from "expo-router";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 import { Platform } from "react-native";
 
+import { useSessao } from "@/hooks/use-sessao";
+
 import migrations from "../../drizzle/sqlite/migrations";
 import { dbSqlite, expoSqlite } from "../db/sqlite";
 import { useSincronizacao } from "../hooks/use-sincronizacao";
@@ -39,6 +41,7 @@ function NativeDatabaseSetup({
 }
 
 export default function RootLayout() {
+  const usuario = useSessao();
   const nativeDatabase =
     Platform.OS === "web" ? null : getNativeDatabase();
 
@@ -56,49 +59,53 @@ export default function RootLayout() {
           name="pages/auth/criadores"
           options={{ title: "Criadores", animation: "fade" }}
         />
-        <Stack.Screen
-          name="pages/home/inicio-sindico"
-          options={{ title: "Visão Geral", animation: "fade" }}
-        />
-        <Stack.Screen
-          name="pages/home/inicio-morador"
-          options={{ title: "Início Morador", animation: "fade" }}
-        />
-        <Stack.Screen
-          name="pages/home/comunicados-sindico"
-          options={{ title: "Comunicados", animation: "fade" }}
-        />
-        <Stack.Screen
-          name="pages/home/novo-comunicado"
-          options={{ title: "Novo comunicado", animation: "slide_from_right" }}
-        />
-        <Stack.Screen
-          name="pages/home/comunicados-morador"
-          options={{ title: "Comunicados", animation: "fade" }}
-        />
-        <Stack.Screen
-          name="pages/home/comunicado/[id]"
-          options={{
-            title: "Detalhe do comunicado",
-            animation: "slide_from_right",
-          }}
-        />
-        <Stack.Screen
-          name="pages/home/ocorrencias-sindico"
-          options={{ title: "Ocorrências", animation: "fade" }}
-        />
-        <Stack.Screen
-          name="pages/home/ocorrencia/[id]"
-          options={{ title: "Detalhes da ocorrência", animation: "slide_from_right" }}
-        />
-        <Stack.Screen
-          name="pages/home/ocorrencias-morador"
-          options={{ title: "Ocorrências", animation: "fade" }}
-        />
-        <Stack.Screen
-          name="pages/home/nova-ocorrencia"
-          options={{ title: "Nova ocorrência", animation: "slide_from_right" }}
-        />
+        <Stack.Protected guard={!!usuario}>
+          <Stack.Screen
+            name="pages/home/inicio-sindico"
+            options={{ title: "Visão Geral", animation: "fade" }}
+          />
+          <Stack.Screen
+            name="pages/home/inicio-morador"
+            options={{ title: "Início Morador", animation: "fade" }}
+          />
+          <Stack.Screen
+            name="pages/home/comunicados-sindico"
+            options={{ title: "Comunicados", animation: "fade" }}
+          />
+          <Stack.Screen
+            name="pages/home/novo-comunicado"
+            options={{ title: "Novo comunicado", animation: "slide_from_right" }}
+          />
+          <Stack.Screen
+            name="pages/home/comunicados-morador"
+            options={{ title: "Comunicados", animation: "fade" }}
+          />
+          <Stack.Screen
+            name="pages/home/comunicado/[id]"
+            options={{
+              title: "Detalhe do comunicado",
+              animation: "slide_from_right",
+            }}
+          />
+          <Stack.Screen
+            name="pages/home/ocorrencias-sindico"
+            options={{ title: "Ocorrências", animation: "fade" }}
+          />
+          <Stack.Screen
+            name="pages/home/ocorrencia/[id]"
+            options={{ title: "Detalhes da ocorrência", animation: "slide_from_right" }}
+          />
+          <Stack.Screen
+            name="pages/home/ocorrencias-morador"
+            options={{ title: "Ocorrências", animation: "fade" }}
+          />
+          <Stack.Screen
+            name="pages/home/nova-ocorrencia"
+            options={{ title: "Nova ocorrência", animation: "slide_from_right" }}
+          />
+          <Stack.Screen name="pages/configuracoes" options={{ title: "Configura??es" }} />
+          <Stack.Screen name="pages/morador/novo-morador" options={{ title: "Novo morador" }} />
+        </Stack.Protected>
       </Stack>
     </>
   );

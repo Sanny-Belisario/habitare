@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { MenuConta } from "@/components/MenuConta";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -37,7 +38,7 @@ function voltar() {
 export default function NovaOcorrencia() {
   const { id } = useLocalSearchParams<{ id?: string }>();
   const editando = typeof id === "string" && id.length > 0;
-  const { marca, inicial } = useCabecalho();
+  const { marca } = useCabecalho();
 
   const [titulo, setTitulo] = useState("");
   const [idCategoria, setIdCategoria] = useState<string | null>(null);
@@ -154,9 +155,7 @@ export default function NovaOcorrencia() {
               <Ionicons name="arrow-back" size={20} color={colors.muted} />
               <Text style={styles.backLabel}>Voltar</Text>
             </TouchableOpacity>
-            <View style={styles.avatar}>
-              <Text style={styles.avatarText}>{inicial}</Text>
-            </View>
+            <MenuConta />
           </View>
 
           <Text style={styles.title}>
@@ -270,15 +269,6 @@ const styles = StyleSheet.create({
   },
   backButton: { flexDirection: "row", alignItems: "center", gap: 8, paddingVertical: 4 },
   backLabel: { fontSize: 14, color: colors.muted },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.navActive,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  avatarText: { fontSize: 16, fontWeight: "700", color: colors.primary },
   title: { fontSize: 30, fontWeight: "800", color: colors.dark },
   subtitle: { fontSize: 14, color: colors.muted, marginTop: 12, marginBottom: 16 },
   loading: { marginTop: 40 },
