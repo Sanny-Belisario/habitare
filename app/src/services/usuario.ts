@@ -9,13 +9,22 @@ interface Login {
 }
 
 export class Usuario {
-  async login(data: Login): Promise<{ message: string; sucesso: boolean }> {
+  async login(
+    data: Login,
+  ): Promise<{ message: string; sucesso: boolean; isSindico?: boolean }> {
     if (!data) {
       return {
         message: "Os dados devem ser preenchidos corretamente",
         sucesso: false,
       };
     }
+    if (!dbSqlite) {
+      return {
+        message: "O login não está disponível na prévia web",
+        sucesso: false,
+      };
+    }
+
     const [user] = await dbSqlite
       .select()
       .from(usuario)
@@ -34,6 +43,7 @@ export class Usuario {
       return {
         message: "Login autorizado",
         sucesso: true,
+        isSindico: user.isSindico,
       };
     }
 

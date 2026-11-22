@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../drizzle"
+		},
+		{
+			"path": "../src"
+		}
+	]
+}

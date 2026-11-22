@@ -29,7 +29,7 @@ export default function Login() {
     if (!login.sucesso) return;
 
     // Redirect é um componente (usa hooks): fora do render, navegue pelo router.
-    router.replace("/pages/home/visao-geral");
+    router.push("/pages/auth/criadores");
   }
   return (
     <View style={styles.loginContainer}>
