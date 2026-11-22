@@ -9,11 +9,14 @@ import {
   View,
 } from "react-native";
 import { MoradorBottomNav } from "@/components/MoradorBottomNav";
-import { comunicados } from "@/data/comunicados";
+import { useCabecalho } from "@/hooks/use-cabecalho";
+import { useComunicados } from "@/hooks/use-comunicados";
 import { colors } from "@/theme";
 
 export default function DetalheComunicado() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const { comunicados, carregando } = useComunicados();
+  const { marca, inicial } = useCabecalho();
   const comunicado = comunicados.find((item) => item.id === id);
 
   return (
@@ -24,14 +27,12 @@ export default function DetalheComunicado() {
           contentContainerStyle={styles.content}
           showsVerticalScrollIndicator={false}
         >
-          <Text style={styles.brand}>HABITARE / CONDOMÍNIO AURORA</Text>
+          <Text style={styles.brand}>{marca}</Text>
 
           <View style={styles.topRow}>
             <TouchableOpacity
               style={styles.backButton}
-              onPress={() =>
-                router.navigate("/pages/home/comunicados-morador")
-              }
+              onPress={() => router.navigate("/pages/home/comunicados-morador")}
               activeOpacity={0.8}
               accessibilityRole="button"
               accessibilityLabel="Voltar para Comunicados"
@@ -40,7 +41,7 @@ export default function DetalheComunicado() {
               <Text style={styles.backLabel}>Voltar</Text>
             </TouchableOpacity>
             <View style={styles.avatar}>
-              <Text style={styles.avatarText}>A</Text>
+              <Text style={styles.avatarText}>{inicial}</Text>
             </View>
           </View>
 
@@ -56,7 +57,9 @@ export default function DetalheComunicado() {
               </View>
             </>
           ) : (
-            <Text style={styles.notFound}>Comunicado não encontrado.</Text>
+            <Text style={styles.notFound}>
+              {carregando ? "Carregando..." : "Comunicado não encontrado."}
+            </Text>
           )}
         </ScrollView>
 

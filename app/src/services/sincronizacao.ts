@@ -133,8 +133,18 @@ export class Sincronizacao {
   // Exclusões não são propagadas: um registro apagado de um lado volta do outro.
   async sincronizar(): Promise<ResultadoSincronizacao> {
     const resultado: ResultadoSincronizacao = {};
+    const erros: string[] = [];
+    // Uma tabela com erro não impede as outras de sincronizarem.
     for (const t of TABELAS) {
-      resultado[getTableName(t.tabela)] = await this.sincronizarTabela(t);
+      const nome = getTableName(t.tabela);
+      try {
+        resultado[nome] = await this.sincronizarTabela(t);
+      } catch (erro) {
+        erros.push(erro instanceof Error ? erro.message : `${nome}: ${erro}`);
+      }
+    }
+    if (erros.length > 0) {
+      throw new Error(erros.join("\n"));
     }
     return resultado;
   }

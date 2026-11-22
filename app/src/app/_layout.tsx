@@ -57,8 +57,8 @@ export default function RootLayout() {
           options={{ title: "Criadores", animation: "fade" }}
         />
         <Stack.Screen
-          name="pages/home/visao-geral"
-          options={{ title: "Visão Geral" }}
+          name="pages/home/inicio-sindico"
+          options={{ title: "Visão Geral", animation: "fade" }}
         />
         <Stack.Screen
           name="pages/home/inicio-morador"
@@ -78,6 +78,10 @@ export default function RootLayout() {
         <Stack.Screen
           name="pages/home/ocorrencias-morador"
           options={{ title: "Ocorrências", animation: "fade" }}
+        />
+        <Stack.Screen
+          name="pages/home/nova-ocorrencia"
+          options={{ title: "Nova ocorrência", animation: "slide_from_right" }}
         />
       </Stack>
     </>

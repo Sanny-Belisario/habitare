@@ -1,6 +1,8 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Alert, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
+import { sessao } from '../services/sessao';
 import { colors } from '../theme';
 import type { NavKey } from '../types';
 
@@ -18,9 +20,31 @@ const ITEMS: { key: NavKey; label: string; icon: IconName }[] = [
   { key: 'configuracoes', label: 'Configurações', icon: 'settings-outline' },
 ];
 
+// Navegação padrão da barra: o Início depende do perfil logado, e o síndico
+// ainda não tem telas próprias de Comunicados e Ocorrências.
+export function navegarPelaBarra(key: NavKey) {
+  const isSindico = sessao.obter()?.isSindico ?? false;
+
+  if (key === 'inicio') {
+    router.replace(
+      isSindico ? '/pages/home/inicio-sindico' : '/pages/home/inicio-morador',
+    );
+  } else if (key === 'configuracoes') {
+    router.replace('/pages/configuracoes');
+  } else if (!isSindico) {
+    router.replace(
+      key === 'comunicados'
+        ? '/pages/home/comunicados-morador'
+        : '/pages/home/ocorrencias-morador',
+    );
+  } else {
+    Alert.alert('Em breve', 'Esta tela ainda não está disponível para o síndico.');
+  }
+}
+
 export default function BottomNav({
   active = 'configuracoes',
-  onChange = () => {},
+  onChange,
 }: BottomNavProps) {
   return (
     <View style={styles.container}>
@@ -31,7 +55,10 @@ export default function BottomNav({
           <TouchableOpacity
             key={item.key}
             style={[styles.item, isActive && styles.itemActive]}
-            onPress={() => onChange(item.key)}
+            onPress={() => {
+              if (item.key === active) return;
+              (onChange ?? navegarPelaBarra)(item.key);
+            }}
             activeOpacity={0.8}
           >
             <Ionicons name={item.icon} size={22} color={color} />

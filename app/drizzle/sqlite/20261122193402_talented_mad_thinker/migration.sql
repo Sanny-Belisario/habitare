@@ -1,0 +1,1 @@
+ALTER TABLE `ocorrencia` ADD `ativo` integer DEFAULT true NOT NULL;

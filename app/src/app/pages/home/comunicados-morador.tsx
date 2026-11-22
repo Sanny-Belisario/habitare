@@ -8,10 +8,14 @@ import {
   View,
 } from "react-native";
 import { MoradorBottomNav } from "@/components/MoradorBottomNav";
-import { comunicados } from "@/data/comunicados";
+import { useCabecalho } from "@/hooks/use-cabecalho";
+import { useComunicados } from "@/hooks/use-comunicados";
 import { colors } from "@/theme";
 
 export default function ComunicadosMorador() {
+  const { comunicados, carregando } = useComunicados();
+  const { marca, inicial } = useCabecalho();
+
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
       <View style={styles.screen}>
@@ -20,7 +24,7 @@ export default function ComunicadosMorador() {
           contentContainerStyle={styles.content}
           showsVerticalScrollIndicator={false}
         >
-          <Text style={styles.brand}>HABITARE / CONDOMÍNIO AURORA</Text>
+          <Text style={styles.brand}>{marca}</Text>
 
           <View style={styles.header}>
             <View>
@@ -28,7 +32,7 @@ export default function ComunicadosMorador() {
               <Text style={styles.title}>Comunicados</Text>
             </View>
             <View style={styles.avatar}>
-              <Text style={styles.avatarText}>A</Text>
+              <Text style={styles.avatarText}>{inicial}</Text>
             </View>
           </View>
 
@@ -66,7 +70,9 @@ export default function ComunicadosMorador() {
               ))
             ) : (
               <Text style={styles.emptyState}>
-                Nenhum comunicado por enquanto
+                {carregando
+                  ? "Carregando comunicados..."
+                  : "Nenhum comunicado por enquanto"}
               </Text>
             )}
           </View>
