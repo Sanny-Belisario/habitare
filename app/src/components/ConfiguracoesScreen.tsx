@@ -9,22 +9,21 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
+
+import { useConsultaLocal } from '@/hooks/use-consulta-local';
+import { useSessao } from '@/hooks/use-sessao';
+import { sincronizarAgora } from '@/hooks/use-sincronizacao';
+import { excluirBloco, listarBlocos } from '@/services/bloco';
 
 import { colors } from '../theme';
-import type { Apartamento, Bloco, Morador, TabKey } from '../types';
+import type { Apartamento, Morador, TabKey } from '../types';
 import ConfigHeader from '../components/ConfigHeader';
 import ConfigTabs from '../components/ConfigTabs';
 import PrimaryButton from '../components/PrimaryButton';
 import StatusBadge from '../components/StatusBadge';
 import CardActions from '../components/CardActions';
 import BottomNav from '../components/BottomNav';
-
-const BLOCOS_INICIAIS: Bloco[] = [
-  { id: 'b1', nome: 'Bloco A' },
-  { id: 'b2', nome: 'Bloco B' },
-  { id: 'b3', nome: 'Bloco C' },
-];
 
 const APARTAMENTOS_INICIAIS: Apartamento[] = [
   { id: 'a1', numero: '201', bloco: 'Bloco C', ocupado: false },
@@ -38,8 +37,12 @@ const MORADORES_INICIAIS: Morador[] = [
 ];
 
 export default function ConfiguracoesScreen() {
-  const [tab, setTab] = useState<TabKey>('apartamentos');
-  const [blocos, setBlocos] = useState<Bloco[]>(BLOCOS_INICIAIS);
+  const { aba } = useLocalSearchParams<{ aba?: TabKey }>();
+  const tab = aba === 'blocos' || aba === 'moradores' ? aba : 'apartamentos';
+  const usuario = useSessao();
+  const { dados: blocos, carregando: carregandoBlocos, erro: erroBlocos } = useConsultaLocal(
+    listarBlocos, ['bloco'], [], [usuario?.idCondominio],
+  );
   const [apartamentos, setApartamentos] = useState<Apartamento[]>(APARTAMENTOS_INICIAIS);
   const [moradores, setMoradores] = useState<Morador[]>(MORADORES_INICIAIS);
   const [codigosVisiveis, setCodigosVisiveis] = useState<Record<string, boolean>>({});
@@ -60,22 +63,44 @@ export default function ConfiguracoesScreen() {
   const alternarCodigo = (id: string) =>
     setCodigosVisiveis((prev) => ({ ...prev, [id]: !prev[id] }));
 
+  function removerBloco(id: string) {
+    try {
+      excluirBloco(id);
+      void sincronizarAgora();
+    } catch (falha) {
+      Alert.alert(
+        'Não foi possível excluir',
+        falha instanceof Error ? falha.message : 'Tente novamente.',
+      );
+    }
+  }
+
   const renderBlocos = () => (
     <>
-      <PrimaryButton title="Adicionar novo bloco" onPress={() => adicionar('bloco')} />
+      {usuario?.isSindico ? (
+        <PrimaryButton
+          title="Adicionar novo bloco"
+          onPress={() => router.push('/pages/novo-bloco')}
+        />
+      ) : null}
       {blocos.map((b) => (
         <View key={b.id} style={styles.card}>
           <Text style={styles.cardTitle}>{b.nome}</Text>
-          <CardActions
-            onEdit={() => editar(b.nome)}
-            onDelete={() =>
-              confirmarExclusao(b.nome, () =>
-                setBlocos((lista) => lista.filter((x) => x.id !== b.id))
-              )
-            }
-          />
+          {usuario?.isSindico ? (
+            <CardActions
+              editLabel={`Editar ${b.nome}`}
+              deleteLabel={`Excluir ${b.nome}`}
+              onEdit={() => router.push({ pathname: '/pages/novo-bloco', params: { id: b.id } })}
+              onDelete={() => confirmarExclusao(`o bloco “${b.nome}”`, () => removerBloco(b.id))}
+            />
+          ) : null}
         </View>
       ))}
+      {blocos.length === 0 ? (
+        <Text style={styles.empty}>
+          {carregandoBlocos ? 'Carregando blocos...' : erroBlocos ?? 'Nenhum bloco cadastrado.'}
+        </Text>
+      ) : null}
     </>
   );
 
@@ -158,7 +183,7 @@ export default function ConfiguracoesScreen() {
         showsVerticalScrollIndicator={false}
       >
         <ConfigHeader />
-        <ConfigTabs active={tab} onChange={setTab} />
+        <ConfigTabs active={tab} onChange={(aba) => router.setParams({ aba })} />
         {tab === 'blocos' && renderBlocos()}
         {tab === 'apartamentos' && renderApartamentos()}
         {tab === 'moradores' && renderMoradores()}
@@ -185,5 +210,6 @@ const styles = StyleSheet.create({
   },
   cardTitle: { fontSize: 20, fontWeight: '800', color: colors.text, marginBottom: 8 },
   cardSub: { fontSize: 13, color: colors.muted, marginBottom: 4 },
+  empty: { color: colors.muted, textAlign: 'center', paddingVertical: 16 },
   codigoRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
 });

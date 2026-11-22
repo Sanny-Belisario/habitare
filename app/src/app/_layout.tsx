@@ -103,7 +103,11 @@ export default function RootLayout() {
             name="pages/home/nova-ocorrencia"
             options={{ title: "Nova ocorrência", animation: "slide_from_right" }}
           />
-          <Stack.Screen name="pages/configuracoes" options={{ title: "Configura??es" }} />
+          <Stack.Screen name="pages/configuracoes" options={{ title: "Configurações" }} />
+          <Stack.Screen
+            name="pages/novo-bloco"
+            options={{ title: "Novo bloco", animation: "slide_from_right" }}
+          />
           <Stack.Screen name="pages/morador/novo-morador" options={{ title: "Novo morador" }} />
         </Stack.Protected>
       </Stack>
