@@ -57,13 +57,7 @@ export default function Login() {
       return;
     }
 
-    // Redirect é um componente (usa hooks): fora do render, navegue pelo router.
-    // replace: o botão voltar não deve retornar ao login.
-    router.replace(
-      login.isSindico
-        ? "/pages/home/inicio-sindico"
-        : "/pages/home/inicio-morador",
-    );
+    router.replace("/");
   }
   return (
     // Android é edge-to-edge: a janela não encolhe com o teclado, então o

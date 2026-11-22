@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { MenuConta } from "@/components/MenuConta";
 import { router, useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
@@ -16,7 +17,7 @@ import { colors } from "@/theme";
 export default function DetalheComunicado() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { comunicados, carregando } = useComunicados();
-  const { marca, inicial } = useCabecalho();
+  const { marca } = useCabecalho();
   const comunicado = comunicados.find((item) => item.id === id);
 
   return (
@@ -40,9 +41,7 @@ export default function DetalheComunicado() {
               <Ionicons name="arrow-back" size={18} color={colors.muted} />
               <Text style={styles.backLabel}>Voltar</Text>
             </TouchableOpacity>
-            <View style={styles.avatar}>
-              <Text style={styles.avatarText}>{inicial}</Text>
-            </View>
+            <MenuConta />
           </View>
 
           {comunicado ? (
@@ -109,19 +108,6 @@ const styles = StyleSheet.create({
   backLabel: {
     color: colors.muted,
     fontSize: 10,
-  },
-  avatar: {
-    width: 25,
-    height: 25,
-    borderRadius: 13,
-    backgroundColor: colors.navActive,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  avatarText: {
-    color: colors.primary,
-    fontSize: 11,
-    fontWeight: "700",
   },
   title: {
     color: colors.dark,

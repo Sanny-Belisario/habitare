@@ -13,6 +13,7 @@ export function useConsultaLocal<T>(
 ) {
   const [dados, setDados] = useState<T>(inicial);
   const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState<string | null>(null);
   const [atualizadoEm, setAtualizadoEm] = useState<Date | null>(null);
 
   useEffect(() => {
@@ -24,9 +25,13 @@ export function useConsultaLocal<T>(
         .then((resultado) => {
           if (!ativo) return;
           setDados(resultado);
+          setErro(null);
           setAtualizadoEm(new Date());
         })
-        .catch((erro) => console.warn("Erro ao consultar o SQLite:", erro))
+        .catch((falha: unknown) => {
+          console.warn("Erro ao consultar o SQLite:", falha);
+          if (ativo) setErro("Não foi possível carregar os dados.");
+        })
         .finally(() => {
           if (ativo) setCarregando(false);
         });
@@ -46,5 +51,5 @@ export function useConsultaLocal<T>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 
-  return { dados, carregando, atualizadoEm };
+  return { dados, carregando, atualizadoEm, erro };
 }

@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { MenuConta } from "@/components/MenuConta";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -12,7 +13,7 @@ import { colors } from "@/theme";
 export default function InicioMorador() {
   const { comunicados, carregando } = useComunicados();
   const { ocorrencias } = useMinhasOcorrencias();
-  const { marca, inicial } = useCabecalho();
+  const { marca } = useCabecalho();
 
   const pendentes = ocorrencias.filter((o) => !ehResolvida(o.status)).length;
   const resumoOcorrencias =
@@ -54,9 +55,7 @@ export default function InicioMorador() {
               >
                 <Ionicons name="settings-outline" size={22} color={colors.primary} />
               </TouchableOpacity>
-              <View style={styles.avatar}>
-                <Text style={styles.avatarText}>{inicial}</Text>
-              </View>
+              <MenuConta />
             </View>
           </View>
 
@@ -194,29 +193,10 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     fontWeight: "700",
   },
-  avatar: {
-    position: "absolute",
-    right: 0,
-    bottom: 0,
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: colors.navActive,
-    borderWidth: 2,
-    borderColor: colors.background,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  avatarText: {
-    color: colors.primary,
-    fontSize: 9,
-    fontWeight: "700",
-  },
   headerActions: {
-    width: 48,
-    height: 48,
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
   },
   settingsButton: {
     width: 40,

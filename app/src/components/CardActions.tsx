@@ -6,15 +6,22 @@ import { colors } from '../theme';
 interface CardActionsProps {
   onEdit: () => void;
   onDelete: () => void;
+  editLabel?: string;
+  deleteLabel?: string;
 }
 
-export default function CardActions({ onEdit, onDelete }: CardActionsProps) {
+export default function CardActions({
+  onEdit,
+  onDelete,
+  editLabel = 'Editar',
+  deleteLabel = 'Excluir',
+}: CardActionsProps) {
   return (
     <View style={styles.row}>
-      <TouchableOpacity onPress={onEdit} hitSlop={8}>
+      <TouchableOpacity onPress={onEdit} hitSlop={8} accessibilityRole="button" accessibilityLabel={editLabel}>
         <Ionicons name="pencil-outline" size={17} color={colors.muted} />
       </TouchableOpacity>
-      <TouchableOpacity onPress={onDelete} hitSlop={8}>
+      <TouchableOpacity onPress={onDelete} hitSlop={8} accessibilityRole="button" accessibilityLabel={deleteLabel}>
         <Ionicons name="trash-outline" size={17} color={colors.trash} />
       </TouchableOpacity>
     </View>

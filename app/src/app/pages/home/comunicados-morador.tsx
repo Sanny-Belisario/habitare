@@ -1,4 +1,5 @@
 import { router } from "expo-router";
+import { MenuConta } from "@/components/MenuConta";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   ScrollView,
@@ -14,7 +15,7 @@ import { colors } from "@/theme";
 
 export default function ComunicadosMorador() {
   const { comunicados, carregando } = useComunicados();
-  const { marca, inicial } = useCabecalho();
+  const { marca } = useCabecalho();
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
@@ -27,13 +28,11 @@ export default function ComunicadosMorador() {
           <Text style={styles.brand}>{marca}</Text>
 
           <View style={styles.header}>
-            <View>
+            <View style={styles.headerText}>
               <Text style={styles.eyebrow}>Seu condomínio</Text>
               <Text style={styles.title}>Comunicados</Text>
             </View>
-            <View style={styles.avatar}>
-              <Text style={styles.avatarText}>{inicial}</Text>
-            </View>
+            <MenuConta />
           </View>
 
           <Text style={styles.sectionTitle}>Avisos do condomínio</Text>
@@ -114,6 +113,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
+  headerText: { flex: 1 },
   eyebrow: {
     color: colors.muted,
     fontSize: 10,
@@ -123,22 +123,6 @@ const styles = StyleSheet.create({
     color: colors.dark,
     fontSize: 20,
     lineHeight: 24,
-    fontWeight: "700",
-  },
-  avatar: {
-    position: "absolute",
-    right: 0,
-    bottom: 0,
-    width: 25,
-    height: 25,
-    borderRadius: 13,
-    backgroundColor: colors.navActive,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  avatarText: {
-    color: colors.primary,
-    fontSize: 11,
     fontWeight: "700",
   },
   sectionTitle: {

@@ -7,15 +7,26 @@ export interface UsuarioLogado {
 }
 
 let usuarioAtual: UsuarioLogado | null = null;
+const ouvintes = new Set<() => void>();
+
+function atualizar(usuario: UsuarioLogado | null) {
+  if (usuarioAtual === usuario) return;
+  usuarioAtual = usuario;
+  for (const ouvir of ouvintes) ouvir();
+}
 
 export const sessao = {
   definir(usuario: UsuarioLogado) {
-    usuarioAtual = usuario;
+    atualizar(usuario);
   },
   obter() {
     return usuarioAtual;
   },
   limpar() {
-    usuarioAtual = null;
+    atualizar(null);
+  },
+  inscrever(ouvir: () => void) {
+    ouvintes.add(ouvir);
+    return () => { ouvintes.delete(ouvir); };
   },
 };

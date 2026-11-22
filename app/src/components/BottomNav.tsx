@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { sessao } from '../services/sessao';
@@ -20,8 +20,6 @@ const ITEMS: { key: NavKey; label: string; icon: IconName }[] = [
   { key: 'configuracoes', label: 'Configurações', icon: 'settings-outline' },
 ];
 
-// Navegação padrão da barra: o Início depende do perfil logado, e o síndico
-// ainda não tem telas próprias de Comunicados e Ocorrências.
 export function navegarPelaBarra(key: NavKey) {
   const isSindico = sessao.obter()?.isSindico ?? false;
 
@@ -31,14 +29,14 @@ export function navegarPelaBarra(key: NavKey) {
     );
   } else if (key === 'configuracoes') {
     router.replace('/pages/configuracoes');
-  } else if (!isSindico) {
+  } else if (key === 'comunicados') {
     router.replace(
-      key === 'comunicados'
-        ? '/pages/home/comunicados-morador'
-        : '/pages/home/ocorrencias-morador',
+      isSindico ? '/pages/home/comunicados-sindico' : '/pages/home/comunicados-morador',
     );
   } else {
-    Alert.alert('Em breve', 'Esta tela ainda não está disponível para o síndico.');
+    router.replace(
+      isSindico ? '/pages/home/ocorrencias-sindico' : '/pages/home/ocorrencias-morador',
+    );
   }
 }
 
