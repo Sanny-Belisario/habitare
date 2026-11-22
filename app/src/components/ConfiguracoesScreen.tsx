@@ -14,22 +14,17 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useConsultaLocal } from '@/hooks/use-consulta-local';
 import { useSessao } from '@/hooks/use-sessao';
 import { sincronizarAgora } from '@/hooks/use-sincronizacao';
+import { excluirApartamento, listarApartamentos, TABELAS_APARTAMENTOS, tituloApartamento } from '@/services/apartamento';
 import { excluirBloco, listarBlocos } from '@/services/bloco';
 
 import { colors } from '../theme';
-import type { Apartamento, Morador, TabKey } from '../types';
+import type { Morador, TabKey } from '../types';
 import ConfigHeader from '../components/ConfigHeader';
 import ConfigTabs from '../components/ConfigTabs';
 import PrimaryButton from '../components/PrimaryButton';
 import StatusBadge from '../components/StatusBadge';
 import CardActions from '../components/CardActions';
 import BottomNav from '../components/BottomNav';
-
-const APARTAMENTOS_INICIAIS: Apartamento[] = [
-  { id: 'a1', numero: '201', bloco: 'Bloco C', ocupado: false },
-  { id: 'a2', numero: '304', bloco: 'Bloco A', ocupado: true },
-  { id: 'a3', numero: '202', bloco: 'Bloco C', ocupado: false },
-];
 
 const MORADORES_INICIAIS: Morador[] = [
   { id: 'm1', nome: 'João Luís', bloco: 'Bloco A', apartamento: '304', codigo: '482913', ativo: true },
@@ -43,7 +38,9 @@ export default function ConfiguracoesScreen() {
   const { dados: blocos, carregando: carregandoBlocos, erro: erroBlocos } = useConsultaLocal(
     listarBlocos, ['bloco'], [], [usuario?.idCondominio],
   );
-  const [apartamentos, setApartamentos] = useState<Apartamento[]>(APARTAMENTOS_INICIAIS);
+  const { dados: apartamentos, carregando: carregandoApartamentos, erro: erroApartamentos } = useConsultaLocal(
+    listarApartamentos, TABELAS_APARTAMENTOS, [], [usuario?.idCondominio],
+  );
   const [moradores, setMoradores] = useState<Morador[]>(MORADORES_INICIAIS);
   const [codigosVisiveis, setCodigosVisiveis] = useState<Record<string, boolean>>({});
 
@@ -57,15 +54,12 @@ export default function ConfiguracoesScreen() {
   const editar = (titulo: string) =>
     Alert.alert('Editar', `Aqui abrirá a edição de ${titulo}.`);
 
-  const adicionar = (item: string) =>
-    Alert.alert('Adicionar', `Aqui abrirá o cadastro de ${item}.`);
-
   const alternarCodigo = (id: string) =>
     setCodigosVisiveis((prev) => ({ ...prev, [id]: !prev[id] }));
 
-  function removerBloco(id: string) {
+  function executarExclusao(excluir: () => void) {
     try {
-      excluirBloco(id);
+      excluir();
       void sincronizarAgora();
     } catch (falha) {
       Alert.alert(
@@ -91,7 +85,9 @@ export default function ConfiguracoesScreen() {
               editLabel={`Editar ${b.nome}`}
               deleteLabel={`Excluir ${b.nome}`}
               onEdit={() => router.push({ pathname: '/pages/novo-bloco', params: { id: b.id } })}
-              onDelete={() => confirmarExclusao(`o bloco “${b.nome}”`, () => removerBloco(b.id))}
+              onDelete={() =>
+                confirmarExclusao(`o bloco “${b.nome}”`, () => executarExclusao(() => excluirBloco(b.id)))
+              }
             />
           ) : null}
         </View>
@@ -106,28 +102,41 @@ export default function ConfiguracoesScreen() {
 
   const renderApartamentos = () => (
     <>
-      <PrimaryButton
-        title="Adicionar novo apartamento"
-        onPress={() => adicionar('apartamento')}
-      />
-      {apartamentos.map((a) => (
-        <View key={a.id} style={styles.card}>
-          <StatusBadge
-            label={a.ocupado ? 'Ocupado' : 'Livre'}
-            variant={a.ocupado ? 'danger' : 'success'}
-          />
-          <Text style={styles.cardTitle}>Apartamento {a.numero}</Text>
-          <Text style={styles.cardSub}>{a.bloco}</Text>
-          <CardActions
-            onEdit={() => editar(`Apartamento ${a.numero}`)}
-            onDelete={() =>
-              confirmarExclusao(`o Apartamento ${a.numero}`, () =>
-                setApartamentos((lista) => lista.filter((x) => x.id !== a.id))
-              )
-            }
-          />
-        </View>
-      ))}
+      {usuario?.isSindico ? (
+        <PrimaryButton
+          title="Adicionar novo apartamento"
+          onPress={() => router.push('/pages/novo-apartamento')}
+        />
+      ) : null}
+      {apartamentos.map((a) => {
+        const titulo = tituloApartamento(a.numero);
+        return (
+          <View key={a.id} style={styles.card}>
+            <StatusBadge
+              label={a.ocupado ? 'Ocupado' : 'Livre'}
+              variant={a.ocupado ? 'danger' : 'success'}
+            />
+            <Text style={[styles.cardTitle, styles.apartmentTitle]}>{titulo}</Text>
+            <Text style={styles.cardSub}>{a.bloco}</Text>
+            {usuario?.isSindico ? (
+              <CardActions
+                editLabel={`Editar ${titulo}, ${a.bloco}`}
+                deleteLabel={`Excluir ${titulo}, ${a.bloco}`}
+                onEdit={() => router.push({ pathname: '/pages/novo-apartamento', params: { id: a.id } })}
+                onDelete={() => confirmarExclusao(
+                  `“${titulo}” do bloco “${a.bloco}”`,
+                  () => executarExclusao(() => excluirApartamento(a.id)),
+                )}
+              />
+            ) : null}
+          </View>
+        );
+      })}
+      {apartamentos.length === 0 ? (
+        <Text style={styles.empty}>
+          {carregandoApartamentos ? 'Carregando apartamentos...' : erroApartamentos ?? 'Nenhum apartamento cadastrado.'}
+        </Text>
+      ) : null}
     </>
   );
 
@@ -209,6 +218,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   cardTitle: { fontSize: 20, fontWeight: '800', color: colors.text, marginBottom: 8 },
+  apartmentTitle: { paddingRight: 76 },
   cardSub: { fontSize: 13, color: colors.muted, marginBottom: 4 },
   empty: { color: colors.muted, textAlign: 'center', paddingVertical: 16 },
   codigoRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
