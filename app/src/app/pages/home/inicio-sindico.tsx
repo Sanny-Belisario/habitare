@@ -1,9 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
 import { and, desc, eq } from "drizzle-orm";
+import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
-  Alert,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -94,9 +94,6 @@ function useAgora(intervaloMs = 60_000) {
   }, [intervaloMs]);
   return agora;
 }
-
-const emBreve = () =>
-  Alert.alert("Em breve", "A lista de ocorrências do síndico ainda não está disponível.");
 
 export default function InicioSindico() {
   return (
@@ -204,7 +201,11 @@ function Painel() {
 
       <View style={styles.recentHeader}>
         <Text style={styles.sectionTitleInline}>Ocorrências recentes</Text>
-        <TouchableOpacity onPress={emBreve} hitSlop={8} accessibilityRole="button">
+        <TouchableOpacity
+          onPress={() => router.push("/pages/home/ocorrencias-sindico")}
+          hitSlop={8}
+          accessibilityRole="button"
+        >
           <View style={styles.seeAll}>
             <Text style={styles.seeAllText}>Ver ocorrências</Text>
             <Ionicons name="arrow-forward" size={11} color={colors.primary} />

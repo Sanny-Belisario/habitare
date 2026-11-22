@@ -2,6 +2,7 @@ import { and, desc, eq, gt, isNull, or } from "drizzle-orm";
 
 import { dbSqlite } from "@/db/sqlite";
 import { comunicado, tipoComunicado } from "@/db/sqlite/schema";
+import { comunicadoNaoExcluido } from "@/services/comunicado";
 import { sessao } from "@/services/sessao";
 import { useConsultaLocal } from "./use-consulta-local";
 
@@ -42,6 +43,7 @@ async function buscarComunicados(): Promise<ComunicadoTela[]> {
       and(
         // Sem sessão (ex.: recarga em desenvolvimento) mostra de todos os condomínios.
         idCondominio ? eq(comunicado.idCondominio, idCondominio) : undefined,
+        comunicadoNaoExcluido,
         // Esconde os expirados (datas em ISO UTC, comparáveis como texto).
         or(isNull(comunicado.expiraEm), gt(comunicado.expiraEm, agora)),
       ),

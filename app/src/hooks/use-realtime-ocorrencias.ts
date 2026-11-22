@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+import { useFocusEffect } from "expo-router";
+import { useCallback, useId } from "react";
 
 import { supabase } from "@/db/postgres";
 import { dbSqlite } from "@/db/sqlite";
@@ -11,11 +12,13 @@ import { sincronizarAgora } from "./use-sincronizacao";
 // Requer a tabela `ocorrencia` na publicação `supabase_realtime` do Postgres;
 // sem ela não chegam eventos e vale só a sincronização periódica.
 export function useRealtimeOcorrencias(idCondominio: string | undefined) {
-  useEffect(() => {
-    if (!dbSqlite) return;
+  const idAssinatura = useId();
+  useFocusEffect(useCallback(() => {
+    const client = supabase;
+    if (!dbSqlite || !client) return;
 
-    const canal = supabase
-      .channel(`ocorrencias-${idCondominio ?? "todas"}`)
+    const canal = client
+      .channel(`ocorrencias-${idCondominio ?? "todas"}-${idAssinatura}`)
       .on(
         "postgres_changes",
         {
@@ -35,7 +38,7 @@ export function useRealtimeOcorrencias(idCondominio: string | undefined) {
       });
 
     return () => {
-      supabase.removeChannel(canal);
+      client.removeChannel(canal);
     };
-  }, [idCondominio]);
+  }, [idCondominio, idAssinatura]));
 }

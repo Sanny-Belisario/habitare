@@ -65,6 +65,14 @@ export default function RootLayout() {
           options={{ title: "Início Morador", animation: "fade" }}
         />
         <Stack.Screen
+          name="pages/home/comunicados-sindico"
+          options={{ title: "Comunicados", animation: "fade" }}
+        />
+        <Stack.Screen
+          name="pages/home/novo-comunicado"
+          options={{ title: "Novo comunicado", animation: "slide_from_right" }}
+        />
+        <Stack.Screen
           name="pages/home/comunicados-morador"
           options={{ title: "Comunicados", animation: "fade" }}
         />
@@ -74,6 +82,14 @@ export default function RootLayout() {
             title: "Detalhe do comunicado",
             animation: "slide_from_right",
           }}
+        />
+        <Stack.Screen
+          name="pages/home/ocorrencias-sindico"
+          options={{ title: "Ocorrências", animation: "fade" }}
+        />
+        <Stack.Screen
+          name="pages/home/ocorrencia/[id]"
+          options={{ title: "Detalhes da ocorrência", animation: "slide_from_right" }}
         />
         <Stack.Screen
           name="pages/home/ocorrencias-morador"

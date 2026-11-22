@@ -1,4 +1,4 @@
-import { and, asc, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
 import { randomUUID } from "expo-crypto";
 
 import { dbSqlite } from "@/db/sqlite";
@@ -44,12 +44,22 @@ export const TABELAS_OCORRENCIA = [
 ];
 
 const STATUS_INICIAL = "Aberta";
+const STATUS_EM_ANDAMENTO = "Em andamento";
+const STATUS_RESOLVIDA = "Resolvida";
 
 export const ehResolvida = (status: string) =>
-  status.trim().toLowerCase() === "resolvida";
+  status.trim().toLowerCase() === STATUS_RESOLVIDA.toLowerCase();
 
 export const ehAberta = (status: string) =>
   status.trim().toLowerCase() === STATUS_INICIAL.toLowerCase();
+
+export function proximoStatusOcorrencia(status: string) {
+  if (ehAberta(status)) return STATUS_EM_ANDAMENTO;
+  if (status.trim().toLowerCase() === STATUS_EM_ANDAMENTO.toLowerCase()) {
+    return STATUS_RESOLVIDA;
+  }
+  return null;
+}
 
 function exigirBanco() {
   if (!dbSqlite) throw new Error("O banco local não está disponível nesta plataforma.");
@@ -70,12 +80,8 @@ export const protocoloCurto = (protocolo: string) =>
 const novoProtocolo = () =>
   `HAB-${new Date().getFullYear()}-${randomUUID().slice(0, 6).toUpperCase()}`;
 
-// Ocorrências ativas abertas pelo usuário logado, das mais novas para as mais antigas.
-export async function listarMinhasOcorrencias(): Promise<OcorrenciaResumo[]> {
-  const usuario = sessao.obter();
-  if (!dbSqlite || !usuario) return [];
-
-  return dbSqlite
+function consultarOcorrencias(db: NonNullable<typeof dbSqlite>) {
+  return db
     .select({
       id: ocorrencia.id,
       protocolo: ocorrencia.numeroProtocolo,
@@ -85,6 +91,7 @@ export async function listarMinhasOcorrencias(): Promise<OcorrenciaResumo[]> {
       status: statusOcorrencia.nome,
       corStatus: statusOcorrencia.corIdentificacao,
       criadaEm: ocorrencia.criadaEm,
+      descricao: ocorrencia.descricao,
     })
     .from(ocorrencia)
     .innerJoin(statusOcorrencia, eq(ocorrencia.idStatus, statusOcorrencia.id))
@@ -92,9 +99,77 @@ export async function listarMinhasOcorrencias(): Promise<OcorrenciaResumo[]> {
       categoriaOcorrencia,
       eq(ocorrencia.idCategoria, categoriaOcorrencia.id),
     )
-    .leftJoin(bloco, eq(ocorrencia.idBloco, bloco.id))
+    .leftJoin(bloco, eq(ocorrencia.idBloco, bloco.id));
+}
+
+// Ocorrências ativas abertas pelo usuário logado, das mais novas para as mais antigas.
+export async function listarMinhasOcorrencias(): Promise<OcorrenciaResumo[]> {
+  const usuario = sessao.obter();
+  if (!dbSqlite || !usuario) return [];
+
+  return consultarOcorrencias(dbSqlite)
     .where(and(eq(ocorrencia.idAutor, usuario.id), eq(ocorrencia.ativo, true)))
     .orderBy(desc(ocorrencia.criadaEm));
+}
+
+function exigirSindico() {
+  const usuario = exigirUsuario();
+  if (!usuario.isSindico) throw new Error("Entre como síndico para gerenciar ocorrências.");
+  return usuario;
+}
+
+function ocorrenciasAtivasDoCondominio(idCondominio: string) {
+  return and(eq(ocorrencia.idCondominio, idCondominio), eq(ocorrencia.ativo, true));
+}
+
+export async function listarOcorrenciasDoSindico() {
+  const usuario = exigirSindico();
+  return consultarOcorrencias(exigirBanco())
+    .where(ocorrenciasAtivasDoCondominio(usuario.idCondominio))
+    .orderBy(desc(ocorrencia.criadaEm));
+}
+
+export async function buscarOcorrenciaDoSindico(id: string) {
+  const usuario = exigirSindico();
+  return consultarOcorrencias(exigirBanco())
+    .where(and(eq(ocorrencia.id, id), ocorrenciasAtivasDoCondominio(usuario.idCondominio)))
+    .get() ?? null;
+}
+
+export async function avancarStatusOcorrencia(id: string, statusExibido: string) {
+  const usuario = exigirSindico();
+  const db = exigirBanco();
+  const escopo = and(eq(ocorrencia.id, id), ocorrenciasAtivasDoCondominio(usuario.idCondominio));
+  const atual = db
+    .select({ idStatus: ocorrencia.idStatus, nomeStatus: statusOcorrencia.nome })
+    .from(ocorrencia)
+    .innerJoin(statusOcorrencia, eq(ocorrencia.idStatus, statusOcorrencia.id))
+    .where(escopo)
+    .get();
+  if (!atual) throw new Error("Ocorrência não encontrada.");
+  if (atual.nomeStatus !== statusExibido) {
+    throw new Error("O status já foi atualizado. Confira o novo status da ocorrência.");
+  }
+
+  const proximo = proximoStatusOcorrencia(atual.nomeStatus);
+  if (!proximo) throw new Error("Esta ocorrência não tem um próximo status.");
+  const destino = db
+    .select({ id: statusOcorrencia.id })
+    .from(statusOcorrencia)
+    .where(and(eq(statusOcorrencia.nome, proximo), eq(statusOcorrencia.ativo, true)))
+    .get();
+  if (!destino) {
+    throw new Error(`O status “${proximo}” não está disponível no aparelho. Sincronize e tente novamente.`);
+  }
+
+  const agora = new Date().toISOString();
+  const datas = ehResolvida(proximo) ? { resolvidaEm: agora } : { iniciadaEm: agora };
+  const alterada = db.update(ocorrencia)
+    .set({ idStatus: destino.id, ...datas })
+    .where(and(escopo, eq(ocorrencia.idStatus, atual.idStatus)))
+    .returning({ id: ocorrencia.id })
+    .get();
+  if (!alterada) throw new Error("A ocorrência mudou. Confira o status atual.");
 }
 
 export async function buscarOcorrencia(id: string) {
@@ -202,7 +277,7 @@ export async function atualizarOcorrencia(id: string, dados: OcorrenciaFormulari
   const db = exigirBanco();
   const usuario = exigirUsuario();
 
-  await db
+  const alterada = await db
     .update(ocorrencia)
     .set({
       titulo: dados.titulo.trim(),
@@ -211,7 +286,22 @@ export async function atualizarOcorrencia(id: string, dados: OcorrenciaFormulari
       idApartamento: dados.idApartamento,
       descricao: dados.descricao.trim() || null,
     })
-    .where(and(eq(ocorrencia.id, id), eq(ocorrencia.idAutor, usuario.id)));
+    .where(ocorrenciaAbertaDoAutor(db, id, usuario.id))
+    .returning({ id: ocorrencia.id })
+    .get();
+  if (!alterada) throw new Error("Só é possível editar suas ocorrências abertas.");
+}
+
+function ocorrenciaAbertaDoAutor(db: NonNullable<typeof dbSqlite>, id: string, idAutor: string) {
+  const statusAbertos = db.select({ id: statusOcorrencia.id })
+    .from(statusOcorrencia)
+    .where(sql`lower(trim(${statusOcorrencia.nome})) = ${STATUS_INICIAL.toLowerCase()}`);
+  return and(
+    eq(ocorrencia.id, id),
+    eq(ocorrencia.idAutor, idAutor),
+    eq(ocorrencia.ativo, true),
+    inArray(ocorrencia.idStatus, statusAbertos),
+  );
 }
 
 // Exclusão lógica: a sincronização não propaga DELETE, então só desativa.
@@ -219,8 +309,11 @@ export async function excluirOcorrencia(id: string) {
   const db = exigirBanco();
   const usuario = exigirUsuario();
 
-  await db
+  const alterada = await db
     .update(ocorrencia)
     .set({ ativo: false })
-    .where(and(eq(ocorrencia.id, id), eq(ocorrencia.idAutor, usuario.id)));
+    .where(ocorrenciaAbertaDoAutor(db, id, usuario.id))
+    .returning({ id: ocorrencia.id })
+    .get();
+  if (!alterada) throw new Error("Só é possível excluir suas ocorrências abertas.");
 }

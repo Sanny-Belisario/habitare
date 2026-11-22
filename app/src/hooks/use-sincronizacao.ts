@@ -19,7 +19,7 @@ export function sincronizarAgora() {
 // primeiro plano. `ativo` segura o início até as migrations do SQLite rodarem.
 export function useSincronizacao(ativo: boolean) {
   useEffect(() => {
-    if (!ativo || !dbSqlite) return;
+    if (!ativo || !dbSqlite || !supabase) return;
 
     const sincronizacao = new Sincronizacao(dbSqlite, supabase);
     // Uma rodada lenta (rede ruim) não pode se sobrepor à próxima; um pedido
