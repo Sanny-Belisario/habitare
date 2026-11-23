@@ -5,9 +5,11 @@ import {
   Pressable,
   Keyboard,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useRef, useState, type ComponentRef } from "react";
 import { Link } from "expo-router";
 import { cardLogin } from "@/styles/card-login";
+import { colors } from "@/theme";
 
 interface Dados {
   email: string;
@@ -20,6 +22,7 @@ interface Login {
 export function CardLogin({ acessoLogin }: Login) {
   const [email, setEmail] = useState<string>("");
   const [senha, setSenha] = useState<string>("");
+  const [senhaVisivel, setSenhaVisivel] = useState(false);
   // Campo em foco, para destacar a borda e o rótulo de quem está sendo digitado.
   const [focado, setFocado] = useState<"email" | "senha" | null>(null);
   const emailRef = useRef<ComponentRef<typeof TextInput>>(null);
@@ -63,21 +66,32 @@ export function CardLogin({ acessoLogin }: Login) {
         >
           Senha/Código de acesso:
         </Text>
-        <TextInput
-          ref={senhaRef}
-          placeholder="Digite sua senha ou código de acesso"
-          style={[cardLogin.input, focado === "senha" && cardLogin.inputFocado]}
-          secureTextEntry
-          autoCapitalize="none"
-          autoCorrect={false}
-          autoComplete="password"
-          textContentType="password"
-          returnKeyType="go"
-          onFocus={() => setFocado("senha")}
-          onBlur={() => setFocado((f) => (f === "senha" ? null : f))}
-          onSubmitEditing={entrar}
-          onChangeText={(e) => setSenha(e)}
-        />
+        <View style={cardLogin.campoSenha}>
+          <TextInput
+            ref={senhaRef}
+            placeholder="Digite sua senha ou código de acesso"
+            style={[cardLogin.input, cardLogin.inputSenha, focado === "senha" && cardLogin.inputFocado]}
+            secureTextEntry={!senhaVisivel}
+            autoCapitalize="none"
+            autoCorrect={false}
+            autoComplete="password"
+            textContentType="password"
+            returnKeyType="go"
+            onFocus={() => setFocado("senha")}
+            onBlur={() => setFocado((f) => (f === "senha" ? null : f))}
+            onSubmitEditing={entrar}
+            value={senha}
+            onChangeText={setSenha}
+          />
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={senhaVisivel ? "Ocultar senha ou código de acesso" : "Mostrar senha ou código de acesso"}
+            onPress={() => setSenhaVisivel((visivel) => !visivel)}
+            style={cardLogin.botaoVisibilidadeSenha}
+          >
+            <Ionicons name={senhaVisivel ? "eye-outline" : "eye-off-outline"} size={17} color={colors.muted} />
+          </Pressable>
+        </View>
         <Link asChild href="/pages/auth/esqueci-a-senha">
           <Pressable style={{ width: "90%" }}>
             <Text style={[cardLogin.text, { textAlign: "end" }]}>

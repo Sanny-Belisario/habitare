@@ -29,6 +29,22 @@ export const cardLogin = StyleSheet.create({
     borderColor: "#243B7A",
     backgroundColor: "#F5F8FF",
   },
+  campoSenha: {
+    width: "90%",
+  },
+  inputSenha: {
+    width: "100%",
+    paddingEnd: 44,
+  },
+  botaoVisibilidadeSenha: {
+    position: "absolute",
+    end: 0,
+    top: 0,
+    bottom: 0,
+    width: 44,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   labelFocado: {
     color: "#243B7A",
   },
