@@ -59,24 +59,23 @@ A URL e a publishable key ficam em **Project Settings > API**. O `DATABASE_URL` 
 
    O `as never` em `useMigrations(dbSqlite, migrations as never)` contorna um erro de tipo do Drizzle `rc.5`, que exige um campo `journal` que o próprio `drizzle-kit` não gera. O código de execução ignora esse campo, então o erro é só de TypeScript.
 
-## Consulta de códigos por administradores
+## Consulta de códigos pelo síndico
 
-A consulta exige conexão com o Supabase. O login local continua funcionando, e o app tenta autenticar o síndico no Supabase Auth com o e-mail e a senha informados no login. Use o mesmo e-mail e senha nas duas contas administrativas.
+Os códigos de acesso têm 8 dígitos numéricos e ficam criptografados no Supabase (schema `habitare_privado`, chave no Supabase Vault). O app os acessa pela função `habitare_codigo_morador`, que confere o **e-mail e a senha do síndico** (os mesmos do login do app, comparados com o `senha_hash` sincronizado). Qualquer síndico do condomínio vê o código de qualquer morador do condomínio, em qualquer aparelho, sem conta no Supabase Auth.
 
-1. Aplique a migração `codigos_admin` junto com as migrações do Postgres. Ela usa o Supabase Vault para guardar a chave de criptografia dos códigos.
-2. Em **Authentication → Users**, crie ou confirme a conta do administrador. Copie o UUID do usuário do Auth e confirme o UUID do condomínio que ele administra.
-3. No SQL Editor, vincule os UUIDs verificados. A tabela de autorização fica em um esquema privado e é administrada no servidor.
+1. Aplique as migrações com `npm run db:migrate:postgres`.
+2. Entre no app como síndico e abra **Configurações → Moradores**. O ícone de olho mostra o código.
 
-   ```sql
-   INSERT INTO habitare_privado.administradores_codigo (id_auth, id_condominio)
-   VALUES ('<uuid-do-usuario-no-auth>', '<uuid-do-condominio>');
-   ```
+- A migração `codigos_sindico` gera um código novo para cada morador que tinha só o hash (o bcrypt não pode ser revertido). Os códigos antigos desses moradores deixam de valer.
+- Códigos de moradores novos são guardados no aparelho e enviados ao Supabase depois da sincronização. Sem conexão, o app mostra a cópia do aparelho.
+- O síndico precisa estar sincronizado no Supabase, porque a validação usa o cadastro do servidor.
+- Enquanto as policies `acessoAnonDev` estiverem ativas, qualquer pessoa com a publishable key lê o `senha_hash`. Revise as policies antes de produção.
 
-4. Entre no app com a senha administrativa e abra **Configurações → Moradores**. Em um segundo aparelho sincronizado, o ícone de olho deve exibir o mesmo código.
+## Exclusão de moradores
 
-Códigos de novos moradores são enviados após a sincronização da conta. Um código emitido pela versão anterior pode ser importado ao abrir o olho no aparelho que ainda tem a cópia no SecureStore. Quando só o hash estiver disponível, a geração de um novo código pede confirmação e substitui a credencial anterior.
+A sincronização não propaga `DELETE`, então o app exclui o morador logicamente (`excluido = true`, `status = false`) e cascateia: desativa os vínculos com apartamentos e as ocorrências do morador, marca os comunicados dele como `excluido` e apaga o código de acesso (hash local, cópia no aparelho e registro criptografado no servidor, por trigger).
 
-A autorização é independente do perfil local. Para revogá-la, retire o vínculo de `habitare_privado.administradores_codigo` ou desative a conta correspondente no Supabase Auth.
+As chaves estrangeiras para `usuario` (`morador_apartamento`, `ocorrencia`, `comunicado` e `habitare_privado.codigos_morador`) têm `ON DELETE CASCADE`. Um `DELETE` físico feito direto no banco também remove os registros dependentes.
 
 ## Vendo os dados com o Drizzle Studio
 

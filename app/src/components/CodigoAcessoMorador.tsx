@@ -68,9 +68,9 @@ export function CodigoAcessoMorador({ id, nome, temCodigoAcesso }: Props) {
         mudarVisibilidade(valor);
       } else {
         Alert.alert(
-          temCodigoAcesso ? "Código ainda não disponível no Supabase" : "Gerar código de acesso?",
+          temCodigoAcesso ? "Código não encontrado" : "Gerar código de acesso?",
           temCodigoAcesso
-            ? "Você pode gerar um novo código. O anterior perde a validade à medida que os aparelhos sincronizam."
+            ? "Você pode gerar um novo código. O anterior perde a validade após a sincronização."
             : "O novo código poderá ser usado pelo morador para entrar com o e-mail cadastrado.",
           [
             { text: "Cancelar", style: "cancel" },

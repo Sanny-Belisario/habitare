@@ -1,0 +1,3 @@
+ALTER TABLE "comunicado" DROP CONSTRAINT "comunicado_id_autor_usuario_id_usuario_fkey", ADD CONSTRAINT "comunicado_id_autor_usuario_id_usuario_fkey" FOREIGN KEY ("id_autor") REFERENCES "usuario"("id_usuario") ON DELETE CASCADE;--> statement-breakpoint
+ALTER TABLE "morador_apartamento" DROP CONSTRAINT "morador_apartamento_id_usuario_usuario_id_usuario_fkey", ADD CONSTRAINT "morador_apartamento_id_usuario_usuario_id_usuario_fkey" FOREIGN KEY ("id_usuario") REFERENCES "usuario"("id_usuario") ON DELETE CASCADE;--> statement-breakpoint
+ALTER TABLE "ocorrencia" DROP CONSTRAINT "ocorrencia_id_autor_usuario_id_usuario_fkey", ADD CONSTRAINT "ocorrencia_id_autor_usuario_id_usuario_fkey" FOREIGN KEY ("id_autor") REFERENCES "usuario"("id_usuario") ON DELETE CASCADE;

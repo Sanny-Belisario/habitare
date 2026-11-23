@@ -1,11 +1,13 @@
-import bcrypt from "bcryptjs";
-import { and, asc, desc, eq, exists, inArray, isNotNull, ne } from "drizzle-orm";
+import { and, asc, desc, eq, exists, inArray, isNotNull, isNull, ne, or } from "drizzle-orm";
 import { getRandomBytesAsync } from "expo-crypto";
 
 import { dbSqlite } from "@/db/sqlite";
-import { apartamento, bloco, moradorApartamento, usuario } from "@/db/sqlite/schema";
+import { apartamento, bloco, comunicado, moradorApartamento, ocorrencia, usuario } from "@/db/sqlite/schema";
+import bcrypt from "@/services/bcrypt";
+import { STATUS_EXCLUIDO } from "@/services/comunicado";
 import { guardarCodigoLocal, lerCodigoLocal, removerCodigoLocal } from "@/services/codigo-acesso-local";
 import {
+  acessoRemotoDisponivel,
   codigosPendentes,
   desmarcarCodigoPendente,
   marcarCodigoPendente,
@@ -173,12 +175,10 @@ export async function cadastrarMorador(dados: DadosMorador, sinal?: AbortSignal)
   const { idBloco, idApartamento } = dados;
   if (!idBloco || !idApartamento) throw new Error("Selecione o bloco e o apartamento.");
 
-  const bytes = await getRandomBytesAsync(44);
-  const codigo = hexadecimal(bytes.subarray(0, 12)).toUpperCase();
   // A coluna da senha é obrigatória. A conta começa com acesso somente pelo código.
-  const [senhaHash, codigoHash] = await Promise.all([
-    bcrypt.hash(hexadecimal(bytes.subarray(12)), 10),
-    bcrypt.hash(codigo, 10),
+  const [senhaHash, { codigo, hash: codigoHash }] = await Promise.all([
+    getRandomBytesAsync(32).then((bytes) => bcrypt.hash(hexadecimal(bytes), 10)),
+    gerarCodigoAcesso(),
   ]);
 
   if (sinal?.aborted || sessao.obter() !== sindico) {
@@ -221,39 +221,81 @@ function buscarHashCodigo(db: BancoLocal, id: string, idCondominio: string) {
   return morador.hash;
 }
 
-async function publicarCodigoLocal(id: string, hash: string, sinal?: AbortSignal) {
+async function publicarCodigoLocal(id: string, hash: string) {
   const conta = sessao.obter();
-  if (sinal?.aborted) return null;
   const codigo = await lerCodigoLocal(id, hash);
-  if (sinal?.aborted || sessao.obter() !== conta) return null;
+  if (sessao.obter() !== conta) return;
   if (!codigo) {
     desmarcarCodigoPendente(id);
-    return null;
+    return;
   }
-  const publicado = await operarCodigoRemoto(id, "publicar", { codigo, hash }, sinal);
-  if (publicado) {
-    desmarcarCodigoPendente(id);
-    void removerCodigoLocal(id, hash).catch(() => {});
+  // A cópia local é mantida: o síndico continua vendo o código mesmo sem o Supabase Auth.
+  if (await operarCodigoRemoto(id, "publicar", { codigo, hash })) desmarcarCodigoPendente(id);
+}
+
+const DIGITOS_CODIGO = 8;
+
+// Código só com números. Bytes >= 250 são descartados para cada dígito ter a mesma chance.
+async function gerarCodigoAcesso() {
+  let codigo = "";
+  while (codigo.length < DIGITOS_CODIGO) {
+    for (const byte of await getRandomBytesAsync(16)) {
+      if (byte < 250 && codigo.length < DIGITOS_CODIGO) codigo += String(byte % 10);
+    }
   }
-  return publicado;
+  return { codigo, hash: await bcrypt.hash(codigo, 10) };
 }
 
 export async function consultarCodigoMorador(id: string, sinal?: AbortSignal) {
   const { db, sindico } = exigirGestaoMoradores();
   const hash = buscarHashCodigo(db, id, sindico.idCondominio);
-  const codigo = await operarCodigoRemoto(id, "consultar", undefined, sinal);
-  if (codigo || !hash) return codigo;
-  // Migra os códigos emitidos por versões que guardavam apenas no aparelho.
-  const publicado = await publicarCodigoLocal(id, hash, sinal);
-  return publicado ?? operarCodigoRemoto(id, "consultar", undefined, sinal);
+  if (!hash) return null;
+
+  // O servidor confere o login do síndico e devolve o código, seja qual for o aparelho que o criou.
+  let erroRemoto: unknown = null;
+  if (acessoRemotoDisponivel()) {
+    try {
+      const remoto = await operarCodigoRemoto(id, "consultar", undefined, sinal);
+      if (remoto) return remoto;
+    } catch (erro) {
+      if (sinal?.aborted) throw erro;
+      erroRemoto = erro;
+    }
+  }
+
+  // Sem conexão, ou antes de o código ser publicado, usa a cópia guardada neste aparelho.
+  const local = await lerCodigoLocal(id, hash).catch(() => null);
+  if (sinal?.aborted || sessao.obter() !== sindico) throw new Error("A operação foi interrompida.");
+  if (local) return local;
+  if (erroRemoto) throw erroRemoto;
+  return null;
 }
 
 export async function renovarCodigoMorador(id: string, sinal?: AbortSignal) {
   const { db, sindico } = exigirGestaoMoradores();
   const anterior = buscarHashCodigo(db, id, sindico.idCondominio);
-  const codigo = await operarCodigoRemoto(id, "renovar", undefined, sinal);
-  if (!codigo) throw new Error("O Supabase não retornou o novo código.");
-  desmarcarCodigoPendente(id);
+
+  // Renova no servidor para o novo código valer em todos os aparelhos do síndico.
+  if (acessoRemotoDisponivel()) {
+    const codigo = await operarCodigoRemoto(id, "renovar", undefined, sinal);
+    if (!codigo) throw new Error("O Supabase não retornou o novo código.");
+    desmarcarCodigoPendente(id);
+    if (anterior) void removerCodigoLocal(id, anterior).catch(() => {});
+    return codigo;
+  }
+
+  const { codigo, hash } = await gerarCodigoAcesso();
+  if (sinal?.aborted || sessao.obter() !== sindico) throw new Error("A operação foi interrompida.");
+  // Guarda a cópia antes de trocar o hash, para o código nunca ficar inacessível.
+  await guardarCodigoLocal(id, hash, codigo);
+  const atualizado = db.update(usuario).set({ codigoAcesso: hash })
+    .where(and(moradoresDoCondominio(sindico.idCondominio), eq(usuario.id, id)))
+    .returning({ id: usuario.id }).get();
+  if (!atualizado) {
+    void removerCodigoLocal(id, hash).catch(() => {});
+    throw new Error(mensagemAusente);
+  }
+  marcarCodigoPendente(id);
   if (anterior) void removerCodigoLocal(id, anterior).catch(() => {});
   return codigo;
 }
@@ -319,13 +361,19 @@ export function editarMorador(id: string, dados: DadosMorador) {
 export function excluirMorador(id: string) {
   const { db, sindico } = exigirGestaoMoradores();
   const hash = db.transaction((tx) => {
-    const removido = tx.update(usuario).set({ status: false, excluido: true })
+    // A sincronização não propaga DELETE, então a exclusão é lógica e cascateia
+    // para os registros ligados ao morador. O código de acesso deixa de valer.
+    const removido = tx.update(usuario).set({ status: false, excluido: true, codigoAcesso: null })
       .where(and(moradoresDoCondominio(sindico.idCondominio), eq(usuario.id, id)))
       .returning({ hash: usuario.codigoAcesso }).get();
     if (!removido) throw new Error(mensagemAusente);
 
     const vinculos = buscarVinculos(tx, id);
     tx.update(moradorApartamento).set({ ativo: false }).where(vinculosAtivos(id)).run();
+    tx.update(ocorrencia).set({ ativo: false })
+      .where(and(eq(ocorrencia.idAutor, id), eq(ocorrencia.ativo, true))).run();
+    tx.update(comunicado).set({ status: STATUS_EXCLUIDO })
+      .where(and(eq(comunicado.idAutor, id), or(isNull(comunicado.status), ne(comunicado.status, STATUS_EXCLUIDO)))).run();
     recalcularOcupacao(tx, sindico.idCondominio, vinculos.map((vinculo) => vinculo.idApartamento));
     return removido.hash;
   });
