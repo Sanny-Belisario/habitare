@@ -1,7 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
+import * as Clipboard from "expo-clipboard";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Alert, Animated, AppState, Pressable, StyleSheet, Text, View } from "react-native";
+import { AccessibilityInfo, Alert, Animated, AppState, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { sincronizarAgora } from "@/hooks/use-sincronizacao";
 import { consultarCodigoMorador, renovarCodigoMorador } from "@/services/morador";
@@ -90,6 +91,21 @@ export function CodigoAcessoMorador({ id, nome, temCodigoAcesso }: Props) {
     }
   }
 
+  async function copiarCodigo() {
+    if (!codigo || !emFoco.current) return;
+
+    const copiado = await Clipboard.setStringAsync(codigo, {
+      android: { isSensitive: true },
+    }).catch(() => false);
+    if (!emFoco.current) return;
+
+    if (copiado) {
+      AccessibilityInfo.announceForAccessibility("Código de acesso copiado.");
+    } else {
+      Alert.alert("Não foi possível copiar o código", "Tente novamente.");
+    }
+  }
+
   const valor = codigo ?? (temCodigoAcesso ? "******" : "Não cadastrado");
   const acao = codigo ? "Ocultar" : temCodigoAcesso ? "Mostrar" : "Gerar";
 
@@ -107,10 +123,21 @@ export function CodigoAcessoMorador({ id, nome, temCodigoAcesso }: Props) {
         accessibilityLabel={`${acao} código de acesso de ${nome}`}
         accessibilityState={{ busy: carregando, disabled: carregando }}
         hitSlop={8}
-        style={styles.eye}
+        style={styles.iconButton}
       >
         <Ionicons name={codigo ? "eye-outline" : "eye-off-outline"} size={17} color={colors.muted} />
       </Pressable>
+      {codigo && (
+        <Pressable
+          onPress={copiarCodigo}
+          accessibilityRole="button"
+          accessibilityLabel={`Copiar código de acesso de ${nome}`}
+          hitSlop={8}
+          style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
+        >
+          <Ionicons name="copy-outline" size={17} color={colors.muted} />
+        </Pressable>
+      )}
     </View>
   );
 }
@@ -119,5 +146,6 @@ const styles = StyleSheet.create({
   row: { flexDirection: "row", alignItems: "center", gap: 4, marginTop: 4 },
   value: { flexShrink: 1 },
   text: { color: colors.muted, fontSize: 12 },
-  eye: { minWidth: 28, minHeight: 28, alignItems: "center", justifyContent: "center" },
+  iconButton: { minWidth: 28, minHeight: 28, alignItems: "center", justifyContent: "center" },
+  pressed: { opacity: 0.5 },
 });

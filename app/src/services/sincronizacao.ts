@@ -1,6 +1,6 @@
 import * as schema from "@/db/sqlite/schema";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { getColumns, getTableName, type Column } from "drizzle-orm";
+import { getColumns, getTableName, sql, type Column } from "drizzle-orm";
 import type { SQLiteAsyncDatabase, SQLiteTable } from "drizzle-orm/sqlite-core";
 
 // O banco local chega por parâmetro (e não importado de @/db/sqlite) para a
@@ -153,7 +153,8 @@ export class Sincronizacao {
     t: TabelaSincronizada,
   ): Promise<ResultadoTabela> {
     const nome = getTableName(t.tabela);
-    const colunas = Object.entries(getColumns(t.tabela)) as [string, Column][];
+    const colunasDaTabela = getColumns(t.tabela);
+    const colunas = Object.entries(colunasDaTabela) as [string, Column][];
     const [chave, colunaChave] = colunas.find(([, c]) => c.primary)!;
     const datas = new Set(t.datas);
 
@@ -236,6 +237,13 @@ export class Sincronizacao {
     }
 
     if (paraReceber.length > 0) {
+      const criacao = t.versao && colunasDaTabela[t.versao[0]];
+      const alteracao = t.versao && colunasDaTabela[t.versao[1]];
+      // O registro pode ter sido alterado no aparelho durante a consulta remota.
+      const remotoMaisNovo = criacao && alteracao
+        ? sql`coalesce(${alteracao}, ${criacao}) <
+            coalesce(excluded.${sql.identifier(alteracao.name)}, excluded.${sql.identifier(criacao.name)})`
+        : undefined;
       // Drivers síncronos (expo-sqlite) não aceitam callback async na transação.
       this.local.transaction((tx) => {
         for (const remoto of paraReceber) {
@@ -243,7 +251,7 @@ export class Sincronizacao {
           // atualizadoEm vai explícito para o $onUpdateFn não trocar pela hora atual.
           tx.insert(t.tabela)
             .values(remoto)
-            .onConflictDoUpdate({ target: colunaChave, set: campos })
+            .onConflictDoUpdate({ target: colunaChave, set: campos, setWhere: remotoMaisNovo })
             .run();
         }
       });
