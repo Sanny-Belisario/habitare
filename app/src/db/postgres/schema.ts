@@ -128,7 +128,7 @@ export const moradorApartamento = pgTable.withRLS(
     id: uuid("id_vinculo").primaryKey().defaultRandom(),
     idUsuario: uuid("id_usuario")
       .notNull()
-      .references(() => usuario.id),
+      .references(() => usuario.id, { onDelete: "cascade" }),
     idApartamento: uuid("id_apartamento")
       .notNull()
       .references(() => apartamento.id),
@@ -176,7 +176,7 @@ export const ocorrencia = pgTable.withRLS(
       .references(() => condominio.id),
     idAutor: uuid("id_autor")
       .notNull()
-      .references(() => usuario.id),
+      .references(() => usuario.id, { onDelete: "cascade" }),
     idBloco: uuid("id_bloco").references(() => bloco.id), // local opcional
     idApartamento: uuid("id_apartamento").references(() => apartamento.id), // local opcional
     idCategoria: uuid("id_categoria")
@@ -226,7 +226,7 @@ export const comunicado = pgTable.withRLS(
       .references(() => tipoComunicado.id),
     idAutor: uuid("id_autor")
       .notNull()
-      .references(() => usuario.id),
+      .references(() => usuario.id, { onDelete: "cascade" }),
     titulo: text().notNull(),
     descricao: text(),
     status: text(),

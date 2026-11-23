@@ -1,31 +1,26 @@
-import { criarClienteAdmin } from "@/db/postgres";
+import { supabase } from "@/db/postgres";
 import { sessao, type UsuarioLogado } from "@/services/sessao";
 
-type ClienteAdmin = NonNullable<ReturnType<typeof criarClienteAdmin>>;
-let acesso: { conta: UsuarioLogado; cliente: ClienteAdmin; autenticado: Promise<boolean> } | null = null;
+// Credenciais do síndico, só em memória, usadas pelo servidor para autorizar o acesso aos códigos.
+let acesso: { conta: UsuarioLogado; email: string; senha: string } | null = null;
 
 sessao.inscrever(() => {
   if (acesso && sessao.obter() !== acesso.conta) acesso = null;
 });
 
 export function iniciarAcessoAdministrativo(conta: UsuarioLogado, email: string, senha: string) {
-  const cliente = criarClienteAdmin();
-  if (!cliente) return;
-
-  acesso = {
-    conta,
-    cliente,
-    autenticado: cliente.auth.signInWithPassword({ email, password: senha })
-      .then(({ data, error }) => !!data.session && !error, () => false),
-  };
+  acesso = { conta, email, senha };
 }
 
-async function obterAcessoAdministrativo() {
+export function acessoRemotoDisponivel() {
+  return !!supabase && !!acesso && sessao.obter() === acesso.conta;
+}
+
+function obterAcessoAdministrativo() {
   const atual = acesso;
-  if (!atual || !(await atual.autenticado) || atual !== acesso || sessao.obter() !== atual.conta) {
-    throw new Error("Entre com a senha de administrador cadastrada no Supabase para consultar os códigos.");
-  }
-  return atual;
+  if (!supabase) throw new Error("O Supabase não está configurado neste aplicativo.");
+  if (!atual || sessao.obter() !== atual.conta) throw new Error("Entre novamente como síndico para consultar os códigos.");
+  return { ...atual, cliente: supabase };
 }
 
 export async function operarCodigoRemoto(
@@ -34,9 +29,11 @@ export async function operarCodigoRemoto(
   dados?: { codigo: string; hash: string },
   sinal?: AbortSignal,
 ) {
-  const atual = await obterAcessoAdministrativo();
+  const atual = obterAcessoAdministrativo();
   if (sinal?.aborted) throw new Error("A operação foi interrompida.");
   const consulta = atual.cliente.rpc("habitare_codigo_morador", {
+    p_email: atual.email,
+    p_senha: atual.senha,
     p_id: id,
     p_acao: acao,
     ...(dados ? { p_codigo: dados.codigo, p_hash: dados.hash } : {}),
@@ -44,8 +41,9 @@ export async function operarCodigoRemoto(
   const { data, error } = await (sinal ? consulta.abortSignal(sinal) : consulta);
   if (sinal?.aborted || sessao.obter() !== atual.conta) throw new Error("A operação foi interrompida.");
   if (error) {
-    if (error.code === "42501") throw new Error("Esta conta administrativa não tem acesso ao código deste condomínio.");
-    if (error.code === "PGRST202") throw new Error("O serviço de códigos ainda não foi ativado no Supabase.");
+    if (error.code === "42501") throw new Error("Não foi possível validar o síndico no Supabase. Aguarde a sincronização e tente novamente.");
+    if (error.code === "P0002") throw new Error("Este morador ainda não foi sincronizado. Tente novamente em instantes.");
+    if (error.code === "PGRST202") throw new Error("O serviço de códigos ainda não foi atualizado no Supabase.");
     if (error.code === "22023") throw new Error("A versão local do código ainda não corresponde ao cadastro sincronizado.");
     throw new Error("Não foi possível acessar os códigos no Supabase. Confira a conexão e tente novamente.");
   }
@@ -68,7 +66,7 @@ export function desmarcarCodigoPendente(id: string) {
 
 export function codigosPendentes() {
   const ids: string[] = [];
-  if (!acesso || sessao.obter() !== acesso.conta) return ids;
+  if (!acessoRemotoDisponivel()) return ids;
   for (let i = 0; i < localStorage.length; i += 1) {
     const chave = localStorage.key(i);
     if (chave?.startsWith(prefixo)) ids.push(chave.slice(prefixo.length));

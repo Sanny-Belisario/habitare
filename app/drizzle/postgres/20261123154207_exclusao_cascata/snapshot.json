@@ -1,0 +1,106 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "ed4680c0-e766-45d5-a967-c8d06f8db09a",
+  "prevIds": [
+    "5f62e109-0518-47d1-8aad-1966203ebec4"
+  ],
+  "footprints": [
+    {
+      "statementType": "recreate_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "comunicado"
+      ],
+      "writes": [
+        "s|fk|public.comunicado.comunicado_id_autor_usuario_id_usuario_fkey",
+        "n|fk|public.comunicado.comunicado_id_autor_usuario_id_usuario_fkey",
+        "e|fk|public.comunicado.comunicado_id_autor_usuario_id_usuario_fkey",
+        "n|con|public.comunicado.comunicado_id_autor_usuario_id_usuario_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.comunicado",
+        "n|sch|public",
+        "n|tbl|public.usuario",
+        "n|sch|public",
+        "n|col|public.comunicado.id_autor",
+        "n|col|public.usuario.id_usuario",
+        "e|uniqueness|public.usuario.id_usuario"
+      ],
+      "sqlHash": "2ee9aa52cb2fb4f9"
+    },
+    {
+      "statementType": "recreate_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "morador_apartamento"
+      ],
+      "writes": [
+        "s|fk|public.morador_apartamento.morador_apartamento_id_usuario_usuario_id_usuario_fkey",
+        "n|fk|public.morador_apartamento.morador_apartamento_id_usuario_usuario_id_usuario_fkey",
+        "e|fk|public.morador_apartamento.morador_apartamento_id_usuario_usuario_id_usuario_fkey",
+        "n|con|public.morador_apartamento.morador_apartamento_id_usuario_usuario_id_usuario_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.morador_apartamento",
+        "n|sch|public",
+        "n|tbl|public.usuario",
+        "n|sch|public",
+        "n|col|public.morador_apartamento.id_usuario",
+        "n|col|public.usuario.id_usuario",
+        "e|uniqueness|public.usuario.id_usuario"
+      ],
+      "sqlHash": "7b1a45529f80a021"
+    },
+    {
+      "statementType": "recreate_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "ocorrencia"
+      ],
+      "writes": [
+        "s|fk|public.ocorrencia.ocorrencia_id_autor_usuario_id_usuario_fkey",
+        "n|fk|public.ocorrencia.ocorrencia_id_autor_usuario_id_usuario_fkey",
+        "e|fk|public.ocorrencia.ocorrencia_id_autor_usuario_id_usuario_fkey",
+        "n|con|public.ocorrencia.ocorrencia_id_autor_usuario_id_usuario_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.ocorrencia",
+        "n|sch|public",
+        "n|tbl|public.usuario",
+        "n|sch|public",
+        "n|col|public.ocorrencia.id_autor",
+        "n|col|public.usuario.id_usuario",
+        "e|uniqueness|public.usuario.id_usuario"
+      ],
+      "sqlHash": "f2850a748a36c03d"
+    }
+  ],
+  "deltas": [
+    {
+      "op": "alter",
+      "key": "fks\u0000[\"public\",\"comunicado\",\"comunicado_id_autor_usuario_id_usuario_fkey\"]",
+      "set": {
+        "onDelete": "CASCADE"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "fks\u0000[\"public\",\"morador_apartamento\",\"morador_apartamento_id_usuario_usuario_id_usuario_fkey\"]",
+      "set": {
+        "onDelete": "CASCADE"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "fks\u0000[\"public\",\"ocorrencia\",\"ocorrencia_id_autor_usuario_id_usuario_fkey\"]",
+      "set": {
+        "onDelete": "CASCADE"
+      }
+    }
+  ]
+}

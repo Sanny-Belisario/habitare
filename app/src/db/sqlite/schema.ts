@@ -87,7 +87,7 @@ export const moradorApartamento = sqliteTable("morador_apartamento", {
   id: text("id_vinculo").primaryKey().$defaultFn(novoId),
   idUsuario: text("id_usuario")
     .notNull()
-    .references(() => usuario.id),
+    .references(() => usuario.id, { onDelete: "cascade" }),
   idApartamento: text("id_apartamento")
     .notNull()
     .references(() => apartamento.id),
@@ -123,7 +123,7 @@ export const ocorrencia = sqliteTable("ocorrencia", {
     .references(() => condominio.id),
   idAutor: text("id_autor")
     .notNull()
-    .references(() => usuario.id),
+    .references(() => usuario.id, { onDelete: "cascade" }),
   idBloco: text("id_bloco").references(() => bloco.id),
   idApartamento: text("id_apartamento").references(() => apartamento.id),
   idCategoria: text("id_categoria")
@@ -166,7 +166,7 @@ export const comunicado = sqliteTable("comunicado", {
     .references(() => tipoComunicado.id),
   idAutor: text("id_autor")
     .notNull()
-    .references(() => usuario.id),
+    .references(() => usuario.id, { onDelete: "cascade" }),
   titulo: text().notNull(),
   descricao: text(),
   status: text(),

@@ -1,6 +1,6 @@
 import { dbSqlite } from "@/db/sqlite";
 import { usuario } from "@/db/sqlite/schema";
-import bcrypt from "bcryptjs";
+import bcrypt from "@/services/bcrypt";
 import { eq, sql } from "drizzle-orm";
 import { iniciarAcessoAdministrativo } from "@/services/codigo-acesso-remoto";
 import { sessao } from "./sessao";
@@ -67,7 +67,7 @@ export class Usuario {
         isSindico: user.isSindico,
       };
       sessao.definir(conta);
-      if (conta.isSindico) iniciarAcessoAdministrativo(conta, email.toLowerCase(), data.senha);
+      if (conta.isSindico) iniciarAcessoAdministrativo(conta, user.email, data.senha);
 
       return {
         message: "Login autorizado",

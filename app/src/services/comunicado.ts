@@ -4,7 +4,7 @@ import { dbSqlite } from "@/db/sqlite";
 import { comunicado, tipoComunicado } from "@/db/sqlite/schema";
 import { sessao } from "@/services/sessao";
 
-const STATUS_EXCLUIDO = "excluido";
+export const STATUS_EXCLUIDO = "excluido";
 
 // Aceita avisos antigos que ainda não têm status.
 export const comunicadoNaoExcluido = or(
