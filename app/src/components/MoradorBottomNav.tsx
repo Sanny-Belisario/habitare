@@ -50,7 +50,7 @@ export function MoradorBottomNav({ active }: MoradorBottomNavProps) {
           >
             <Ionicons
               name={item.icon}
-              size={17}
+              size={22}
               color={selected ? colors.primary : colors.muted}
             />
             <Text
@@ -70,33 +70,35 @@ export function MoradorBottomNav({ active }: MoradorBottomNavProps) {
 
 const styles = StyleSheet.create({
   bottomNav: {
-    minHeight: 52,
-    paddingHorizontal: 26,
-    paddingVertical: 5,
-    borderTopWidth: StyleSheet.hairlineWidth,
+    paddingHorizontal: 8,
+    paddingVertical: 10,
+    borderTopWidth: 1,
     borderTopColor: "#E6EBF2",
     backgroundColor: colors.card,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "space-around",
   },
   navigationItem: {
-    minWidth: 58,
-    height: 38,
-    paddingHorizontal: 8,
-    borderRadius: 10,
+    minWidth: 76,
+    flexShrink: 1,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
-    gap: 1,
   },
   navigationItemSelected: {
     backgroundColor: colors.navActive,
   },
   navigationLabel: {
     color: colors.muted,
-    fontSize: 7,
+    fontSize: 11,
+    marginTop: 4,
+    textAlign: "center",
   },
   navigationLabelSelected: {
     color: colors.primary,
+    fontWeight: "700",
   },
 });
