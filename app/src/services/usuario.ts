@@ -1,12 +1,17 @@
 import { dbSqlite } from "@/db/sqlite";
 import { usuario } from "@/db/sqlite/schema";
 import bcrypt from "bcryptjs";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
+import { iniciarAcessoAdministrativo } from "@/services/codigo-acesso-remoto";
 import { sessao } from "./sessao";
 
 interface Login {
   email: string;
   senha: string;
+}
+
+export function emailNormalizadoIgual(email: string) {
+  return sql`lower(trim(${usuario.email})) = ${email.trim().toLowerCase()}`;
 }
 
 export class Usuario {
@@ -26,10 +31,13 @@ export class Usuario {
       };
     }
 
-    const [user] = await dbSqlite
+    const email = data.email.trim();
+    const [contaExata] = await dbSqlite
       .select()
       .from(usuario)
-      .where(eq(usuario.email, data.email.trim()));
+      .where(eq(usuario.email, email));
+    const user = contaExata ?? dbSqlite.select().from(usuario)
+      .where(emailNormalizadoIgual(email)).get();
 
     if (!user) {
       return {
@@ -45,19 +53,21 @@ export class Usuario {
         (await bcrypt.compare(data.senha, user.codigoAcesso)));
 
     if (verify) {
-      if (!user.status) {
+      if (!user.status || user.excluido) {
         return {
           message: "Usuário inativo. Procure o síndico do condomínio.",
           sucesso: false,
         };
       }
 
-      sessao.definir({
+      const conta = {
         id: user.id,
         nome: user.nome,
         idCondominio: user.idCondominio,
         isSindico: user.isSindico,
-      });
+      };
+      sessao.definir(conta);
+      if (conta.isSindico) iniciarAcessoAdministrativo(conta, email.toLowerCase(), data.senha);
 
       return {
         message: "Login autorizado",

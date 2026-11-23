@@ -28,7 +28,7 @@ export function navegarPelaBarra(key: NavKey) {
       isSindico ? '/pages/home/inicio-sindico' : '/pages/home/inicio-morador',
     );
   } else if (key === 'configuracoes') {
-    router.replace('/pages/configuracoes');
+    router.replace({ pathname: '/pages/configuracoes', params: { aba: 'blocos' } });
   } else if (key === 'comunicados') {
     router.replace(
       isSindico ? '/pages/home/comunicados-sindico' : '/pages/home/comunicados-morador',

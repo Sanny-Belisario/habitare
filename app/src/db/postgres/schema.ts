@@ -83,6 +83,7 @@ export const usuario = pgTable.withRLS(
     codigoAcesso: text("codigo_acesso_hash"),
     telefone: text(),
     status: boolean().notNull().default(true),
+    excluido: boolean().notNull().default(false),
     isSindico: boolean("is_sindico").notNull().default(false),
     criadoEm: criadoEm(),
     atualizadoEm: atualizadoEm(),

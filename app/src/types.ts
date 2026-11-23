@@ -9,6 +9,7 @@ export interface Bloco {
 
 export interface Apartamento {
   id: string;
+  idBloco: string;
   numero: string;
   bloco: string;
   ocupado: boolean;
@@ -17,8 +18,8 @@ export interface Apartamento {
 export interface Morador {
   id: string;
   nome: string;
-  bloco: string;
-  apartamento: string;
-  codigo: string;
+  bloco: string | null;
+  apartamento: string | null;
   ativo: boolean;
+  temCodigoAcesso: boolean;
 }

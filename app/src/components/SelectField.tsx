@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { estilosCampo } from "@/styles/campos-formulario";
 import { colors } from "@/theme";
 
 export interface OpcaoSelect {
@@ -49,20 +50,20 @@ export function SelectField({
   };
 
   return (
-    <View style={styles.group}>
-      <Text style={styles.label}>
+    <View style={estilosCampo.grupo}>
+      <Text style={estilosCampo.rotulo}>
         {label}
-        {obrigatorio ? <Text style={styles.required}> *</Text> : null}
+        {obrigatorio ? <Text style={estilosCampo.obrigatorio}> *</Text> : null}
       </Text>
       <TouchableOpacity
-        style={[styles.input, desabilitado && styles.inputDisabled]}
+        style={[estilosCampo.controle, styles.input, desabilitado && styles.inputDisabled]}
         onPress={() => setAberto(true)}
         disabled={desabilitado}
         activeOpacity={0.8}
         accessibilityRole="button"
         accessibilityLabel={`${label}: ${selecionada?.nome ?? placeholder}`}
       >
-        <Text style={selecionada ? styles.value : styles.placeholder}>
+        <Text style={[estilosCampo.texto, styles.inputText, !selecionada && styles.placeholder]}>
           {selecionada?.nome ?? placeholder}
         </Text>
         <Ionicons name="chevron-down" size={14} color={colors.muted} />
@@ -123,21 +124,14 @@ export function SelectField({
 }
 
 const styles = StyleSheet.create({
-  group: { gap: 8 },
-  label: { fontSize: 14, fontWeight: "700", color: colors.dark },
-  required: { color: "#D64242" },
   input: {
-    minHeight: 48,
-    borderRadius: 12,
-    backgroundColor: colors.card,
-    paddingHorizontal: 14,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    gap: 8,
   },
   inputDisabled: { opacity: 0.55 },
-  placeholder: { fontSize: 13, color: colors.muted },
-  value: { fontSize: 14, color: colors.dark },
+  inputText: { flex: 1 },
+  placeholder: { color: colors.muted },
   backdrop: {
     flex: 1,
     justifyContent: "flex-end",

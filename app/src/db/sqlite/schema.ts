@@ -42,6 +42,7 @@ export const usuario = sqliteTable("usuario", {
   codigoAcesso: text("codigo_acesso_hash"),
   telefone: text(),
   status: integer({ mode: "boolean" }).notNull().default(true),
+  excluido: integer({ mode: "boolean" }).notNull().default(false),
   isSindico: integer("is_sindico", { mode: "boolean" })
     .notNull()
     .default(false),

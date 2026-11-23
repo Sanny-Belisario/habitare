@@ -1,276 +1,238 @@
-import { SafeAreaView } from "react-native-safe-area-context";
-import { MenuConta } from "@/components/MenuConta";
-import { router } from "expo-router";
+import { Redirect, router, useLocalSearchParams } from "expo-router";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
-  Alert,
-  Pressable,
+  Keyboard,
+  KeyboardAvoidingView,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from "react-native";
-import { navegarPelaBarra } from "@/components/BottomNav";
-import type { NavKey } from "@/types";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-const fields = [
-  { label: "Nome Completo", placeholder: "Informe o nome do novo morador" },
-  { label: "E-mail", placeholder: "Informe o e-mail do morador" },
-  { label: "Telefone", placeholder: "Informe o telefone do morador" },
-  { label: "Bloco", placeholder: "Selecione um bloco", dropdown: true },
-  {
-    label: "Apartamento",
-    placeholder: "Selecione um apartamento",
-    dropdown: true,
-  },
-];
+import BottomNav from "@/components/BottomNav";
+import { CampoTexto } from "@/components/CampoTexto";
+import PrimaryButton from "@/components/PrimaryButton";
+import { SelectField } from "@/components/SelectField";
+import { SindicoHeader } from "@/components/SindicoHeader";
+import { useConsultaLocal } from "@/hooks/use-consulta-local";
+import { useSessao } from "@/hooks/use-sessao";
+import { sincronizarAgora } from "@/hooks/use-sincronizacao";
+import { listarApartamentos, TABELAS_APARTAMENTOS, tituloApartamento } from "@/services/apartamento";
+import { listarBlocos } from "@/services/bloco";
+import { buscarMoradorParaEdicao, cadastrarMorador, editarMorador, TABELAS_MORADORES } from "@/services/morador";
+import { estilosCampo } from "@/styles/campos-formulario";
+import { colors } from "@/theme";
 
-const navigationItems = [
-  { label: "Início", icon: "⌂" },
-  { label: "Comunicados", icon: "≡" },
-  { label: "Ocorrências", icon: "□" },
-  { label: "Configurações", icon: "⚙", selected: true },
-];
+const listaMoradores = {
+  pathname: "/pages/configuracoes",
+  params: { aba: "moradores" },
+} as const;
+
+type MoradorEdicao = NonNullable<Awaited<ReturnType<typeof buscarMoradorParaEdicao>>>;
+
+function voltar() {
+  router.dismissTo(listaMoradores);
+}
 
 export default function NovoMorador() {
-  function navegar(label: string) {
-    const chaves: Record<string, NavKey> = {
-      Início: "inicio",
-      Comunicados: "comunicados",
-      Ocorrências: "ocorrencias",
-      Configurações: "configuracoes",
-    };
-    navegarPelaBarra(chaves[label]);
-  }
+  const { id } = useLocalSearchParams<{ id?: string }>();
+  const usuario = useSessao();
+  if (!usuario) return <Redirect href="/pages/auth/login" />;
+  if (!usuario.isSindico) return <Redirect href={listaMoradores} />;
+
+  return id === undefined
+    ? <FormularioMorador key={usuario.id} />
+    : <EdicaoMorador key={`${usuario.id}/${id}`} id={id} />;
+}
+
+function EdicaoMorador({ id }: { id: string }) {
+  const { dados: morador, carregando, erro } = useConsultaLocal(
+    () => buscarMoradorParaEdicao(id), TABELAS_MORADORES, null, [id],
+  );
+  if (morador) return <FormularioMorador morador={morador} />;
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
-      <View style={styles.screen}>
-        <ScrollView
-          style={styles.scroll}
-          contentContainerStyle={styles.content}
-          showsVerticalScrollIndicator={false}
-        >
-          <Text style={styles.brand}>HABITARE / CONDOMÍNIO AURORA</Text>
+    <TelaMorador titulo="Editar morador">
+      <Text style={styles.subtitle}>
+        {carregando ? "Carregando morador..." : erro ?? "Morador não encontrado."}
+      </Text>
+    </TelaMorador>
+  );
+}
 
-          <View style={styles.topRow}>
-            <Pressable
-              style={styles.backRow}
-              onPress={() => router.replace("/pages/configuracoes")}
-              accessibilityRole="button"
-            >
-              <Text style={styles.backArrow}>←</Text>
-              <Text style={styles.backText}>Voltar</Text>
-            </Pressable>
-            <MenuConta />
+function FormularioMorador({ morador }: { morador?: MoradorEdicao }) {
+  const [nome, setNome] = useState(morador?.nome ?? "");
+  const [email, setEmail] = useState(morador?.email ?? "");
+  const [telefone, setTelefone] = useState(morador?.telefone ?? "");
+  const [idBloco, setIdBloco] = useState<string | null>(morador?.idBloco ?? null);
+  const [idApartamento, setIdApartamento] = useState<string | null>(morador?.idApartamento ?? null);
+  const [salvando, setSalvando] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
+  const [acesso, setAcesso] = useState<Awaited<ReturnType<typeof cadastrarMorador>> | null>(null);
+  const pendente = useRef<AbortController | null>(null);
+  useEffect(() => () => pendente.current?.abort(), []);
+
+  const { dados: blocos, carregando: carregandoBlocos, erro: erroBlocos } = useConsultaLocal(
+    listarBlocos, ["bloco"], [],
+  );
+  const { dados: apartamentos, carregando: carregandoApartamentos, erro: erroApartamentos } = useConsultaLocal(
+    listarApartamentos, TABELAS_APARTAMENTOS, [],
+  );
+  const opcoesApartamentos = apartamentos
+    .filter((apartamento) => apartamento.idBloco === idBloco)
+    .map((apartamento) => ({ id: apartamento.id, nome: tituloApartamento(apartamento.numero) }));
+
+  async function salvar() {
+    if (pendente.current || acesso) return;
+    const pedido = new AbortController();
+    pendente.current = pedido;
+    setSalvando(true);
+    setErro(null);
+    Keyboard.dismiss();
+    try {
+      const dados = { nome, email, telefone, idBloco, idApartamento };
+      if (morador) {
+        editarMorador(morador.id, dados);
+        void sincronizarAgora();
+        voltar();
+        return;
+      }
+      const resultado = await cadastrarMorador(dados, pedido.signal);
+      if (pedido.signal.aborted) return;
+      setAcesso(resultado);
+      void sincronizarAgora();
+    } catch (falha) {
+      if (!pedido.signal.aborted) {
+        setErro(falha instanceof Error ? falha.message : "Não foi possível salvar o morador.");
+      }
+    } finally {
+      pendente.current = null;
+      if (!pedido.signal.aborted) setSalvando(false);
+    }
+  }
+
+  const falha = erro ?? erroBlocos ?? erroApartamentos;
+
+  const titulo = morador ? "Editar morador" : acesso ? "Morador cadastrado" : "Novo morador";
+  const rotuloSalvar = morador ? "Salvar alterações" : "Cadastrar morador";
+
+  return (
+    <TelaMorador titulo={titulo}>
+      {acesso ? (
+        <>
+          <Text style={styles.subtitle}>
+            O morador entra com o e-mail e o código abaixo. {acesso.codigoGuardado
+              ? "O código ficará disponível na lista de moradores após a sincronização."
+              : "Guarde o código antes de sair desta tela."}
+          </Text>
+          <View style={styles.accessCard}>
+            <Text style={estilosCampo.rotulo}>E-mail</Text>
+            <Text style={[estilosCampo.texto, styles.accessValue]} selectable>{acesso.email}</Text>
+            <Text style={estilosCampo.rotulo}>Código de acesso</Text>
+            <Text style={styles.code} selectable>{acesso.codigo}</Text>
           </View>
-
-          <Text style={styles.title}>Novo morador</Text>
-          <Text style={styles.subtitle}>Preencha o campo abaixo.</Text>
-
+          <PrimaryButton title="Concluir" onPress={voltar} />
+        </>
+      ) : (
+        <>
+          <Text style={styles.subtitle}>Preencha os campos abaixo.</Text>
           <View style={styles.form}>
-            {fields.map((field) => (
-              <View key={field.label} style={styles.fieldGroup}>
-                <Text style={styles.label}>
-                  {field.label}
-                  <Text style={styles.required}> *</Text>
-                </Text>
-                <View style={styles.input}>
-                  <Text style={styles.placeholder}>{field.placeholder}</Text>
-                  {field.dropdown ? (
-                    <Text style={styles.dropdownMark}>⌄</Text>
-                  ) : null}
-                </View>
-              </View>
-            ))}
+            <CampoTexto
+              label="Nome completo"
+              obrigatorio
+              value={nome}
+              onChangeText={setNome}
+              autoCapitalize="words"
+              autoComplete="name"
+              editable={!salvando}
+              placeholder="Informe o nome do morador"
+            />
+            <CampoTexto
+              label="E-mail"
+              obrigatorio
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+              autoComplete="email"
+              keyboardType="email-address"
+              autoCorrect={false}
+              editable={!salvando}
+              placeholder="Informe o e-mail do morador"
+            />
+            <CampoTexto
+              label="Telefone"
+              obrigatorio={!morador}
+              value={telefone}
+              onChangeText={setTelefone}
+              autoComplete="tel"
+              keyboardType="phone-pad"
+              editable={!salvando}
+              placeholder="Informe o telefone do morador"
+            />
+            <SelectField
+              label="Bloco"
+              placeholder={carregandoBlocos ? "Carregando blocos..." : "Selecione um bloco"}
+              opcoes={blocos}
+              valor={idBloco}
+              onChange={(id) => {
+                if (id === idBloco) return;
+                setIdBloco(id);
+                setIdApartamento(null);
+                setErro(null);
+              }}
+              obrigatorio={!morador}
+              desabilitado={salvando || carregandoBlocos}
+              vazio="Nenhum bloco ativo no condomínio."
+            />
+            <SelectField
+              label="Apartamento"
+              placeholder={idBloco ? "Selecione um apartamento" : "Selecione um bloco primeiro"}
+              opcoes={opcoesApartamentos}
+              valor={idApartamento}
+              onChange={(id) => {
+                setIdApartamento(id);
+                setErro(null);
+              }}
+              obrigatorio={!morador || !!idBloco}
+              desabilitado={salvando || carregandoApartamentos || !idBloco}
+              vazio="Nenhum apartamento ativo neste bloco."
+            />
+            {falha ? <Text style={styles.error} accessibilityLiveRegion="polite">{falha}</Text> : null}
+            <PrimaryButton
+              title={salvando ? "Salvando..." : rotuloSalvar}
+              onPress={salvar}
+              disabled={salvando || carregandoBlocos || carregandoApartamentos}
+            />
           </View>
+        </>
+      )}
+    </TelaMorador>
+  );
+}
 
-          <Pressable
-            style={styles.submitButton}
-            onPress={() =>
-              Alert.alert(
-                "Cadastro não implementado",
-                "Este formulário está disponível apenas para conferência visual.",
-              )
-            }
-            accessibilityRole="button"
-          >
-            <Text style={styles.submitText}>Cadastrar morador</Text>
-          </Pressable>
+function TelaMorador({ titulo, children }: { titulo: string; children: ReactNode }) {
+  return (
+    <SafeAreaView style={styles.screen} edges={["top", "bottom"]}>
+      <KeyboardAvoidingView behavior="padding" style={styles.body}>
+        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+          <SindicoHeader titulo={titulo} onVoltar={voltar} />
+          {children}
         </ScrollView>
-
-        <View style={styles.bottomBar}>
-          {navigationItems.map((item) => (
-            <Pressable
-              key={item.label}
-              style={[
-                styles.navigationItem,
-                item.selected && styles.selectedItem,
-              ]}
-              onPress={() => navegar(item.label)}
-              accessibilityRole="button"
-            >
-              <Text
-                style={[
-                  styles.navigationIcon,
-                  item.selected && styles.selectedText,
-                ]}
-              >
-                {item.icon}
-              </Text>
-              <Text
-                style={[
-                  styles.navigationLabel,
-                  item.selected && styles.selectedText,
-                ]}
-                numberOfLines={1}
-              >
-                {item.label}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
-      </View>
+        <BottomNav active="configuracoes" />
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#F4F7FA",
-  },
-  screen: {
-    flex: 1,
-    backgroundColor: "#F4F7FA",
-  },
-  scroll: {
-    flex: 1,
-  },
-  content: {
-    paddingHorizontal: 18,
-    paddingTop: 10,
-    paddingBottom: 22,
-  },
-  brand: {
-    color: "#263B50",
-    fontSize: 7,
-    fontWeight: "700",
-    letterSpacing: 0.1,
-  },
-  topRow: {
-    height: 36,
-    marginTop: 7,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  backRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 7,
-  },
-  backArrow: {
-    color: "#8393A3",
-    fontSize: 19,
-    lineHeight: 22,
-  },
-  backText: {
-    color: "#8393A3",
-    fontSize: 9,
-  },
-  title: {
-    color: "#1E3348",
-    fontSize: 19,
-    lineHeight: 23,
-    fontWeight: "700",
-    marginTop: -1,
-  },
-  subtitle: {
-    color: "#7D8C9C",
-    fontSize: 9,
-    marginTop: 14,
-    marginBottom: 11,
-  },
-  form: {
-    gap: 9,
-  },
-  fieldGroup: {
-    gap: 6,
-  },
-  label: {
-    color: "#172D40",
-    fontSize: 9,
-    lineHeight: 11,
-    fontWeight: "700",
-  },
-  required: {
-    color: "#D64242",
-  },
-  input: {
-    height: 36,
-    borderRadius: 9,
-    backgroundColor: "#FFFFFF",
-    paddingHorizontal: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  placeholder: {
-    color: "#8897A6",
-    fontSize: 8,
-  },
-  dropdownMark: {
-    color: "#6F8091",
-    fontSize: 13,
-    marginRight: 1,
-  },
-  submitButton: {
-    height: 36,
-    marginTop: 13,
-    borderRadius: 9,
-    backgroundColor: "#2B4183",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  submitText: {
-    color: "#FFFFFF",
-    fontSize: 9,
-    fontWeight: "700",
-  },
-  bottomBar: {
-    minHeight: 48,
-    backgroundColor: "#FFFFFF",
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: "#E6EBF0",
-    paddingHorizontal: 8,
-    paddingVertical: 5,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  navigationItem: {
-    minWidth: 42,
-    height: 35,
-    paddingHorizontal: 5,
-    borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 1,
-    flex: 1,
-  },
-  selectedItem: {
-    backgroundColor: "#DFEAF1",
-  },
-  navigationIcon: {
-    color: "#536B82",
-    fontSize: 13,
-    lineHeight: 15,
-  },
-  navigationLabel: {
-    color: "#7B8998",
-    fontSize: 6,
-  },
-  selectedText: {
-    color: "#29447F",
-  },
+  screen: { flex: 1, backgroundColor: colors.background },
+  body: { flex: 1 },
+  content: { padding: 20 },
+  subtitle: { color: colors.muted, fontSize: 14, marginTop: 18, marginBottom: 16 },
+  form: { gap: 16 },
+  accessCard: { backgroundColor: colors.card, padding: 16, borderRadius: 12, gap: 8, marginBottom: 16 },
+  accessValue: { marginBottom: 8 },
+  code: { color: colors.primary, fontSize: 16, fontWeight: "700" },
+  error: { color: colors.trash, fontSize: 13 },
 });

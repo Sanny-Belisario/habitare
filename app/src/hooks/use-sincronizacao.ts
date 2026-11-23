@@ -3,6 +3,7 @@ import { AppState } from "react-native";
 
 import { supabase } from "@/db/postgres";
 import { dbSqlite } from "@/db/sqlite";
+import { publicarCodigosPendentes } from "@/services/morador";
 import { Sincronizacao } from "@/services/sincronizacao";
 
 const INTERVALO_MS = 30_000;
@@ -37,7 +38,7 @@ export function useSincronizacao(ativo: boolean) {
       try {
         do {
           pendente = false;
-          const resultado = await sincronizacao.sincronizar();
+          const resultado = await sincronizacao.sincronizar().finally(publicarCodigosPendentes);
           const alteradas = Object.entries(resultado).filter(
             ([, r]) => r.enviados > 0 || r.recebidos > 0,
           );

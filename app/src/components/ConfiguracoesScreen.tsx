@@ -1,48 +1,44 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
   ScrollView,
-  TouchableOpacity,
   Alert,
   StyleSheet,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
+
+import { useConsultaLocal } from '@/hooks/use-consulta-local';
+import { useSessao } from '@/hooks/use-sessao';
+import { sincronizarAgora } from '@/hooks/use-sincronizacao';
+import { excluirApartamento, listarApartamentos, TABELAS_APARTAMENTOS, tituloApartamento } from '@/services/apartamento';
+import { excluirBloco, listarBlocos } from '@/services/bloco';
+import { excluirMorador, listarMoradores, TABELAS_MORADORES } from '@/services/morador';
 
 import { colors } from '../theme';
-import type { Apartamento, Bloco, Morador, TabKey } from '../types';
+import type { TabKey } from '../types';
 import ConfigHeader from '../components/ConfigHeader';
 import ConfigTabs from '../components/ConfigTabs';
 import PrimaryButton from '../components/PrimaryButton';
 import StatusBadge from '../components/StatusBadge';
 import CardActions from '../components/CardActions';
 import BottomNav from '../components/BottomNav';
-
-const BLOCOS_INICIAIS: Bloco[] = [
-  { id: 'b1', nome: 'Bloco A' },
-  { id: 'b2', nome: 'Bloco B' },
-  { id: 'b3', nome: 'Bloco C' },
-];
-
-const APARTAMENTOS_INICIAIS: Apartamento[] = [
-  { id: 'a1', numero: '201', bloco: 'Bloco C', ocupado: false },
-  { id: 'a2', numero: '304', bloco: 'Bloco A', ocupado: true },
-  { id: 'a3', numero: '202', bloco: 'Bloco C', ocupado: false },
-];
-
-const MORADORES_INICIAIS: Morador[] = [
-  { id: 'm1', nome: 'João Luís', bloco: 'Bloco A', apartamento: '304', codigo: '482913', ativo: true },
-  { id: 'm2', nome: 'Luísa Moraes', bloco: 'Bloco C', apartamento: '201', codigo: '731045', ativo: false },
-];
+import { MoradorCard } from '../components/MoradorCard';
 
 export default function ConfiguracoesScreen() {
-  const [tab, setTab] = useState<TabKey>('apartamentos');
-  const [blocos, setBlocos] = useState<Bloco[]>(BLOCOS_INICIAIS);
-  const [apartamentos, setApartamentos] = useState<Apartamento[]>(APARTAMENTOS_INICIAIS);
-  const [moradores, setMoradores] = useState<Morador[]>(MORADORES_INICIAIS);
-  const [codigosVisiveis, setCodigosVisiveis] = useState<Record<string, boolean>>({});
+  const { aba } = useLocalSearchParams<{ aba?: TabKey }>();
+  const tab = aba === 'blocos' || aba === 'moradores' ? aba : 'apartamentos';
+  const usuario = useSessao();
+  const { dados: blocos, carregando: carregandoBlocos, erro: erroBlocos } = useConsultaLocal(
+    listarBlocos, ['bloco'], [], [usuario?.idCondominio],
+  );
+  const { dados: apartamentos, carregando: carregandoApartamentos, erro: erroApartamentos } = useConsultaLocal(
+    listarApartamentos, TABELAS_APARTAMENTOS, [], [usuario?.idCondominio],
+  );
+  const { dados: moradores, carregando: carregandoMoradores, erro: erroMoradores } = useConsultaLocal(
+    listarMoradores, TABELAS_MORADORES, [], [usuario?.id],
+  );
 
   const confirmarExclusao = (titulo: string, onConfirm: () => void) => {
     Alert.alert('Excluir', `Deseja excluir ${titulo}?`, [
@@ -51,103 +47,114 @@ export default function ConfiguracoesScreen() {
     ]);
   };
 
-  const editar = (titulo: string) =>
-    Alert.alert('Editar', `Aqui abrirá a edição de ${titulo}.`);
-
-  const adicionar = (item: string) =>
-    Alert.alert('Adicionar', `Aqui abrirá o cadastro de ${item}.`);
-
-  const alternarCodigo = (id: string) =>
-    setCodigosVisiveis((prev) => ({ ...prev, [id]: !prev[id] }));
+  function executarExclusao(excluir: () => void) {
+    try {
+      excluir();
+      void sincronizarAgora();
+    } catch (falha) {
+      Alert.alert(
+        'Não foi possível excluir',
+        falha instanceof Error ? falha.message : 'Tente novamente.',
+      );
+    }
+  }
 
   const renderBlocos = () => (
     <>
-      <PrimaryButton title="Adicionar novo bloco" onPress={() => adicionar('bloco')} />
+      {usuario?.isSindico ? (
+        <PrimaryButton
+          title="Adicionar novo bloco"
+          onPress={() => router.push('/pages/novo-bloco')}
+        />
+      ) : null}
       {blocos.map((b) => (
         <View key={b.id} style={styles.card}>
           <Text style={styles.cardTitle}>{b.nome}</Text>
-          <CardActions
-            onEdit={() => editar(b.nome)}
-            onDelete={() =>
-              confirmarExclusao(b.nome, () =>
-                setBlocos((lista) => lista.filter((x) => x.id !== b.id))
-              )
-            }
-          />
+          {usuario?.isSindico ? (
+            <CardActions
+              editLabel={`Editar ${b.nome}`}
+              deleteLabel={`Excluir ${b.nome}`}
+              onEdit={() => router.push({ pathname: '/pages/novo-bloco', params: { id: b.id } })}
+              onDelete={() =>
+                confirmarExclusao(`o bloco “${b.nome}”`, () => executarExclusao(() => excluirBloco(b.id)))
+              }
+            />
+          ) : null}
         </View>
       ))}
+      {blocos.length === 0 ? (
+        <Text style={styles.empty}>
+          {carregandoBlocos ? 'Carregando blocos...' : erroBlocos ?? 'Nenhum bloco cadastrado.'}
+        </Text>
+      ) : null}
     </>
   );
 
   const renderApartamentos = () => (
     <>
-      <PrimaryButton
-        title="Adicionar novo apartamento"
-        onPress={() => adicionar('apartamento')}
-      />
-      {apartamentos.map((a) => (
-        <View key={a.id} style={styles.card}>
-          <StatusBadge
-            label={a.ocupado ? 'Ocupado' : 'Livre'}
-            variant={a.ocupado ? 'danger' : 'success'}
-          />
-          <Text style={styles.cardTitle}>Apartamento {a.numero}</Text>
-          <Text style={styles.cardSub}>{a.bloco}</Text>
-          <CardActions
-            onEdit={() => editar(`Apartamento ${a.numero}`)}
-            onDelete={() =>
-              confirmarExclusao(`o Apartamento ${a.numero}`, () =>
-                setApartamentos((lista) => lista.filter((x) => x.id !== a.id))
-              )
-            }
-          />
-        </View>
-      ))}
-    </>
-  );
-
-  const renderMoradores = () => (
-    <>
-      <PrimaryButton
-        title="Adicionar novo morador"
-        onPress={() => router.navigate('/pages/morador/novo-morador')}
-      />
-      {moradores.map((m) => {
-        const visivel = !!codigosVisiveis[m.id];
+      {usuario?.isSindico ? (
+        <PrimaryButton
+          title="Adicionar novo apartamento"
+          onPress={() => router.push('/pages/novo-apartamento')}
+        />
+      ) : null}
+      {apartamentos.map((a) => {
+        const titulo = tituloApartamento(a.numero);
         return (
-          <View key={m.id} style={styles.card}>
+          <View key={a.id} style={styles.card}>
             <StatusBadge
-              label={m.ativo ? 'Ativo' : 'Inativo'}
-              variant={m.ativo ? 'success' : 'danger'}
+              label={a.ocupado ? 'Ocupado' : 'Livre'}
+              variant={a.ocupado ? 'danger' : 'success'}
             />
-            <Text style={styles.cardTitle}>{m.nome}</Text>
-            <Text style={styles.cardSub}>
-              {m.bloco} • Apartamento {m.apartamento}
-            </Text>
-            <View style={styles.codigoRow}>
-              <Text style={styles.cardSub}>
-                Código de Acesso: {visivel ? m.codigo : '******'}
-              </Text>
-              <TouchableOpacity onPress={() => alternarCodigo(m.id)} hitSlop={8}>
-                <Ionicons
-                  name={visivel ? 'eye-outline' : 'eye-off-outline'}
-                  size={16}
-                  color={colors.muted}
-                />
-              </TouchableOpacity>
-            </View>
-            <CardActions
-              onEdit={() => editar(m.nome)}
-              onDelete={() =>
-                confirmarExclusao(m.nome, () =>
-                  setMoradores((lista) => lista.filter((x) => x.id !== m.id))
-                )
-              }
-            />
+            <Text style={[styles.cardTitle, styles.titleWithBadge]}>{titulo}</Text>
+            <Text style={styles.cardSub}>{a.bloco}</Text>
+            {usuario?.isSindico ? (
+              <CardActions
+                editLabel={`Editar ${titulo}, ${a.bloco}`}
+                deleteLabel={`Excluir ${titulo}, ${a.bloco}`}
+                onEdit={() => router.push({ pathname: '/pages/novo-apartamento', params: { id: a.id } })}
+                onDelete={() => confirmarExclusao(
+                  `“${titulo}” do bloco “${a.bloco}”`,
+                  () => executarExclusao(() => excluirApartamento(a.id)),
+                )}
+              />
+            ) : null}
           </View>
         );
       })}
+      {apartamentos.length === 0 ? (
+        <Text style={styles.empty}>
+          {carregandoApartamentos ? 'Carregando apartamentos...' : erroApartamentos ?? 'Nenhum apartamento cadastrado.'}
+        </Text>
+      ) : null}
     </>
+  );
+
+  const renderMoradores = () => usuario?.isSindico ? (
+    <>
+      <PrimaryButton
+        title="Adicionar novo morador"
+        onPress={() => router.push('/pages/morador/novo-morador')}
+      />
+      {moradores.map((morador) => (
+        <MoradorCard
+          key={morador.id}
+          morador={morador}
+          onEdit={() => router.push({ pathname: '/pages/morador/novo-morador', params: { id: morador.id } })}
+          onDelete={() => confirmarExclusao(
+            `o morador “${morador.nome}”`,
+            () => executarExclusao(() => excluirMorador(morador.id)),
+          )}
+        />
+      ))}
+      {moradores.length === 0 ? (
+        <Text style={styles.empty}>
+          {carregandoMoradores ? 'Carregando moradores...' : erroMoradores ?? 'Nenhum morador cadastrado.'}
+        </Text>
+      ) : null}
+    </>
+  ) : (
+    <Text style={styles.empty}>A lista de moradores é gerenciada pelo síndico.</Text>
   );
 
   return (
@@ -158,7 +165,7 @@ export default function ConfiguracoesScreen() {
         showsVerticalScrollIndicator={false}
       >
         <ConfigHeader />
-        <ConfigTabs active={tab} onChange={setTab} />
+        <ConfigTabs active={tab} onChange={(aba) => router.setParams({ aba })} />
         {tab === 'blocos' && renderBlocos()}
         {tab === 'apartamentos' && renderApartamentos()}
         {tab === 'moradores' && renderMoradores()}
@@ -184,6 +191,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   cardTitle: { fontSize: 20, fontWeight: '800', color: colors.text, marginBottom: 8 },
+  titleWithBadge: { paddingRight: 76 },
   cardSub: { fontSize: 13, color: colors.muted, marginBottom: 4 },
-  codigoRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  empty: { color: colors.muted, textAlign: 'center', paddingVertical: 16 },
 });

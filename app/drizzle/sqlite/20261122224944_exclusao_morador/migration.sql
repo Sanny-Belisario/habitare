@@ -1,0 +1,1 @@
+ALTER TABLE `usuario` ADD `excluido` integer DEFAULT false NOT NULL;

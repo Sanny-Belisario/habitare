@@ -3,6 +3,7 @@ import { Stack } from "expo-router";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 import { Platform } from "react-native";
 
+import { useRevogarSessao } from "@/hooks/use-revogar-sessao";
 import { useSessao } from "@/hooks/use-sessao";
 
 import migrations from "../../drizzle/sqlite/migrations";
@@ -42,6 +43,7 @@ function NativeDatabaseSetup({
 
 export default function RootLayout() {
   const usuario = useSessao();
+  useRevogarSessao(usuario);
   const nativeDatabase =
     Platform.OS === "web" ? null : getNativeDatabase();
 
@@ -103,7 +105,15 @@ export default function RootLayout() {
             name="pages/home/nova-ocorrencia"
             options={{ title: "Nova ocorrência", animation: "slide_from_right" }}
           />
-          <Stack.Screen name="pages/configuracoes" options={{ title: "Configura??es" }} />
+          <Stack.Screen name="pages/configuracoes" options={{ title: "Configurações" }} />
+          <Stack.Screen
+            name="pages/novo-bloco"
+            options={{ title: "Novo bloco", animation: "slide_from_right" }}
+          />
+          <Stack.Screen
+            name="pages/novo-apartamento"
+            options={{ title: "Novo apartamento", animation: "slide_from_right" }}
+          />
           <Stack.Screen name="pages/morador/novo-morador" options={{ title: "Novo morador" }} />
         </Stack.Protected>
       </Stack>
