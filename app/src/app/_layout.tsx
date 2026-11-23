@@ -58,6 +58,10 @@ export default function RootLayout() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="pages/auth/login" options={{ title: "Login" }} />
         <Stack.Screen
+          name="pages/auth/esqueci-a-senha"
+          options={{ title: "Esqueci a senha", animation: "slide_from_right" }}
+        />
+        <Stack.Screen
           name="pages/auth/criadores"
           options={{ title: "Criadores", animation: "fade" }}
         />

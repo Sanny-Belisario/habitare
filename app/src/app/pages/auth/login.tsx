@@ -1,14 +1,6 @@
-import { StatusBar } from "expo-status-bar";
-import { useEffect, useRef, type ComponentRef } from "react";
-import {
-  Alert,
-  Image,
-  Keyboard,
-  KeyboardAvoidingView,
-  ScrollView,
-} from "react-native";
-import { styles } from "@/styles";
+import { Alert } from "react-native";
 import { CardLogin } from "@/components/card-login";
+import { TelaAutenticacao } from "@/components/TelaAutenticacao";
 import { Usuario } from "@/services/usuario";
 import { router } from "expo-router";
 
@@ -18,18 +10,7 @@ interface AcessoLogin {
 }
 
 export default function Login() {
-  const logo = require("../../../../assets/images/logo-habitare.png");
   const usuarios = new Usuario();
-  const scrollRef = useRef<ComponentRef<typeof ScrollView>>(null);
-
-  // Com o teclado aberto, rola até o fim para o campo de senha e o botão
-  // "Entrar" ficarem acima dele.
-  useEffect(() => {
-    const assinatura = Keyboard.addListener("keyboardDidShow", () => {
-      scrollRef.current?.scrollToEnd({ animated: true });
-    });
-    return () => assinatura.remove();
-  }, []);
 
   async function acessoLogin(data: AcessoLogin) {
     if (!data.email.trim()) {
@@ -60,19 +41,8 @@ export default function Login() {
     router.replace("/");
   }
   return (
-    // Android é edge-to-edge: a janela não encolhe com o teclado, então o
-    // KeyboardAvoidingView precisa de behavior nas duas plataformas.
-    <KeyboardAvoidingView style={styles.loginScreen} behavior="padding">
-      <ScrollView
-        ref={scrollRef}
-        contentContainerStyle={styles.loginContainer}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-      >
-        <Image source={logo} style={styles.logo} />
-        <CardLogin acessoLogin={acessoLogin} />
-      </ScrollView>
-      <StatusBar style="auto" />
-    </KeyboardAvoidingView>
+    <TelaAutenticacao>
+      <CardLogin acessoLogin={acessoLogin} />
+    </TelaAutenticacao>
   );
 }

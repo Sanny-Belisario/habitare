@@ -71,6 +71,10 @@ Os códigos de acesso têm 8 dígitos numéricos e ficam criptografados no Supab
 - O síndico precisa estar sincronizado no Supabase, porque a validação usa o cadastro do servidor.
 - Enquanto as policies `acessoAnonDev` estiverem ativas, qualquer pessoa com a publishable key lê o `senha_hash`. Revise as policies antes de produção.
 
+## Recuperação da senha do síndico
+
+Em **Esqueci a senha/código de acesso**, o app procura o e-mail no cadastro local do Habitare. O morador recebe a orientação de pedir o código de acesso ao síndico. No fluxo do trabalho acadêmico, o e-mail cadastrado é suficiente para o síndico ativo escolher uma nova senha no app. O SQLite guarda o novo hash, que é enviado ao Supabase pela sincronização.
+
 ## Exclusão de moradores
 
 A sincronização não propaga `DELETE`, então o app exclui o morador logicamente (`excluido = true`, `status = false`) e cascateia: desativa os vínculos com apartamentos e as ocorrências do morador, marca os comunicados dele como `excluido` e apaga o código de acesso (hash local, cópia no aparelho e registro criptografado no servidor, por trigger).
