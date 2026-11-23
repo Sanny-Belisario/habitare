@@ -121,7 +121,11 @@ function FormularioMorador({ morador }: { morador?: MoradorEdicao }) {
     <TelaMorador titulo={titulo}>
       {acesso ? (
         <>
-          <Text style={styles.subtitle}>O morador entra com o e-mail e o código abaixo. Guarde o código, pois ele é exibido apenas agora.</Text>
+          <Text style={styles.subtitle}>
+            O morador entra com o e-mail e o código abaixo. {acesso.codigoGuardado
+              ? "O código ficará disponível na lista de moradores após a sincronização."
+              : "Guarde o código antes de sair desta tela."}
+          </Text>
           <View style={styles.accessCard}>
             <Text style={estilosCampo.rotulo}>E-mail</Text>
             <Text style={[estilosCampo.texto, styles.accessValue]} selectable>{acesso.email}</Text>

@@ -1,7 +1,7 @@
-import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet, Text, View } from "react-native";
 
 import CardActions from "@/components/CardActions";
+import { CodigoAcessoMorador } from "@/components/CodigoAcessoMorador";
 import StatusBadge from "@/components/StatusBadge";
 import { tituloApartamento } from "@/services/apartamento";
 import { colors } from "@/theme";
@@ -23,16 +23,7 @@ export function MoradorCard({ morador, onEdit, onDelete }: MoradorCardProps) {
       <Text style={styles.details}>
         {bloco && apartamento ? `${bloco} • ${tituloApartamento(apartamento)}` : "Sem apartamento vinculado"}
       </Text>
-      <View
-        style={styles.code}
-        accessible
-        accessibilityLabel={temCodigoAcesso ? "Código de acesso oculto" : "Código de acesso não cadastrado"}
-      >
-        <Text style={styles.details}>
-          Código de acesso: {temCodigoAcesso ? "******" : "Não cadastrado"}
-        </Text>
-        {temCodigoAcesso ? <Ionicons name="eye-off-outline" size={14} color={colors.muted} /> : null}
-      </View>
+      <CodigoAcessoMorador id={morador.id} nome={nome} temCodigoAcesso={temCodigoAcesso} />
       <CardActions
         editLabel={`Editar ${nome}`}
         deleteLabel={`Excluir ${nome}`}
@@ -60,5 +51,4 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   details: { color: colors.muted, fontSize: 12 },
-  code: { flexDirection: "row", alignItems: "center", gap: 5, marginTop: 4, flexWrap: "wrap" },
 });

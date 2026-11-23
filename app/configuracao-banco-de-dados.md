@@ -59,6 +59,25 @@ A URL e a publishable key ficam em **Project Settings > API**. O `DATABASE_URL` 
 
    O `as never` em `useMigrations(dbSqlite, migrations as never)` contorna um erro de tipo do Drizzle `rc.5`, que exige um campo `journal` que o próprio `drizzle-kit` não gera. O código de execução ignora esse campo, então o erro é só de TypeScript.
 
+## Consulta de códigos por administradores
+
+A consulta exige conexão com o Supabase. O login local continua funcionando, e o app tenta autenticar o síndico no Supabase Auth com o e-mail e a senha informados no login. Use o mesmo e-mail e senha nas duas contas administrativas.
+
+1. Aplique a migração `codigos_admin` junto com as migrações do Postgres. Ela usa o Supabase Vault para guardar a chave de criptografia dos códigos.
+2. Em **Authentication → Users**, crie ou confirme a conta do administrador. Copie o UUID do usuário do Auth e confirme o UUID do condomínio que ele administra.
+3. No SQL Editor, vincule os UUIDs verificados. A tabela de autorização fica em um esquema privado e é administrada no servidor.
+
+   ```sql
+   INSERT INTO habitare_privado.administradores_codigo (id_auth, id_condominio)
+   VALUES ('<uuid-do-usuario-no-auth>', '<uuid-do-condominio>');
+   ```
+
+4. Entre no app com a senha administrativa e abra **Configurações → Moradores**. Em um segundo aparelho sincronizado, o ícone de olho deve exibir o mesmo código.
+
+Códigos de novos moradores são enviados após a sincronização da conta. Um código emitido pela versão anterior pode ser importado ao abrir o olho no aparelho que ainda tem a cópia no SecureStore. Quando só o hash estiver disponível, a geração de um novo código pede confirmação e substitui a credencial anterior.
+
+A autorização é independente do perfil local. Para revogá-la, retire o vínculo de `habitare_privado.administradores_codigo` ou desative a conta correspondente no Supabase Auth.
+
 ## Vendo os dados com o Drizzle Studio
 
 **Postgres:** com o `DATABASE_URL` preenchido no `.env.local`, rode:

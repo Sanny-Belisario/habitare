@@ -4,6 +4,13 @@ import { getRandomBytesAsync } from "expo-crypto";
 
 import { dbSqlite } from "@/db/sqlite";
 import { apartamento, bloco, moradorApartamento, usuario } from "@/db/sqlite/schema";
+import { guardarCodigoLocal, lerCodigoLocal, removerCodigoLocal } from "@/services/codigo-acesso-local";
+import {
+  codigosPendentes,
+  desmarcarCodigoPendente,
+  marcarCodigoPendente,
+  operarCodigoRemoto,
+} from "@/services/codigo-acesso-remoto";
 import { sessao } from "@/services/sessao";
 import { emailNormalizadoIgual } from "@/services/usuario";
 import type { Morador } from "@/types";
@@ -178,7 +185,7 @@ export async function cadastrarMorador(dados: DadosMorador, sinal?: AbortSignal)
     throw new Error("O cadastro foi interrompido.");
   }
 
-  db.transaction((tx) => {
+  const idMorador = db.transaction((tx) => {
     validarUnidade(tx, sindico.idCondominio, idBloco, idApartamento);
     validarEmailDisponivel(tx, valores.email);
 
@@ -192,9 +199,83 @@ export async function cadastrarMorador(dados: DadosMorador, sinal?: AbortSignal)
 
     tx.insert(moradorApartamento).values({ idUsuario: morador.id, idApartamento }).run();
     recalcularOcupacao(tx, sindico.idCondominio, [idApartamento]);
+    return morador.id;
   });
 
-  return { email: valores.email, codigo };
+  let codigoGuardado = false;
+  try {
+    await guardarCodigoLocal(idMorador, codigoHash, codigo);
+    marcarCodigoPendente(idMorador);
+    codigoGuardado = true;
+  } catch {
+    // O cadastro local continua válido e o código fica disponível na confirmação.
+  }
+  return { email: valores.email, codigo, codigoGuardado };
+}
+
+function buscarHashCodigo(db: BancoLocal, id: string, idCondominio: string) {
+  const morador = db.select({ hash: usuario.codigoAcesso }).from(usuario)
+    .where(and(moradoresDoCondominio(idCondominio), eq(usuario.id, id)))
+    .get();
+  if (!morador) throw new Error(mensagemAusente);
+  return morador.hash;
+}
+
+async function publicarCodigoLocal(id: string, hash: string, sinal?: AbortSignal) {
+  const conta = sessao.obter();
+  if (sinal?.aborted) return null;
+  const codigo = await lerCodigoLocal(id, hash);
+  if (sinal?.aborted || sessao.obter() !== conta) return null;
+  if (!codigo) {
+    desmarcarCodigoPendente(id);
+    return null;
+  }
+  const publicado = await operarCodigoRemoto(id, "publicar", { codigo, hash }, sinal);
+  if (publicado) {
+    desmarcarCodigoPendente(id);
+    void removerCodigoLocal(id, hash).catch(() => {});
+  }
+  return publicado;
+}
+
+export async function consultarCodigoMorador(id: string, sinal?: AbortSignal) {
+  const { db, sindico } = exigirGestaoMoradores();
+  const hash = buscarHashCodigo(db, id, sindico.idCondominio);
+  const codigo = await operarCodigoRemoto(id, "consultar", undefined, sinal);
+  if (codigo || !hash) return codigo;
+  // Migra os códigos emitidos por versões que guardavam apenas no aparelho.
+  const publicado = await publicarCodigoLocal(id, hash, sinal);
+  return publicado ?? operarCodigoRemoto(id, "consultar", undefined, sinal);
+}
+
+export async function renovarCodigoMorador(id: string, sinal?: AbortSignal) {
+  const { db, sindico } = exigirGestaoMoradores();
+  const anterior = buscarHashCodigo(db, id, sindico.idCondominio);
+  const codigo = await operarCodigoRemoto(id, "renovar", undefined, sinal);
+  if (!codigo) throw new Error("O Supabase não retornou o novo código.");
+  desmarcarCodigoPendente(id);
+  if (anterior) void removerCodigoLocal(id, anterior).catch(() => {});
+  return codigo;
+}
+
+export async function publicarCodigosPendentes() {
+  const conta = sessao.obter();
+  const db = dbSqlite;
+  if (!conta?.isSindico || !db) return;
+  const ids = codigosPendentes();
+  if (ids.length === 0) return;
+
+  const pendentes = db.select({ id: usuario.id, hash: usuario.codigoAcesso }).from(usuario)
+    .where(and(moradoresDoCondominio(conta.idCondominio), inArray(usuario.id, ids))).all();
+  for (const { id, hash } of pendentes) {
+    if (sessao.obter() !== conta) return;
+    if (!hash) continue;
+    try {
+      await publicarCodigoLocal(id, hash);
+    } catch {
+      // Conserva a fila para a próxima sincronização após uma falha de rede ou autorização.
+    }
+  }
 }
 
 export function editarMorador(id: string, dados: DadosMorador) {
@@ -237,14 +318,17 @@ export function editarMorador(id: string, dados: DadosMorador) {
 
 export function excluirMorador(id: string) {
   const { db, sindico } = exigirGestaoMoradores();
-  db.transaction((tx) => {
+  const hash = db.transaction((tx) => {
     const removido = tx.update(usuario).set({ status: false, excluido: true })
       .where(and(moradoresDoCondominio(sindico.idCondominio), eq(usuario.id, id)))
-      .returning({ id: usuario.id }).get();
+      .returning({ hash: usuario.codigoAcesso }).get();
     if (!removido) throw new Error(mensagemAusente);
 
     const vinculos = buscarVinculos(tx, id);
     tx.update(moradorApartamento).set({ ativo: false }).where(vinculosAtivos(id)).run();
     recalcularOcupacao(tx, sindico.idCondominio, vinculos.map((vinculo) => vinculo.idApartamento));
+    return removido.hash;
   });
+  desmarcarCodigoPendente(id);
+  if (hash) void removerCodigoLocal(id, hash).catch(() => {});
 }
