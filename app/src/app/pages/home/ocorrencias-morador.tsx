@@ -76,7 +76,7 @@ export default function OcorrenciasMorador() {
           <Text style={styles.brand}>{marca}</Text>
 
           <View style={styles.header}>
-            <View>
+            <View style={styles.headerText}>
               <Text style={styles.eyebrow}>Seu condomínio</Text>
               <Text style={styles.title}>Ocorrências</Text>
             </View>
@@ -112,7 +112,9 @@ export default function OcorrenciasMorador() {
                   <Text style={styles.cardSub}>
                     {o.bloco ?? "Área comum"}  •  {o.categoria}
                   </Text>
-                  <CardActions onEdit={() => editar(o)} onDelete={() => excluir(o)} />
+                  {ehAberta(o.status) && (
+                    <CardActions onEdit={() => editar(o)} onDelete={() => excluir(o)} />
+                  )}
                 </View>
               );
             })
@@ -142,31 +144,35 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "flex-start",
     marginBottom: 20,
+    gap: 12,
   },
+  headerText: { flex: 1 },
   eyebrow: { fontSize: 15, color: colors.muted, marginBottom: 2 },
   title: { fontSize: 30, fontWeight: "800", color: colors.dark },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: "800",
+    fontSize: 17,
+    fontWeight: "700",
     color: colors.dark,
     marginBottom: 14,
   },
   card: {
     backgroundColor: colors.card,
     borderRadius: 16,
-    padding: 18,
-    marginBottom: 12,
+    padding: 16,
+    marginBottom: 10,
   },
   cardTop: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     marginBottom: 10,
+    flexWrap: "wrap",
+    gap: 8,
   },
   protocol: { fontSize: 12, fontWeight: "700", color: colors.muted },
   badge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },
   badgeText: { fontSize: 11, fontWeight: "700" },
-  cardTitle: { fontSize: 17, fontWeight: "800", color: colors.text, marginBottom: 6 },
+  cardTitle: { fontSize: 16, fontWeight: "700", color: colors.text, marginBottom: 6 },
   cardSub: { fontSize: 13, color: colors.muted },
   emptyState: {
     padding: 20,

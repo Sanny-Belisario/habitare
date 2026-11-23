@@ -53,11 +53,12 @@ export const ehResolvida = (status: string) =>
 export const ehAberta = (status: string) =>
   status.trim().toLowerCase() === STATUS_INICIAL.toLowerCase();
 
+export const ehEmAndamento = (status: string) =>
+  status.trim().toLowerCase() === STATUS_EM_ANDAMENTO.toLowerCase();
+
 export function proximoStatusOcorrencia(status: string) {
   if (ehAberta(status)) return STATUS_EM_ANDAMENTO;
-  if (status.trim().toLowerCase() === STATUS_EM_ANDAMENTO.toLowerCase()) {
-    return STATUS_RESOLVIDA;
-  }
+  if (ehEmAndamento(status)) return STATUS_RESOLVIDA;
   return null;
 }
 

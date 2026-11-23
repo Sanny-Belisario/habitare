@@ -38,7 +38,7 @@ export default function DetalheComunicado() {
               accessibilityRole="button"
               accessibilityLabel="Voltar para Comunicados"
             >
-              <Ionicons name="arrow-back" size={18} color={colors.muted} />
+              <Ionicons name="arrow-back" size={20} color={colors.muted} />
               <Text style={styles.backLabel}>Voltar</Text>
             </TouchableOpacity>
             <MenuConta />
@@ -81,20 +81,16 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    paddingHorizontal: 18,
-    paddingTop: 10,
-    paddingBottom: 18,
+    padding: 20,
+    gap: 16,
   },
   brand: {
     color: colors.primary,
-    fontSize: 7,
+    fontSize: 11,
     fontWeight: "700",
-    letterSpacing: 0.1,
+    letterSpacing: 0.3,
   },
   topRow: {
-    height: 42,
-    marginTop: 8,
-    marginBottom: 9,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -102,54 +98,49 @@ const styles = StyleSheet.create({
   backButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 7,
-    paddingVertical: 6,
+    gap: 8,
+    minHeight: 30,
   },
   backLabel: {
     color: colors.muted,
-    fontSize: 10,
+    fontSize: 14,
   },
   title: {
     color: colors.dark,
-    fontSize: 18,
-    lineHeight: 23,
-    fontWeight: "700",
-    marginBottom: 9,
+    fontSize: 30,
+    fontWeight: "800",
   },
   categoryTag: {
     alignSelf: "flex-start",
-    paddingHorizontal: 8,
+    paddingHorizontal: 9,
     paddingVertical: 5,
-    borderRadius: 6,
+    borderRadius: 7,
     backgroundColor: colors.navActive,
   },
   categoryText: {
     color: colors.primary,
-    fontSize: 8,
+    fontSize: 10,
     fontWeight: "700",
   },
   detailCard: {
-    minHeight: 100,
-    marginTop: 12,
-    paddingHorizontal: 13,
-    paddingVertical: 14,
-    borderRadius: 13,
+    minHeight: 118,
+    padding: 16,
+    borderRadius: 16,
     backgroundColor: colors.card,
-    gap: 10,
+    gap: 12,
   },
   details: {
     color: colors.muted,
-    fontSize: 10,
-    lineHeight: 16,
+    fontSize: 13,
   },
   body: {
     color: colors.dark,
-    fontSize: 10,
-    lineHeight: 16,
+    fontSize: 15,
+    lineHeight: 22,
   },
   notFound: {
     color: colors.muted,
-    fontSize: 12,
+    fontSize: 13,
     paddingVertical: 20,
   },
 });

@@ -7,7 +7,7 @@ import { MoradorBottomNav } from "@/components/MoradorBottomNav";
 import { useCabecalho } from "@/hooks/use-cabecalho";
 import { useComunicados } from "@/hooks/use-comunicados";
 import { useMinhasOcorrencias } from "@/hooks/use-minhas-ocorrencias";
-import { ehResolvida } from "@/services/ocorrencia";
+import { ehEmAndamento } from "@/services/ocorrencia";
 import { colors } from "@/theme";
 
 export default function InicioMorador() {
@@ -15,13 +15,11 @@ export default function InicioMorador() {
   const { ocorrencias } = useMinhasOcorrencias();
   const { marca } = useCabecalho();
 
-  const pendentes = ocorrencias.filter((o) => !ehResolvida(o.status)).length;
+  const emAndamento = ocorrencias.filter((o) => ehEmAndamento(o.status)).length;
   const resumoOcorrencias =
-    pendentes === 0
-      ? "Nenhuma ocorrência em andamento"
-      : pendentes === 1
-        ? "1 ocorrência em andamento"
-        : `${pendentes} ocorrências em andamento`;
+    emAndamento === 1
+      ? "1 ocorrência em andamento"
+      : `${emAndamento} ocorrências em andamento`;
 
   function openAnnouncement(id: string) {
     router.navigate("/pages/home/comunicados-morador");
@@ -42,21 +40,11 @@ export default function InicioMorador() {
           <Text style={styles.brand}>{marca}</Text>
 
           <View style={styles.header}>
-            <View>
+            <View style={styles.headerText}>
               <Text style={styles.eyebrow}>Seu condomínio</Text>
               <Text style={styles.title}>Início</Text>
             </View>
-            <View style={styles.headerActions}>
-              <TouchableOpacity
-                style={styles.settingsButton}
-                onPress={() => router.navigate("/pages/configuracoes")}
-                accessibilityRole="button"
-                accessibilityLabel="Configurações"
-              >
-                <Ionicons name="settings-outline" size={22} color={colors.primary} />
-              </TouchableOpacity>
-              <MenuConta />
-            </View>
+            <MenuConta />
           </View>
 
           <Text style={styles.sectionTitle}>Acesso rápido</Text>
@@ -125,26 +113,20 @@ export default function InicioMorador() {
           </View>
         </ScrollView>
 
-        <TouchableOpacity
-          style={styles.occurrenceSummary}
-          onPress={() =>
-            router.navigate(
-              pendentes > 0
-                ? "/pages/home/ocorrencias-morador"
-                : "/pages/home/nova-ocorrencia",
-            )
-          }
-          activeOpacity={0.8}
-          accessibilityRole="button"
-        >
-          <Text style={styles.summaryTitle}>{resumoOcorrencias}</Text>
-          <View style={styles.summaryLink}>
-            <Text style={styles.summaryText}>
-              {pendentes > 0 ? "Acompanhar solicitações" : "Registrar uma ocorrência"}
-            </Text>
-            <Ionicons name="arrow-forward" size={10} color={colors.primary} />
-          </View>
-        </TouchableOpacity>
+        {emAndamento > 0 && (
+          <TouchableOpacity
+            style={styles.occurrenceSummary}
+            onPress={() => router.navigate("/pages/home/ocorrencias-morador")}
+            activeOpacity={0.8}
+            accessibilityRole="button"
+          >
+            <Text style={styles.summaryTitle}>{resumoOcorrencias}</Text>
+            <View style={styles.summaryLink}>
+              <Text style={styles.summaryText}>Acompanhar solicitações</Text>
+              <Ionicons name="arrow-forward" size={14} color={colors.primary} />
+            </View>
+          </TouchableOpacity>
+        )}
 
         <MoradorBottomNav active="inicio" />
       </View>
@@ -165,138 +147,124 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    paddingHorizontal: 18,
-    paddingTop: 10,
-    paddingBottom: 14,
+    padding: 20,
+    paddingBottom: 28,
   },
   brand: {
     color: colors.primary,
-    fontSize: 7,
+    fontSize: 11,
     fontWeight: "700",
-    letterSpacing: 0.1,
+    letterSpacing: 0.3,
+    marginBottom: 14,
   },
   header: {
-    marginTop: 17,
-    marginBottom: 17,
+    marginBottom: 20,
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     justifyContent: "space-between",
+    gap: 12,
   },
+  headerText: { flex: 1 },
   eyebrow: {
     color: colors.muted,
-    fontSize: 10,
-    marginBottom: 4,
+    fontSize: 15,
+    marginBottom: 2,
   },
   title: {
     color: colors.dark,
-    fontSize: 20,
-    lineHeight: 24,
-    fontWeight: "700",
-  },
-  headerActions: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  settingsButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.card,
-    alignItems: "center",
-    justifyContent: "center",
+    fontSize: 30,
+    fontWeight: "800",
   },
   sectionTitle: {
     color: colors.dark,
-    fontSize: 12,
-    lineHeight: 15,
-    fontWeight: "700",
+    fontSize: 18,
+    fontWeight: "800",
   },
   quickAccess: {
     flexDirection: "row",
-    gap: 8,
-    marginTop: 9,
+    gap: 10,
+    marginTop: 12,
   },
   quickCard: {
-    height: 64,
+    minHeight: 84,
     flex: 1,
-    padding: 10,
-    borderRadius: 12,
+    padding: 14,
+    borderRadius: 16,
     backgroundColor: colors.card,
     justifyContent: "space-between",
+    gap: 8,
   },
   quickIcon: {
-    width: 21,
-    height: 21,
-    borderRadius: 7,
+    width: 32,
+    height: 32,
+    borderRadius: 8,
     backgroundColor: colors.navActive,
     alignItems: "center",
     justifyContent: "center",
   },
   quickLabel: {
     color: colors.dark,
-    fontSize: 8,
+    fontSize: 13,
     fontWeight: "700",
   },
   announcementsHeading: {
-    marginTop: 19,
-    marginBottom: 9,
+    marginTop: 24,
+    marginBottom: 12,
   },
   announcements: {
-    gap: 7,
+    gap: 10,
   },
   announcementCard: {
-    minHeight: 78,
-    paddingHorizontal: 13,
-    paddingVertical: 10,
-    borderRadius: 13,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 16,
     backgroundColor: colors.card,
     justifyContent: "center",
   },
   categoryTag: {
     alignSelf: "flex-start",
-    paddingHorizontal: 7,
-    paddingVertical: 4,
-    marginBottom: 8,
-    borderRadius: 6,
+    paddingHorizontal: 9,
+    paddingVertical: 5,
+    marginBottom: 7,
+    borderRadius: 7,
     backgroundColor: colors.navActive,
   },
   categoryText: {
     color: colors.primary,
-    fontSize: 6,
+    fontSize: 10,
     fontWeight: "700",
   },
   announcementTitle: {
     color: colors.dark,
-    fontSize: 10,
+    fontSize: 16,
     fontWeight: "700",
   },
   announcementDetails: {
     color: colors.muted,
-    fontSize: 8,
-    marginTop: 6,
+    fontSize: 13,
+    marginTop: 3,
   },
   occurrenceSummary: {
-    marginHorizontal: 18,
+    marginHorizontal: 20,
     marginBottom: 12,
-    paddingHorizontal: 13,
-    paddingVertical: 9,
-    borderRadius: 11,
+    padding: 16,
+    borderRadius: 16,
     backgroundColor: colors.navActive,
   },
   summaryTitle: {
     color: colors.primary,
-    fontSize: 9,
+    fontSize: 13,
     fontWeight: "700",
   },
   summaryLink: {
-    marginTop: 3,
+    marginTop: 4,
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
   },
   summaryText: {
     color: colors.primary,
-    fontSize: 8,
+    fontSize: 12,
+    flexShrink: 1,
   },
 });
