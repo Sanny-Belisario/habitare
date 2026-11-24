@@ -6,6 +6,7 @@ import { TelaAutenticacao } from "@/components/TelaAutenticacao";
 import { sincronizarAgora } from "@/hooks/use-sincronizacao";
 import { Usuario } from "@/services/usuario";
 import { cardLogin } from "@/styles/card-login";
+import { colors } from "@/theme";
 
 const usuarios = new Usuario();
 
@@ -24,6 +25,7 @@ function CampoSenha({ rotulo, valor, alterar, editavel, enviar }: {
       <TextInput
         accessibilityLabel={rotulo}
         style={[cardLogin.input, focado && cardLogin.inputFocado]}
+        placeholderTextColor={colors.muted}
         value={valor}
         onChangeText={alterar}
         onFocus={() => setFocado(true)}
@@ -112,6 +114,7 @@ export default function EsqueciASenha() {
               accessibilityLabel="E-mail"
               placeholder="Digite o seu e-mail"
               style={[cardLogin.input, focado && cardLogin.inputFocado]}
+              placeholderTextColor={colors.muted}
               keyboardType="email-address"
               autoComplete="email"
               autoCapitalize="none"
