@@ -24,6 +24,7 @@ export const cardLogin = StyleSheet.create({
     padding: 12,
     borderWidth: 1.5,
     borderColor: "#D5DDE6",
+    color: "#172D40",
   },
   inputFocado: {
     borderColor: "#243B7A",

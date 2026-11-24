@@ -46,6 +46,7 @@ export function CardLogin({ acessoLogin }: Login) {
           ref={emailRef}
           placeholder="Digite o seu e-mail"
           style={[cardLogin.input, focado === "email" && cardLogin.inputFocado]}
+          placeholderTextColor={colors.muted}
           keyboardType="email-address"
           autoCapitalize="none"
           autoCorrect={false}
@@ -71,6 +72,7 @@ export function CardLogin({ acessoLogin }: Login) {
             ref={senhaRef}
             placeholder="Digite sua senha ou código de acesso"
             style={[cardLogin.input, cardLogin.inputSenha, focado === "senha" && cardLogin.inputFocado]}
+            placeholderTextColor={colors.muted}
             secureTextEntry={!senhaVisivel}
             autoCapitalize="none"
             autoCorrect={false}
